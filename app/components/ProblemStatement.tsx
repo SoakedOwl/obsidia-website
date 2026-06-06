@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -205,12 +205,13 @@ function FindingCard({
   meta: SMeta;
 }) {
   const [barsOn, setBarsOn] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(cardRef, { once: false, amount: 0.25 });
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 44 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: false, amount: 0.25 }}
+      ref={cardRef}
+      animate={{ opacity: inView ? 1 : 0 }}
       transition={{ duration: 0.72, ease: EASE, delay: 0.22 + index * 0.13 }}
       className={`finding-card card-${meta.cssClass}`}
       onMouseEnter={() => setBarsOn(true)}
@@ -277,6 +278,8 @@ function FindingCard({
    Section
 ────────────────────────────────────────────── */
 export default function ProblemStatement() {
+  const headerRef = useRef<HTMLDivElement>(null);
+  const headerInView = useInView(headerRef, { once: false, amount: 0.5 });
   const FINDINGS = [
     { code: 'D-01', statement: 'Your website exists. It does not work for you.',            note: 'A site that does not convert visitors into leads is a cost with a logo on it.' },
     { code: 'D-02', statement: 'Your team is doing work that should not require a human.',  note: 'Every hour spent on approvals and data entry is an hour your business is not growing.' },
@@ -302,14 +305,26 @@ export default function ProblemStatement() {
         background: 'radial-gradient(circle, rgba(61,82,230,0.05) 0%, transparent 60%)',
         pointerEvents: 'none',
       }} />
-
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <div aria-hidden style={{
+      position: 'absolute', bottom: '-25%', left: '90%',
+      transform: 'translateX(-50%)',
+      width: '900px', height: '600px',
+      background: 'radial-gradient(ellipse, rgba(61,82,230,0.18) 0%, transparent 60%)',
+      pointerEvents: 'none',
+      }} />
+      <div aria-hidden style={{
+      position: 'absolute', bottom: '45%', left: '10%',
+      transform: 'translateX(-50%)',
+      width: '900px', height: '600px',
+      background: 'radial-gradient(ellipse, rgba(61,82,230,0.18) 0%, transparent 60%)',
+      pointerEvents: 'none',
+      }} />
+      <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
 
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 22 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.5 }}
+          ref={headerRef}
+          animate={{ opacity: headerInView ? 1 : 0 }}
           transition={{ duration: 0.62, ease: EASE, delay: 0.3 }}
           style={{ marginBottom: '64px' }}
         >

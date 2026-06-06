@@ -3,41 +3,28 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { ArrowUpRight, ArrowRight, ChevronDown } from 'lucide-react';
-import BorderGlow from './ui/BorderGlow';
+import { ArrowUpRight, ArrowRight, ChevronDown, Mail, Check, X } from 'lucide-react';
 
 
 /* ── Service item type ─────────────────────────────────────── */
-const SERVICE_ITEMS_STATIC = [
-  { href: '/services/automation' },
-  { href: '/services/websites'   },
-  { href: '/services/apps'       },
-] as const;
-
 type ServiceItem = { label: string; href: string; tag: string; desc: string };
 
-/* ─────────────────────────────────────────────────────────────
-   Logo mark — two stacked cobalt bars (flow symbol)
-───────────────────────────────────────────────────────────── */
-function LogoMark({ light }: { light: boolean }) {
-  return (
-    <svg
-      width="10"
-      height="22"
-      viewBox="0 0 10 22"
-      fill="none"
-      aria-hidden
-      style={{ flexShrink: 0 }}
-    >
-      <rect width="10" height="10" fill="var(--accent)" />
-      <rect y="14" width="10" height="8" fill={light ? 'rgba(61,82,230,0.45)' : 'rgba(61,82,230,0.35)'} />
-    </svg>
-  );
-}
+/* ── Scroll to top (smooth) ────────────────────────────────── */
+const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+
+/* ── Active-tab background — white-on-blue treatment ───────── */
+const ACTIVE_TAB_BG: React.CSSProperties = {
+  position: 'absolute',
+  inset: 0,
+  backgroundColor: 'rgba(255,255,255,0.18)',
+  borderRadius: '8px',
+  border: '1px solid rgba(255,255,255,0.28)',
+};
 
 /* ─────────────────────────────────────────────────────────────
-   Animated hamburger icon (3 lines → X)
+   Animated hamburger icon — unchanged
 ───────────────────────────────────────────────────────────── */
 function HamburgerIcon({ open }: { open: boolean }) {
   const base: React.CSSProperties = {
@@ -57,432 +44,308 @@ function HamburgerIcon({ open }: { open: boolean }) {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Nav link with opacity-based hover + slide underline
+   Desktop nav link — white text on blue bar, active tab highlight
 ───────────────────────────────────────────────────────────── */
-function NavLink({
-  href, label, active, textColor,
-}: {
-  href: string; label: string; active: boolean; textColor: string;
-}) {
-  const [hovered, setHovered] = useState(false);
-  const [everHovered, setEverHovered] = useState(false);
-  const lit = active || hovered;
+function NavLink({ href, label, active }: { href: string; label: string; active: boolean }) {
+  return (
+    <div style={{ position: 'relative' }}>
+      {active && (
+        <motion.div
+          layoutId="nav-active-bg"
+          style={ACTIVE_TAB_BG}
+          transition={{ type: 'spring', stiffness: 400, damping: 38 }}
+        />
+      )}
+      <Link
+        href={href}
+        onClick={active ? (e) => { e.preventDefault(); scrollToTop(); } : undefined}
+        style={{
+          position: 'relative',
+          zIndex: 1,
+          display: 'inline-flex',
+          alignItems: 'center',
+          fontFamily: 'var(--font-body), sans-serif',
+          fontSize: '13px',
+          fontWeight: 500,
+          letterSpacing: '0.02em',
+          color: '#ffffff',
+          textDecoration: 'none',
+          padding: '9px 14px',
+          opacity: active ? 1 : 0.7,
+          whiteSpace: 'nowrap',
+          transition: 'opacity 180ms ease',
+        }}
+        onMouseEnter={(e) => { if (!active) (e.currentTarget as HTMLElement).style.opacity = '1'; }}
+        onMouseLeave={(e) => { if (!active) (e.currentTarget as HTMLElement).style.opacity = '0.7'; }}
+      >
+        {label}
+      </Link>
+    </div>
+  );
+}
 
+/* ─────────────────────────────────────────────────────────────
+   Services nav trigger — pure trigger, matches NavLink structure
+───────────────────────────────────────────────────────────── */
+function ServicesNavItem({
+  pathname, label, open, onEnter, onLeave,
+}: {
+  pathname: string;
+  label: string;
+  open: boolean;
+  onEnter: () => void;
+  onLeave: () => void;
+}) {
+  const isActive = pathname.startsWith('/services');
+  return (
+    <div style={{ position: 'relative' }}>
+      {isActive && (
+        <motion.div
+          layoutId="nav-active-bg"
+          style={ACTIVE_TAB_BG}
+          transition={{ type: 'spring', stiffness: 400, damping: 38 }}
+        />
+      )}
+      <Link
+        href="/services"
+        aria-expanded={open}
+        aria-haspopup="true"
+        onClick={pathname === '/services' ? (e) => { e.preventDefault(); scrollToTop(); } : undefined}
+        style={{
+          position: 'relative',
+          zIndex: 1,
+          display: 'inline-flex',
+          alignItems: 'center',
+          fontFamily: 'var(--font-body), sans-serif',
+          fontSize: '13px',
+          fontWeight: 500,
+          letterSpacing: '0.02em',
+          color: '#ffffff',
+          textDecoration: 'none',
+          padding: '9px 14px',
+          opacity: isActive || open ? 1 : 0.7,
+          whiteSpace: 'nowrap',
+          transition: 'opacity 180ms ease',
+        }}
+        onMouseEnter={(e) => {
+          onEnter();
+          if (!isActive && !open) (e.currentTarget as HTMLElement).style.opacity = '1';
+        }}
+        onMouseLeave={(e) => {
+          onLeave();
+          if (!isActive && !open) (e.currentTarget as HTMLElement).style.opacity = '0.7';
+        }}
+      >
+        {label}
+      </Link>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Dashed-frame service icons (15×15 px)
+───────────────────────────────────────────────────────────── */
+function AutomationIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden>
+      <rect x="0.5"  y="5.5"  width="4" height="4" rx="0.5" stroke="currentColor" strokeWidth="0.8" strokeDasharray="1.3 0.9"/>
+      <rect x="6"    y="0.5"  width="4" height="4" rx="0.5" stroke="currentColor" strokeWidth="0.8" strokeDasharray="1.3 0.9"/>
+      <rect x="11.5" y="5.5"  width="4" height="4" rx="0.5" stroke="currentColor" strokeWidth="0.8" strokeDasharray="1.3 0.9"/>
+      <path d="M4.5 7.5H6M10 2.5H11.5M10 7.5H11.5" stroke="currentColor" strokeWidth="0.75"/>
+      <path d="M8 4.5V5.5"                           stroke="currentColor" strokeWidth="0.75"/>
+      <path d="M2.5 9.5V12.5H7.5"                   stroke="currentColor" strokeWidth="0.75"/>
+      <path d="M13.5 9.5V12.5H8.5"                  stroke="currentColor" strokeWidth="0.75"/>
+      <circle cx="8" cy="12.5" r="1" stroke="currentColor" strokeWidth="0.75"/>
+    </svg>
+  );
+}
+
+function WebIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden>
+      <rect x="0.5" y="1.5" width="15" height="13" rx="1.5" stroke="currentColor" strokeWidth="0.8" strokeDasharray="1.5 0.9"/>
+      <path d="M0.5 5H15.5M4 1.5V5"                stroke="currentColor" strokeWidth="0.75"/>
+      <rect x="2"   y="7"   width="5" height="3.5" rx="0.5" stroke="currentColor" strokeWidth="0.75"/>
+      <path d="M9 8H14M9 10.5H12.5M2 12.5H14"      stroke="currentColor" strokeWidth="0.75"/>
+    </svg>
+  );
+}
+
+function AppIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden>
+      <rect x="4.5" y="0.5" width="9" height="6.5" rx="1" stroke="currentColor" strokeWidth="0.8"  strokeDasharray="1.5 0.9"/>
+      <rect x="1"   y="4"   width="9" height="6.5" rx="1" stroke="currentColor" strokeWidth="0.75"/>
+      <rect x="6"   y="9"   width="9" height="6.5" rx="1" stroke="currentColor" strokeWidth="0.8"  strokeDasharray="1.5 0.9"/>
+    </svg>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Individual service card
+───────────────────────────────────────────────────────────── */
+function ServiceCard({
+  item, icon, isActive,
+}: {
+  item: ServiceItem;
+  icon: React.ReactNode;
+  isActive: boolean;
+}) {
+  const [hov, setHov] = useState(false);
   return (
     <Link
-      href={href}
-      onMouseEnter={() => { setHovered(true); setEverHovered(true); }}
-      onMouseLeave={() => setHovered(false)}
+      href={item.href}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
       style={{
-        position: 'relative',
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '5px',
-        fontFamily: 'var(--font-body), sans-serif',
-        fontSize: '13px',
-        fontWeight: active ? 700 : 500,
-        letterSpacing: '0.04em',
-        color: active ? 'var(--accent)' : textColor,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        padding: '16px 18px',
+        minHeight: '84px',
+        borderRadius: '8px',
+        backgroundColor: isActive
+          ? 'rgba(61,82,230,0.12)'
+          : hov
+          ? 'rgba(255,255,255,0.08)'
+          : 'rgba(255,255,255,0.042)',
+        border: `1px solid ${
+          isActive
+            ? 'rgba(61,82,230,0.24)'
+            : hov
+            ? 'rgba(255,255,255,0.12)'
+            : 'rgba(255,255,255,0.06)'}`,
         textDecoration: 'none',
-        padding: '8px 12px',
-        opacity: active || hovered ? 1 : 0.78,
-        transition: 'color 200ms ease, opacity 200ms ease',
-        whiteSpace: 'nowrap',
+        transition: 'background-color 220ms ease, border-color 220ms ease',
       }}
     >
-      {active && (
+      {/* Top: icon + tag */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
         <span style={{
-          width: '4px', height: '4px', borderRadius: '50%',
-          backgroundColor: 'var(--accent)', flexShrink: 0,
-        }} />
-      )}
-      {label}
-      <span
-        aria-hidden
-        style={{
-          position: 'absolute',
-          bottom: '4px',
-          left: '12px',
-          right: active ? '8px' : '12px',
-          height: '1px',
-          backgroundColor: 'var(--accent)',
-          transform: lit ? 'scaleX(1)' : 'scaleX(0)',
-          transformOrigin: lit ? 'left center' : (everHovered ? 'right center' : 'left center'),
-          transition: 'transform 260ms cubic-bezier(0.76,0,0.24,1)',
-        }}
-      />
+          display: 'flex',
+          color: isActive ? 'var(--accent)' : hov ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.22)',
+          transition: 'color 220ms ease',
+        }}>
+          {icon}
+        </span>
+        <span style={{
+          fontFamily: 'var(--font-mono), monospace',
+          fontSize: '9px',
+          letterSpacing: '0.14em',
+          textTransform: 'uppercase',
+          color: isActive ? 'rgba(61,82,230,0.80)' : hov ? 'var(--accent)' : 'rgba(255,255,255,0.22)',
+          transition: 'color 220ms ease',
+        }}>
+          {item.tag}
+        </span>
+      </div>
+      {/* Service name */}
+      <span style={{
+        fontFamily: 'var(--font-cormorant), Georgia, serif',
+        fontSize: '19px',
+        fontWeight: 500,
+        letterSpacing: '-0.015em',
+        lineHeight: 1.15,
+        color: isActive ? '#fff' : hov ? '#fff' : 'rgba(220,225,248,0.60)',
+        transition: 'color 220ms ease',
+      }}>
+        {item.label}
+      </span>
     </Link>
   );
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Right-panel preview — one per service, crossfades on hover
+   Services dropdown — 2×2 card grid
+   Row 1: Automation | Websites
+   Row 2: Apps       | View All (accent CTA)
 ───────────────────────────────────────────────────────────── */
-const EASE_NAV = 'cubic-bezier(0.22,1,0.36,1)';
-
-function DefaultPreviewPanel() {
-  const [exploreHov, setExploreHov] = useState(false);
-  return (
-    <div style={{
-      position: 'absolute', inset: 0,
-      padding: '32px 32px 26px',
-      display: 'flex', flexDirection: 'column',
-    }}>
-      <span style={{
-        fontFamily: 'var(--font-mono), monospace',
-        fontSize: '9px', letterSpacing: '0.2em', textTransform: 'uppercase',
-        color: 'var(--accent)', display: 'block', marginBottom: '14px',
-      }}>
-        All Services
-      </span>
-
-      <h3 style={{
-        fontFamily: 'var(--font-cormorant), Georgia, serif',
-        fontSize: '32px', fontWeight: 500,
-        letterSpacing: '-0.02em', lineHeight: 1.05,
-        color: 'var(--dark-text)', marginBottom: '14px',
-      }}>
-        Three disciplines.<br />One studio.
-      </h3>
-
-      <Link
-        href="/services"
-        onMouseEnter={() => setExploreHov(true)}
-        onMouseLeave={() => setExploreHov(false)}
-        style={{
-          display: 'inline-flex', alignItems: 'center', gap: '6px',
-          fontFamily: 'var(--font-body), sans-serif',
-          fontSize: '11px', fontWeight: 500, letterSpacing: '0.08em',
-          color: exploreHov ? 'var(--accent)' : 'rgba(220,225,248,0.30)',
-          textDecoration: 'none',
-          transition: `color 200ms ${EASE_NAV}`,
-          alignSelf: 'flex-start',
-          marginTop: 'auto',
-        }}
-      >
-        Explore all services
-        <ArrowRight
-          size={10}
-          style={{
-            transform: exploreHov ? 'translateX(4px)' : 'translateX(0)',
-            transition: `transform 200ms ${EASE_NAV}`,
-          }}
-        />
-      </Link>
-    </div>
-  );
-}
-
-function PreviewPanel({ item, active }: { item: ServiceItem; active: boolean }) {
-  const [exploreHov, setExploreHov] = useState(false);
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        inset: 0,
-        padding: '32px 32px 26px',
-        opacity: active ? 1 : 0,
-        transition: `opacity 200ms ease`,
-        pointerEvents: active ? 'auto' : 'none',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      <span style={{
-        fontFamily: 'var(--font-mono), monospace',
-        fontSize: '9px', letterSpacing: '0.2em', textTransform: 'uppercase',
-        color: 'var(--accent)', display: 'block', marginBottom: '14px',
-      }}>
-        {item.tag}
-      </span>
-
-      <h3 style={{
-        fontFamily: 'var(--font-cormorant), Georgia, serif',
-        fontSize: '32px', fontWeight: 500,
-        letterSpacing: '-0.02em', lineHeight: 1.05,
-        color: 'var(--dark-text)', marginBottom: '14px',
-      }}>
-        {item.label}
-      </h3>
-
-      <p style={{
-        fontFamily: 'var(--font-body), sans-serif',
-        fontSize: '13px', lineHeight: 1.7,
-        color: 'rgba(220,225,248,0.66)',
-        flex: 1, marginBottom: '22px',
-      }}>
-        {item.desc}
-      </p>
-
-      <Link
-        href={item.href}
-        onMouseEnter={() => setExploreHov(true)}
-        onMouseLeave={() => setExploreHov(false)}
-        style={{
-          display: 'inline-flex', alignItems: 'center', gap: '6px',
-          fontFamily: 'var(--font-body), sans-serif',
-          fontSize: '11px', fontWeight: 500, letterSpacing: '0.08em',
-          color: exploreHov ? 'var(--accent)' : 'rgba(220,225,248,0.30)',
-          textDecoration: 'none',
-          transition: `color 200ms ${EASE_NAV}`,
-          alignSelf: 'flex-start',
-        }}
-      >
-        Explore
-        <ArrowRight
-          size={10}
-          style={{
-            transform: exploreHov ? 'translateX(4px)' : 'translateX(0)',
-            transition: `transform 200ms ${EASE_NAV}`,
-          }}
-        />
-      </Link>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────
-   Services dropdown panel (desktop) — list + preview
-───────────────────────────────────────────────────────────── */
-
-function ServicesDropdown({ pathname, items, viewAll, onMouseEnter, onMouseLeave, onFocusIn, onFocusOut }: {
-  pathname: string;
-  items: ServiceItem[];
-  viewAll: string;
-  onMouseEnter?: () => void;
-  onMouseLeave?: () => void;
-  onFocusIn?: () => void;
-  onFocusOut?: () => void;
-}) {
-  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
-  const [viewAllHov, setViewAllHov] = useState(false);
-  const isExactServices = pathname === '/services';
-
-  return (
-    <div style={{ position: 'absolute', top: 'calc(100% + 10px)', left: '50%', transform: 'translateX(-50%)', zIndex: 10 }}>
-    <motion.div
-      role="navigation"
-      aria-label="Services"
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      onFocus={() => onFocusIn?.()}
-      onBlur={(e) => { if (onFocusOut && !e.currentTarget.contains(e.relatedTarget as Node)) onFocusOut(); }}
-      initial={{ opacity: 0, y: -14, scaleY: 0.94 }}
-      animate={{ opacity: 1, y: 0, scaleY: 1 }}
-      exit={{ opacity: 0, y: -10, scaleY: 0.96 }}
-      transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
-      style={{
-        transformOrigin: 'top center',
-        width: '700px',
-        backgroundColor: 'var(--dark-bg)',
-        border: '1px solid rgba(255,255,255,0.07)',
-        borderTop: `2px solid var(--accent)`,
-        boxShadow: '0 28px 72px rgba(0,0,0,0.72), 0 1px 0 rgba(255,255,255,0.025) inset',
-        overflow: 'hidden',
-        display: 'grid',
-        gridTemplateColumns: '270px 1fr',
-      }}
-    >
-      {/* ── Left: service list ── */}
-      <div style={{ borderRight: '1px solid rgba(255,255,255,0.09)', padding: '8px 0' }}>
-        {/* View all — top of list */}
-        <Link
-          href="/services"
-          style={{
-            display: 'flex', alignItems: 'center', gap: '6px',
-            padding: '9px 20px',
-            marginBottom: '4px',
-            borderBottom: '1px solid rgba(255,255,255,0.06)',
-            fontFamily: 'var(--font-body), sans-serif',
-            fontSize: '10px', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase',
-            color: viewAllHov ? 'var(--dark-text)' : isExactServices ? 'rgba(220,225,248,0.90)' : 'rgba(220,225,248,0.62)',
-            textDecoration: 'none',
-            boxShadow: isExactServices ? 'inset 2px 0 0 rgba(61,82,230,0.52)' : 'none',
-            transition: `color 200ms ${EASE_NAV}, box-shadow 200ms ease`,
-          }}
-          onMouseEnter={() => { setViewAllHov(true); setHoveredIdx(null); }}
-          onMouseLeave={() => setViewAllHov(false)}
-        >
-          {viewAll}
-          {isExactServices && !viewAllHov && (
-            <span style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: 'var(--accent)', flexShrink: 0, marginLeft: '2px' }} />
-          )}
-          {!isExactServices && <ArrowRight size={9} />}
-          {isExactServices && viewAllHov && <ArrowRight size={9} />}
-        </Link>
-
-        {items.map((item, i) => {
-          const isHov    = hoveredIdx === i;
-          const isActive = pathname.startsWith(item.href);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onMouseEnter={() => setHoveredIdx(i)}
-              style={{
-                display: 'block',
-                padding: '10px 20px',
-                backgroundColor: isHov
-                  ? 'rgba(136,96,230,0.10)'
-                  : isActive ? 'rgba(61,82,230,0.07)' : 'transparent',
-                boxShadow: isActive ? 'inset 2px 0 0 rgba(61,82,230,0.52)' : 'none',
-                textDecoration: 'none',
-                whiteSpace: 'nowrap',
-                transition: `background-color 380ms ${EASE_NAV}, box-shadow 240ms ease`,
-              }}
-            >
-              <span style={{
-                display: 'block',
-                fontFamily: 'var(--font-mono), monospace',
-                fontSize: '9px', letterSpacing: '0.2em', textTransform: 'uppercase',
-                color: isHov ? 'var(--accent)' : isActive ? 'rgba(61,82,230,0.70)' : 'rgba(61,82,230,0.38)',
-                marginBottom: '5px',
-                transition: `color 360ms ${EASE_NAV}`,
-              }}>
-                {item.tag}
-              </span>
-              <span style={{
-                display: 'block',
-                fontFamily: 'var(--font-cormorant), Georgia, serif',
-                fontSize: '20px', fontWeight: 500,
-                letterSpacing: '-0.01em', lineHeight: 1.1,
-                color: isHov ? '#FFFFFF' : isActive ? 'rgba(220,225,248,0.80)' : 'rgba(220,225,248,0.42)',
-                transition: `color 360ms ${EASE_NAV}`,
-              }}>
-                {item.label}
-              </span>
-            </Link>
-          );
-        })}
-      </div>
-
-      {/* ── Right: preview panel — sequential crossfade on service switch ── */}
-      <div style={{ position: 'relative', minHeight: '200px', backgroundColor: 'rgba(255,255,255,0.022)' }}>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={hoveredIdx ?? 'default'}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.28, ease: 'easeInOut' }}
-            style={{ position: 'absolute', inset: 0 }}
-          >
-            {hoveredIdx === null
-              ? <DefaultPreviewPanel />
-              : <PreviewPanel item={items[hoveredIdx]} active={true} />
-            }
-          </motion.div>
-        </AnimatePresence>
-      </div>
-    </motion.div>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────
-   Services nav trigger — wraps the button + dropdown
-───────────────────────────────────────────────────────────── */
-function ServicesNavItem({
-  pathname, textColor, label, items, viewAll,
+function ServicesDropdownContent({
+  pathname, items, viewAll,
 }: {
   pathname: string;
-  textColor: string;
-  label: string;
   items: ServiceItem[];
   viewAll: string;
 }) {
-  const [open, setOpen] = useState(false);
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isActive = pathname.startsWith('/services');
-  const [hovered, setHovered] = useState(false);
-  const lit = isActive || open;
-
-  const openMenu = () => {
-    if (closeTimer.current) clearTimeout(closeTimer.current);
-    setOpen(true);
-    setHovered(true);
-  };
-  const closeMenu = () => {
-    closeTimer.current = setTimeout(() => { setOpen(false); setHovered(false); }, 130);
-  };
+  const [viewAllHov, setViewAllHov] = useState(false);
+  const ICONS = [<AutomationIcon key="a" />, <WebIcon key="w" />, <AppIcon key="p" />];
 
   return (
-    <div style={{ position: 'relative', alignSelf: 'center' }}>
+    <div
+      role="region"
+      aria-label="Services menu"
+      style={{
+        padding: '10px',
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: '6px',
+      }}
+    >
+      {items.map((item, i) => (
+        <ServiceCard
+          key={item.href}
+          item={item}
+          icon={ICONS[i]}
+          isActive={pathname.startsWith(item.href)}
+        />
+      ))}
+
+      {/* 4th slot — View All CTA card */}
       <Link
         href="/services"
-        aria-expanded={open}
-        onMouseEnter={openMenu}
-        onMouseLeave={closeMenu}
-        onFocus={openMenu}
-        onBlur={closeMenu}
+        onMouseEnter={() => setViewAllHov(true)}
+        onMouseLeave={() => setViewAllHov(false)}
         style={{
-          position: 'relative',
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '4px',
-          fontFamily: 'var(--font-body), sans-serif',
-          fontSize: '13px',
-          fontWeight: 500,
-          letterSpacing: '0.04em',
-          color: isActive ? 'var(--accent)' : textColor,
-          cursor: 'pointer',
-          padding: '8px 12px',
-          opacity: isActive || hovered ? 1 : 0.78,
-          transition: 'color 200ms ease, opacity 200ms ease',
-          whiteSpace: 'nowrap',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          padding: '16px 18px',
+          minHeight: '84px',
+          borderRadius: '8px',
+          backgroundColor: viewAllHov ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.042)',
+          border: `1px solid ${viewAllHov ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.06)'}`,
           textDecoration: 'none',
+          transition: 'background-color 220ms ease, border-color 220ms ease',
         }}
       >
-        {isActive && (
+        <span style={{
+          fontFamily: 'var(--font-mono), monospace',
+          fontSize: '9px',
+          letterSpacing: '0.14em',
+          textTransform: 'uppercase',
+          color: viewAllHov ? 'var(--accent)' : 'rgba(255,255,255,0.22)',
+          transition: 'color 220ms ease',
+        }}>
+          Overview
+        </span>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <span style={{
-            width: '4px', height: '4px', borderRadius: '50%',
-            backgroundColor: 'var(--accent)', flexShrink: 0,
-          }} />
-        )}
-        {label}
-        <ChevronDown
-          size={11}
-          style={{
-            transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
-            transition: 'transform 220ms cubic-bezier(0.22,1,0.36,1)',
-            opacity: 0.65,
-          }}
-        />
-        <span
-          aria-hidden
-          style={{
-            position: 'absolute',
-            bottom: '4px',
-            left: '12px',
-            right: isActive ? '8px' : '12px',
-            height: '1px',
-            backgroundColor: 'var(--accent)',
-            transform: lit ? 'scaleX(1)' : 'scaleX(0)',
-            transformOrigin: 'left center',
-            transition: 'transform 260ms cubic-bezier(0.76,0,0.24,1)',
-          }}
-        />
-      </Link>
-
-      <AnimatePresence>
-        {open && (
-          <ServicesDropdown
-            pathname={pathname}
-            items={items}
-            viewAll={viewAll}
-            onMouseEnter={() => { if (closeTimer.current) clearTimeout(closeTimer.current); }}
-            onMouseLeave={closeMenu}
-            onFocusIn={() => { if (closeTimer.current) clearTimeout(closeTimer.current); }}
-            onFocusOut={closeMenu}
+            fontFamily: 'var(--font-cormorant), Georgia, serif',
+            fontSize: '19px',
+            fontWeight: 500,
+            letterSpacing: '-0.015em',
+            color: viewAllHov ? '#fff' : 'rgba(220,225,248,0.60)',
+            transition: 'color 220ms ease',
+          }}>
+            {viewAll}
+          </span>
+          <ArrowRight
+            size={11}
+            style={{
+              color: viewAllHov ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.22)',
+              transform: viewAllHov ? 'translateX(3px)' : 'translateX(0)',
+              transition: 'color 220ms ease, transform 220ms ease',
+              flexShrink: 0,
+            }}
           />
-        )}
-      </AnimatePresence>
+        </div>
+      </Link>
     </div>
   );
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Mobile full-screen menu
+   Mobile full-screen menu — unchanged
 ───────────────────────────────────────────────────────────── */
 function MobileMenu({
   open,
@@ -493,6 +356,7 @@ function MobileMenu({
   startProjectLabel,
   companyLabel,
   youAreHereLabel,
+  onClose,
 }: {
   open: boolean;
   pathname: string;
@@ -501,6 +365,7 @@ function MobileMenu({
   allServicesLabel: string;
   startProjectLabel: string;
   companyLabel: string;
+  onClose: () => void;
   youAreHereLabel: string;
 }) {
   const [servicesOpen, setServicesOpen] = useState(false);
@@ -532,14 +397,12 @@ function MobileMenu({
         backgroundSize: '22px 22px',
         opacity: 0.7, pointerEvents: 'none',
       }} />
-
       <div aria-hidden style={{
         position: 'absolute', top: '-100px', left: '-60px',
         width: '380px', height: '380px',
         background: 'radial-gradient(circle, rgba(61,82,230,0.10) 0%, transparent 65%)',
         pointerEvents: 'none',
       }} />
-
       <div aria-hidden style={{
         position: 'absolute', top: 0, left: 0, bottom: 0, width: '3px',
         backgroundColor: 'var(--accent)',
@@ -547,7 +410,6 @@ function MobileMenu({
         transformOrigin: 'top',
         transition: 'transform 560ms cubic-bezier(0.76,0,0.24,1) 80ms',
       }} />
-
       <div style={{
         position: 'relative', zIndex: 1,
         display: 'flex', flexDirection: 'column',
@@ -612,7 +474,6 @@ function MobileMenu({
                       }}
                     />
                   </button>
-
                   <div style={{
                     display: 'grid',
                     gridTemplateRows: servicesOpen ? '1fr' : '0fr',
@@ -622,6 +483,7 @@ function MobileMenu({
                   <div style={{ overflow: 'hidden', minHeight: 0 }}>
                     <Link
                       href="/services"
+                      onClick={(e) => { if (pathname === '/services') { e.preventDefault(); onClose(); scrollToTop(); } }}
                       style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -647,13 +509,13 @@ function MobileMenu({
                       {allServicesLabel}
                       <ArrowRight size={11} style={{ marginLeft: 'auto', opacity: 0.5 }} />
                     </Link>
-
                     {serviceItems.map((item, j) => {
                       const subActive = pathname.startsWith(item.href);
                       return (
                         <Link
                           key={item.href}
                           href={item.href}
+                          onClick={(e) => { if (subActive) { e.preventDefault(); onClose(); scrollToTop(); } }}
                           style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -715,6 +577,7 @@ function MobileMenu({
               <Link
                 key={href}
                 href={href}
+                onClick={isActive ? (e) => { e.preventDefault(); onClose(); scrollToTop(); } : undefined}
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
@@ -806,7 +669,6 @@ function MobileMenu({
               {companyLabel}
             </div>
           </div>
-
           <div style={{ textAlign: 'right' }}>
             <div style={{
               fontFamily: 'var(--font-body), sans-serif',
@@ -831,19 +693,260 @@ function MobileMenu({
 
 
 /* ─────────────────────────────────────────────────────────────
-   Main navigation component
+   Contact drawer — slides in from right
+───────────────────────────────────────────────────────────── */
+function DarkField({ label, name, type = 'text', value, onChange, placeholder }: { label: string; name: string; type?: string; value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; placeholder?: string; }) {
+  const [focused, setFocused] = useState(false);
+  return (
+    <div>
+      <label style={{ display: 'block', fontFamily: 'var(--font-body), sans-serif', fontSize: '11px', fontWeight: 400, letterSpacing: '0.03em', marginBottom: '8px', color: focused ? 'var(--accent)' : 'rgba(220,225,248,0.38)', transition: 'color 220ms ease', userSelect: 'none' }}>
+        {label}
+      </label>
+      <input
+        name={name} type={type} value={value} onChange={onChange} placeholder={placeholder}
+        onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
+        className="drawer-input"
+        style={{
+          width: '100%',
+          padding: '12px 16px',
+          fontFamily: 'var(--font-body), sans-serif',
+          fontSize: '14px',
+          color: 'var(--dark-text)',
+          backgroundColor: focused ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.05)',
+          border: `1.5px solid ${focused ? 'var(--accent)' : 'rgba(255,255,255,0.1)'}`,
+          borderRadius: '10px',
+          outline: 'none',
+          boxSizing: 'border-box',
+          transition: 'border-color 220ms ease, background-color 200ms ease, box-shadow 220ms ease',
+          boxShadow: focused ? '0 0 0 3px rgba(61,82,230,0.12)' : 'none',
+        }}
+      />
+    </div>
+  );
+}
+
+function DrawerTextarea({ value, onChange }: { value: string; onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void }) {
+  const [focused, setFocused] = useState(false);
+  return (
+    <textarea
+      name="message"
+      value={value}
+      onChange={onChange}
+      rows={4}
+      placeholder="What are you working on?"
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+      className="drawer-input"
+      style={{
+        width: '100%',
+        padding: '12px 16px',
+        fontFamily: 'var(--font-body), sans-serif',
+        fontSize: '14px',
+        lineHeight: 1.8,
+        color: 'var(--dark-text)',
+        backgroundColor: focused ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.05)',
+        border: `1.5px solid ${focused ? 'var(--accent)' : 'rgba(255,255,255,0.1)'}`,
+        borderRadius: '10px',
+        outline: 'none',
+        resize: 'none',
+        boxSizing: 'border-box',
+        transition: 'border-color 220ms ease, background-color 200ms ease, box-shadow 220ms ease',
+        boxShadow: focused ? '0 0 0 3px rgba(61,82,230,0.12)' : 'none',
+      }}
+    />
+  );
+}
+
+function ContactDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [form, setForm] = useState({ name: '', email: '', phone: '', message: '', _hp: '' });
+  const [services, setServices] = useState<string[]>([]);
+  const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    const h = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', h);
+    return () => window.removeEventListener('keydown', h);
+  }, [open, onClose]);
+
+  useEffect(() => {
+    if (!open) {
+      setTimeout(() => { setForm({ name: '', email: '', phone: '', message: '', _hp: '' }); setServices([]); setSent(false); setSending(false); }, 400);
+    }
+  }, [open]);
+
+  const wordCount = form.message.trim().split(/\s+/).filter(Boolean).length;
+  const msgReady = wordCount >= 10;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (form._hp) return;
+    if (!form.name.trim() || !form.email.trim() || !form.message.trim()) return;
+    setSending(true);
+    setTimeout(() => { setSent(true); setSending(false); }, 600);
+  };
+
+  const toggleService = (s: string) => setServices(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s]);
+  const SERVICE_OPTS = ['Workflow Automation', 'Website Development', 'Application Development', 'Other'];
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            transition={{ duration: 0.28, ease: 'easeOut' }}
+            onClick={onClose}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(6,8,15,0.72)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', zIndex: 150 }}
+          />
+          {/* Panel */}
+          <motion.div
+            variants={{ hidden: { x: '100%' }, visible: { x: 0, transition: { duration: 0.48, ease: [0.22, 1, 0.36, 1] } }, exit: { x: '100%', transition: { duration: 0.34, ease: [0.55, 0, 1, 0.45] } } }}
+            initial="hidden" animate="visible" exit="exit"
+            style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: '580px', maxWidth: '100vw', background: 'var(--dark-surface)', borderLeft: '1px solid rgba(61,82,230,0.16)', zIndex: 151, overflowY: 'auto', display: 'flex', flexDirection: 'column', padding: '48px 48px' }}
+          >
+            {/* Close button */}
+            <button
+              onClick={onClose}
+              aria-label="Close drawer"
+              style={{ position: 'absolute', top: '20px', right: '20px', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', cursor: 'pointer', fontSize: '16px', color: 'rgba(220,225,248,0.6)', lineHeight: 1 }}
+            >
+              &times;
+            </button>
+
+            {sent ? (
+              /* Sent state */
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px', marginTop: '40px' }}>
+                <div style={{ width: '48px', height: '48px', border: '1px solid rgba(61,82,230,0.3)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(61,82,230,0.1)' }}>
+                  <Check size={20} color="var(--accent)" strokeWidth={1.5} />
+                </div>
+                <h3 style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '22px', fontWeight: 600, color: 'var(--dark-text)', margin: 0 }}>Message sent.</h3>
+                <p style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '14px', color: 'rgba(220,225,248,0.45)', lineHeight: 1.7, margin: 0 }}>We&apos;ll be in touch within one hour.</p>
+                <button
+                  onClick={onClose}
+                  style={{ marginTop: '16px', fontFamily: 'var(--font-body), sans-serif', fontSize: '13px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(220,225,248,0.5)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                >
+                  Close
+                </button>
+              </div>
+            ) : (
+              <>
+                {/* Heading */}
+                <div style={{ marginBottom: '0' }}>
+                  <span style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '28px', fontWeight: 500, color: 'var(--dark-text)', display: 'block', lineHeight: 1.2 }}>Ready to</span>
+                  <span style={{ fontFamily: 'var(--font-heading), Georgia, serif', fontStyle: 'italic', fontSize: '36px', fontWeight: 500, color: 'var(--accent)', display: 'block', lineHeight: 1.1 }}>get started?</span>
+                </div>
+
+                <form onSubmit={handleSubmit} style={{ marginTop: '36px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                  <input name="_hp" value={form._hp} onChange={e => setForm(p => ({ ...p, _hp: e.target.value }))} tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: 'absolute', opacity: 0, pointerEvents: 'none', height: 0, width: 0, border: 'none', padding: 0 }} />
+
+                  <DarkField label="Name" name="name" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Your full name" />
+                  <DarkField label="Email" name="email" type="email" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} placeholder="you@company.com" />
+                  <DarkField label="Phone (optional)" name="phone" type="tel" value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} placeholder="+966 (055) 000 - 0000" />
+
+                  {/* Services */}
+                  <div>
+                    <div style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '8.5px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(220,225,248,0.35)', marginBottom: '14px' }}>
+                      Services interested in
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      {SERVICE_OPTS.map(s => {
+                        const checked = services.includes(s);
+                        return (
+                          <button
+                            key={s}
+                            type="button"
+                            onClick={() => toggleService(s)}
+                            style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'none', border: 'none', cursor: 'pointer', padding: 0, textAlign: 'left' }}
+                          >
+                            <span style={{ width: '16px', height: '16px', flexShrink: 0, borderRadius: '3px', border: checked ? 'none' : '1.5px solid rgba(255,255,255,0.2)', backgroundColor: checked ? 'var(--accent)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background-color 140ms ease, border-color 140ms ease' }}>
+                              {checked && <Check size={9} color="#FFFFFF" strokeWidth={2.5} />}
+                            </span>
+                            <span style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '14px', color: 'rgba(220,225,248,0.65)' }}>{s}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Message / Project description */}
+                  <div>
+                    <label style={{ display: 'block', fontFamily: 'var(--font-body), sans-serif', fontSize: '11px', fontWeight: 400, letterSpacing: '0.03em', marginBottom: '8px', color: 'rgba(220,225,248,0.38)', userSelect: 'none' }}>
+                      Project description
+                    </label>
+                    <div>
+                      <DrawerTextarea
+                        value={form.message}
+                        onChange={e => setForm(p => ({ ...p, message: e.target.value }))}
+                      />
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '6px' }}>
+                      <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '9px', letterSpacing: '0.12em', textTransform: 'uppercase', color: msgReady ? 'var(--accent)' : 'rgba(220,225,248,0.2)', transition: 'color 300ms ease' }}>
+                        {wordCount} {wordCount === 1 ? 'word' : 'words'}{msgReady ? ' — ready' : ' — 10 min'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Submit */}
+                  <button
+                    type="submit"
+                    disabled={sending}
+                    style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--accent)', color: '#FFFFFF', border: 'none', padding: '14px', borderRadius: '50px', fontSize: '13px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-body), sans-serif', cursor: sending ? 'default' : 'pointer', opacity: sending ? 0.6 : 1, transition: 'opacity 200ms ease', marginTop: '8px' }}
+                  >
+                    {sending ? 'Sending...' : 'Send Message'}
+                  </button>
+                </form>
+              </>
+            )}
+          </motion.div>
+
+          {/* Placeholder styles for dark inputs */}
+          <style>{`
+            .drawer-input::placeholder { color: rgba(220,225,248,0.25) !important; }
+            .drawer-input:-webkit-autofill,
+            .drawer-input:-webkit-autofill:focus {
+              -webkit-box-shadow: 0 0 0 1000px rgba(20,22,40,1) inset !important;
+              -webkit-text-fill-color: var(--dark-text) !important;
+            }
+          `}</style>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Main navigation — single unified pill bar
+   Logo left · links centered · CTA right
 ───────────────────────────────────────────────────────────── */
 export default function Navigation() {
-  const [scrolled, setScrolled] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [isDarkSection, setIsDarkSection] = useState(true);
+  const [scrolled,    setScrolled]   = useState(false);
+  const [progress,    setProgress]   = useState(0);
+  const [menuOpen,    setMenuOpen]   = useState(false);
+  const [dropOpen,    setDropOpen]   = useState(false);
+  const [drawerOpen,  setDrawerOpen] = useState(false);
+  const dropTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pathname = usePathname();
 
+  const openDrop = useCallback(() => {
+    if (dropTimer.current) clearTimeout(dropTimer.current);
+    setDropOpen(true);
+  }, []);
+
+  const closeDrop = useCallback(() => {
+    dropTimer.current = setTimeout(() => setDropOpen(false), 120);
+  }, []);
+
+  const cancelClose = useCallback(() => {
+    if (dropTimer.current) clearTimeout(dropTimer.current);
+  }, []);
+
   const serviceItems: ServiceItem[] = [
-    { label: 'Workflow Automation',    href: '/services/automation', tag: 'Automation', desc: 'Eliminate manual tasks. Build workflows that run themselves.' },
-    { label: 'Website Development',    href: '/services/websites',   tag: 'Web',        desc: 'Sites that convert visitors, load fast, work on every device.' },
-    { label: 'Application Development',href: '/services/apps',       tag: 'Apps',       desc: 'Custom tools built for exactly how your team operates.' },
+    { label: 'Workflow Automation',     href: '/services/automation', tag: 'Automation', desc: 'Eliminate manual tasks. Build workflows that run themselves.' },
+    { label: 'Website Development',     href: '/services/websites',   tag: 'Web',        desc: 'Sites that convert visitors, load fast, work on every device.' },
+    { label: 'Application Development', href: '/services/apps',       tag: 'Apps',       desc: 'Custom tools built for exactly how your team operates.' },
   ];
 
   const NAV_LINKS = [
@@ -856,8 +959,7 @@ export default function Navigation() {
   const detectNavTheme = useCallback(() => {
     const elements = document.elementsFromPoint(window.innerWidth / 2, 50) as Element[];
     const section = elements.find(el => el.hasAttribute('data-nav-theme'));
-    const theme = section?.getAttribute('data-nav-theme') ?? 'dark';
-    setIsDarkSection(theme === 'dark');
+    void section?.getAttribute('data-nav-theme');
   }, []);
 
   useEffect(() => {
@@ -878,14 +980,21 @@ export default function Navigation() {
     return () => clearTimeout(t);
   }, [pathname, detectNavTheme]);
 
-  useEffect(() => { setMenuOpen(false); }, [pathname]);
+  useEffect(() => {
+    setMenuOpen(false);
+    setDropOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    document.body.style.overflow = (menuOpen || drawerOpen) ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
-  }, [menuOpen]);
+  }, [menuOpen, drawerOpen]);
 
-  const linkColor = '#ffffff';
+  useEffect(() => {
+    const handler = () => setDrawerOpen(true);
+    window.addEventListener('openContactDrawer', handler);
+    return () => window.removeEventListener('openContactDrawer', handler);
+  }, []);
 
   return (
     <>
@@ -895,7 +1004,7 @@ export default function Navigation() {
         style={{
           position: 'fixed', top: 0, left: 0,
           height: '2px', width: '100%',
-          backgroundColor: 'var(--accent)',
+          backgroundColor: 'rgba(255,255,255,0.9)',
           zIndex: 200,
           opacity: scrolled ? 1 : 0,
           transform: `scaleX(${progress / 100})`,
@@ -905,71 +1014,69 @@ export default function Navigation() {
         }}
       />
 
-      {/* ── Header shell — transparent, only for positioning ── */}
+      {/* ── Header shell ── */}
       <header
         data-main-nav
         style={{
           position: 'fixed', top: 0, left: 0, right: 0,
           zIndex: 100,
-          padding: scrolled ? '10px 20px' : '16px 20px',
+          padding: '10px 16px',
           pointerEvents: 'none',
-          transition: 'none',
+          transition: 'padding 400ms ease',
         }}
       >
-        {/* ── Floating dark pill ── */}
+        {/* ── Unified pill bar ── */}
         <div
           style={{
-            maxWidth: '960px',
-            margin: '0 auto',
-            pointerEvents: 'auto',
             position: 'relative',
-            display: 'flex',
+            pointerEvents: 'auto',
+            display: 'grid',
+            gridTemplateColumns: '1fr auto 1fr',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            height: scrolled ? '68px' : '78px',
-            backgroundColor: scrolled ? 'rgba(6,8,15,0.72)' : 'rgba(6,8,15,0.42)',
-            backdropFilter: 'blur(32px) saturate(2.2)',
-            WebkitBackdropFilter: 'blur(32px) saturate(2.2)',
-            border: `1px solid ${scrolled ? 'rgba(255,255,255,0.10)' : 'rgba(255,255,255,0.06)'}`,
-            borderRadius: '16px',
-            padding: '0 28px',
-            boxShadow: scrolled
-              ? '0 8px 48px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.05) inset'
-              : '0 4px 24px rgba(0,0,0,0.3)',
-            transition: 'background-color 400ms ease, border-color 400ms ease, box-shadow 400ms ease',
+            height: '75px',
+            borderRadius: '14px',
+            backgroundColor: 'rgba(30,46,180,0.96)',
+            WebkitBackdropFilter: 'blur(24px) saturate(1.8)',
+            border: '1px solid rgba(255,255,255,0.18)',
+            boxShadow: 'none',
+            transition: 'background-color 400ms ease, box-shadow 400ms ease',
           }}
         >
-          {/* ── Wordmark ── */}
-          <Link
-            href="/"
-            aria-label="Obsidia home"
-            style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', flexShrink: 0 }}
-          >
-            <div style={{ position: 'relative', height: '76px', width: '320px' }}>
-              <img
-                src="/logos/obsidia_web_black_logo.png"
-                alt="Obsidia"
-                style={{
-                  position: 'absolute', inset: 0,
-                  height: '100%', width: '100%',
-                  objectFit: 'contain', objectPosition: 'left center',
-                }}
-              />
-            </div>
-          </Link>
 
-          {/* ── Desktop navigation — centered absolutely ── */}
+          {/* ── LEFT: Logo ── */}
+          <div style={{ display: 'flex', alignItems: 'center', paddingLeft: '8px' }}>
+            <Link
+              href="/"
+              aria-label="Obsidia home"
+              onClick={pathname === '/' ? (e) => { e.preventDefault(); scrollToTop(); } : undefined}
+              style={{
+                display: 'flex', alignItems: 'center',
+                height: '60px', padding: '0 14px',
+                textDecoration: 'none', flexShrink: 0,
+              }}
+            >
+              <img
+                src="/logos/obsidia_logo_offwhite.png"
+                alt="Obsidia"
+                style={{ height: '54px', width: 'auto', display: 'block' }}
+              />
+              <img
+                src="/logos/obsidia_logo_name.png"
+                alt="Obsidia"
+                style={{ height: '20px', width: 'auto', display: 'block', filter: 'brightness(0) invert(1)', marginLeft: '0.2px' }}
+/>
+            </Link>
+          </div>
+
+          {/* ── CENTER: Nav links ── */}
           <nav
             aria-label="Main navigation"
+            className="nav-desktop"
             style={{
-              position: 'absolute',
-              left: '50%',
-              transform: 'translateX(-50%)',
               display: 'flex',
               alignItems: 'center',
-              gap: '2px',
+              gap: '20px',
             }}
-            className="nav-desktop"
           >
             {NAV_LINKS.map(({ label, href }) => {
               if (href === '/services') {
@@ -977,65 +1084,96 @@ export default function Navigation() {
                   <ServicesNavItem
                     key={href}
                     pathname={pathname}
-                    textColor={linkColor}
                     label={label}
-                    items={serviceItems}
-                    viewAll="View all services"
+                    open={dropOpen}
+                    onEnter={openDrop}
+                    onLeave={closeDrop}
                   />
                 );
               }
               const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href);
-              return <NavLink key={href} href={href} label={label} active={isActive} textColor={linkColor} />;
+              return (
+                <div key={href} onMouseEnter={() => setDropOpen(false)}>
+                  <NavLink href={href} label={label} active={isActive} />
+                </div>
+              );
             })}
           </nav>
 
-          {/* ── Right side: CTA + mobile toggle ── */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-            <div className="nav-desktop" style={{ flexShrink: 0 }}>
-              <BorderGlow
-                backgroundColor="#3D52E6"
-                borderRadius={8}
-                glowColor="220 100 80"
-                glowRadius={14}
-                glowIntensity={2.4}
-                colors={['#3D52E6', '#8860E6', '#60A5FA']}
-                edgeSensitivity={65}
-                coneSpread={28}
-                fillOpacity={0}
-              >
-                <Link
-                  href="/contact"
-                  style={{
-                    display: 'inline-flex', alignItems: 'center', gap: '7px',
-                    fontFamily: 'var(--font-body), sans-serif',
-                    fontSize: '11px', fontWeight: 500,
-                    letterSpacing: '0.16em', textTransform: 'uppercase',
-                    color: '#FFFFFF', textDecoration: 'none',
-                    padding: '10px 22px',
-                    transition: 'gap 200ms ease',
-                    whiteSpace: 'nowrap',
-                  }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.gap = '10px'; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.gap = '7px'; }}
-                >
-                  Start a Project <ArrowUpRight size={11} />
-                </Link>
-              </BorderGlow>
-            </div>
+          {/* ── RIGHT: CTA + mobile hamburger ── */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: '10px', gap: '8px' }}>
 
+            {/* Desktop mail icon box */}
+            <button
+              aria-label="Contact us"
+              className="nav-cta"
+              onClick={() => setDrawerOpen(true)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#ffffff',
+                padding: '8px',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              <Image src="/mail_icon.png" alt="Contact us" width={47} height={47} style={{ display: 'block' }} />
+            </button>
+
+            {/* Mobile hamburger */}
             <button
               aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}
               onClick={() => setMenuOpen((v) => !v)}
               className="nav-mobile-toggle"
               style={{
-                background: 'none', border: 'none', padding: '8px',
-                cursor: 'pointer', display: 'none',
-                color: 'var(--dark-text)',
+                background: 'none', border: 'none',
+                padding: '10px', cursor: 'pointer',
+                display: 'none', alignItems: 'center', justifyContent: 'center',
+                color: '#ffffff',
               }}
             >
               <HamburgerIcon open={menuOpen} />
             </button>
           </div>
+
+          {/* ── Services dropdown — floats 8px below bar ── */}
+          <AnimatePresence>
+            {dropOpen && (
+              <motion.div
+                key="services-dropdown"
+                initial={{ opacity: 0, y: -8, scaleY: 0.92 }}
+                animate={{ opacity: 1, y: 0, scaleY: 1 }}
+                exit={{ opacity: 0, y: -8, scaleY: 0.92 }}
+                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                onMouseEnter={cancelClose}
+                onMouseLeave={closeDrop}
+                style={{
+                  position: 'absolute',
+                  top: 'calc(100% + 8px)',
+                  left: 'calc(50% - 210px)',
+                  width: '420px',
+                  transformOrigin: 'top center',
+                  borderRadius: '12px',
+                  backgroundColor: 'rgba(6,8,15,0.97)',
+                  backdropFilter: 'blur(32px) saturate(2.2)',
+                  WebkitBackdropFilter: 'blur(32px) saturate(2.2)',
+                  border: '1px solid rgba(255,255,255,0.14)',
+                  boxShadow: '0 16px 48px rgba(0,0,0,0.5)',
+                  overflow: 'hidden',
+                  zIndex: 10,
+                }}
+              >
+                <ServicesDropdownContent
+                  pathname={pathname}
+                  items={serviceItems}
+                  viewAll="View all services"
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
         </div>
       </header>
 
@@ -1049,13 +1187,21 @@ export default function Navigation() {
         startProjectLabel="Start a Project"
         companyLabel="An Obsidia Company"
         youAreHereLabel="You are here"
+        onClose={() => setMenuOpen(false)}
       />
+
+      {/* ── Contact drawer ── */}
+      <ContactDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
 
       {/* ── Responsive rules ── */}
       <style>{`
+        .nav-desktop        { display: flex !important; }
+        .nav-cta            { display: inline-flex !important; }
+        .nav-mobile-toggle  { display: none !important; }
         @media (max-width: 768px) {
           .nav-desktop        { display: none !important; }
-          .nav-mobile-toggle  { display: flex !important; align-items: center !important; }
+          .nav-cta            { display: none !important; }
+          .nav-mobile-toggle  { display: flex !important; align-items: center !important; justify-content: center !important; }
         }
       `}</style>
     </>

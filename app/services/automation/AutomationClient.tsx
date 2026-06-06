@@ -40,10 +40,10 @@ function AutomationHero() {
       data-nav-theme="dark"
       id="auto-hero"
       data-section-label="Overview"
-      style={{ position: 'relative', minHeight: '100dvh', display: 'grid', gridTemplateColumns: '55% 45%', alignItems: 'stretch', overflow: 'hidden', backgroundColor: 'var(--dark-bg)', paddingTop: '76px' }}
+      style={{ position: 'relative', minHeight: '100vh', display: 'grid', gridTemplateColumns: '55% 45%', alignItems: 'stretch', overflow: 'hidden', backgroundColor: 'var(--dark-bg)', paddingTop: '92px' }}
       className="auto-hero-grid"
     >
-      <div aria-hidden style={{ position: 'absolute', inset: 0, width: '55%', backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
+      <div aria-hidden style={{ position: 'absolute', top: '92px', left: 0, right: 0, bottom: 0, width: '55%', backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
       <div aria-hidden style={{ position: 'absolute', top: '20%', left: '-120px', width: '700px', height: '700px', background: 'radial-gradient(circle, rgba(61,82,230,0.09) 0%, transparent 60%)', pointerEvents: 'none', zIndex: 0 }} />
 
       <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '80px 48px 80px 32px', maxWidth: '680px' }}>
@@ -199,18 +199,14 @@ function ServiceRow({
       }}
       style={{
         position: 'relative', overflow: 'hidden',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        backgroundColor: '#FFFFFF',
+        border: '1px solid rgba(0,0,0,0.08)',
+        borderRadius: '12px',
+        margin: '8px 0',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)',
         cursor: 'default',
       }}
     >
-      {/* Horizontal scan beam */}
-      <motion.div aria-hidden style={{
-        position: 'absolute', top: 0, x: spotX,
-        width: 560, height: '100%',
-        background: 'radial-gradient(ellipse 280px 100% at center, rgba(61,82,230,0.07) 0%, transparent 70%)',
-        pointerEvents: 'none', zIndex: 0,
-      }} />
-
       {/* Left accent bar */}
       <div style={{
         position: 'absolute', top: 0, left: 0, width: '2px', height: '100%',
@@ -234,7 +230,7 @@ function ServiceRow({
         <span style={{
           fontFamily: 'var(--font-mono), monospace', fontSize: '11px',
           letterSpacing: '0.14em',
-          color: isActive ? 'var(--accent)' : '#FFFFFF',
+          color: isActive ? 'var(--accent)' : '#0D0D0D',
           transition: 'color 250ms ease',
         }}>
           {item.n}
@@ -242,23 +238,11 @@ function ServiceRow({
 
         {/* Title + tag */}
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-            <span style={{
-              fontFamily: 'var(--font-body), sans-serif', fontSize: '9px', fontWeight: 500,
-              letterSpacing: '0.14em', textTransform: 'uppercase',
-              color: '#FFFFFF',
-              backgroundColor: isActive ? 'rgba(61,82,230,0.1)' : 'rgba(255,255,255,0.04)',
-              border: `1px solid ${isActive ? 'rgba(61,82,230,0.65)' : 'rgba(255,255,255,0.25)'}`,
-              padding: '3px 8px',
-              transition: 'all 250ms ease',
-            }}>
-              {item.tag}
-            </span>
-          </div>
+          
           <h3 className="font-heading" style={{
-            fontSize: 'clamp(20px, 2vw, 26px)', fontWeight: 500,
+            fontSize: 'clamp(20px, 2vw, 40px)', fontWeight: 500,
             letterSpacing: '-0.02em', lineHeight: 1.15,
-            color: isActive ? '#F0EFE9' : '#6A6A68',
+            color: isActive ? 'var(--accent)' : '#0D0D0D',
             transition: 'color 250ms ease',
           }}>
             {item.title}
@@ -277,8 +261,8 @@ function ServiceRow({
             playsInline
             preload="metadata"
             style={{
-              width: '30px',
-              height: '30px',
+              width: '60px',
+              height: '60px',
               objectFit: 'contain',
               display: 'block',
             }}
@@ -299,21 +283,20 @@ function ServicePreviewPanel({ items, activeIdx }: { items: typeof AUTO_SERVICES
           animate={{ opacity: i === activeIdx ? 1 : 0 }}
           transition={{ duration: 0.3, ease: 'easeInOut' }}
           style={{
-            position: 'absolute', inset: 0,
-            border: '1px solid rgba(255,255,255,0.08)',
+            position: 'absolute',
+            top: '8px',
+            left: 0,
+            right: 0,
+            bottom: 0,
+            border: '1px solid rgba(61,82,230,0.12)',
+            borderRadius: '16px',
             padding: '48px 44px',
             display: 'flex', flexDirection: 'column', gap: '32px',
             pointerEvents: i === activeIdx ? 'auto' : 'none',
+            backgroundColor: '#FFFFFF',
+            boxShadow: '0 0 0 1px rgba(61,82,230,0.14), 0 8px 24px rgba(61,82,230,0.22), 0 24px 64px rgba(61,82,230,0.10), 0 48px 96px rgba(61,82,230,0.18)',
           }}
         >
-          {/* Corner accent */}
-          <div aria-hidden style={{
-            position: 'absolute', top: 0, right: 0,
-            width: '120px', height: '120px',
-            background: 'radial-gradient(circle at top right, rgba(61,82,230,0.15) 0%, transparent 70%)',
-            pointerEvents: 'none',
-          }} />
-
           <div style={{ position: 'relative', zIndex: 1 }}>
             <span style={{
               fontFamily: 'var(--font-mono), monospace', fontSize: '10px', fontWeight: 600,
@@ -326,7 +309,7 @@ function ServicePreviewPanel({ items, activeIdx }: { items: typeof AUTO_SERVICES
             <h3 className="font-heading" style={{
               fontSize: 'clamp(26px, 2.6vw, 36px)', fontWeight: 500,
               letterSpacing: '-0.025em', lineHeight: 1.1,
-              color: '#F0EFE9', marginBottom: '20px',
+              color: '#0D0D1A', marginBottom: '20px',
             }}>
               {item.title}
             </h3>
@@ -335,7 +318,7 @@ function ServicePreviewPanel({ items, activeIdx }: { items: typeof AUTO_SERVICES
 
             <p className="font-body" style={{
               fontSize: '15px', lineHeight: 1.8,
-              color: 'rgba(240,239,233,0.55)',
+              color: 'rgba(13,13,26,0.6)',
               marginBottom: '32px',
             }}>
               {item.body}
@@ -365,49 +348,29 @@ function ServicePreviewPanel({ items, activeIdx }: { items: typeof AUTO_SERVICES
 
 function AutomationServicesSection() {
   const [activeIdx, setActiveIdx] = useState(0);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const headerInView = useInView(headerRef, { once: false, amount: 0.3 });
 
   return (
     <section
       id="auto-services"
       data-section-label="What We Automate"
       style={{
-        backgroundColor: 'var(--dark-bg)',
+        backgroundColor: '#F8F7F2',
         padding: '40px 32px',
-        height: '100dvh',
+        minHeight: '100dvh',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         position: 'relative', overflow: 'hidden',
       }}
     >
-      {/* Left gutter decoration */}
-      <div aria-hidden style={{
-        position: 'absolute', top: 0, left: 0, bottom: 0, width: '200px',
-        background: [
-          'linear-gradient(to right, rgba(61,82,230,0.22) 0%, transparent 100%)',
-          'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)',
-        ].join(', '),
-        backgroundSize: 'auto, 28px 28px',
-        pointerEvents: 'none',
-      }} />
-      {/* Right gutter decoration */}
-      <div aria-hidden style={{
-        position: 'absolute', top: 0, right: 0, bottom: 0, width: '200px',
-        background: [
-          'linear-gradient(to left, rgba(61,82,230,0.22) 0%, transparent 100%)',
-          'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)',
-        ].join(', '),
-        backgroundSize: 'auto, 28px 28px',
-        pointerEvents: 'none',
-      }} />
-
       <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1, width: '100%' }}>
 
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.3 }}
+          ref={headerRef}
+          animate={{ opacity: headerInView ? 1 : 0 }}
           transition={{ duration: 0.65, ease: EASE }}
           style={{ marginBottom: '20px' }}
         >
@@ -415,14 +378,14 @@ function AutomationServicesSection() {
             <span style={{
               fontFamily: 'var(--font-mono), monospace', fontSize: '10px', fontWeight: 500,
               letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--accent)',
-              opacity: 0.7, display: 'block', marginBottom: '20px',
+              display: 'block', marginBottom: '20px',
             }}>
               What We Automate
             </span>
             <h2 className="font-heading" style={{
               fontSize: 'clamp(36px, 4vw, 56px)', fontWeight: 500,
               letterSpacing: '-0.03em', lineHeight: 1.05,
-              color: 'var(--dark-text)',
+              color: 'var(--text)',
             }}>
               The four workflows<br />businesses automate first.
             </h2>
@@ -711,11 +674,13 @@ function PainCards() {
   const [flipped, setFlipped] = useState<HoverCard>('none');
   const [btnReady, setBtnReady] = useState<HoverCard>('none');
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const headlineRef = useRef<HTMLDivElement>(null);
+  const headlineInView = useInView(headlineRef, { once: false, amount: 0.5 });
 
   const handleEnter = useCallback((pos: CardPos) => {
     setHover(pos);
     if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => setBtnReady(pos), 1000);
+    timerRef.current = setTimeout(() => setBtnReady(pos), 500);
   }, []);
 
   const handleLeave = useCallback(() => {
@@ -740,7 +705,7 @@ function PainCards() {
       data-nav-theme="dark"
       style={{
         backgroundColor: 'var(--dark-bg)',
-        height: '100dvh',
+        minHeight: '100dvh',
         padding: '0 32px',
         display: 'flex',
         flexDirection: 'column',
@@ -761,9 +726,8 @@ function PainCards() {
 
         {/* ── Headline ── */}
         <motion.div
-          initial={{ opacity: 0, y: 28 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.5 }}
+          ref={headlineRef}
+          animate={{ opacity: headlineInView ? 1 : 0 }}
           transition={{ duration: 0.7, ease: EASE }}
           style={{ textAlign: 'center', marginBottom: '52px' }}
         >
@@ -1121,22 +1085,22 @@ function DeliverableCard({ item, index }: { item: typeof DELIVERABLES[0]; index:
     mouseY.set(-300);
   }, [mouseX, mouseY]);
 
+  const inView = useInView(cardRef, { once: false, amount: 0.2 });
+
   return (
     <motion.div
       ref={cardRef as React.RefObject<HTMLDivElement>}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      initial="hidden"
-      whileInView="visible"
       whileHover="hovered"
-      viewport={{ once: false, amount: 0.2 }}
+      animate={inView ? 'visible' : 'hidden'}
       variants={{
-        hidden: { opacity: 0, y: 18 },
+        hidden: { opacity: 0 },
         visible: {
-          opacity: 1, y: 0,
+          opacity: 1,
           transition: { duration: 0.6, ease: EASE, delay: index * 0.09 + 0.1 },
         },
-        hovered: { opacity: 1, y: 0 },
+        hovered: { opacity: 1 },
       }}
       style={{
         position: 'relative',
@@ -1257,6 +1221,8 @@ function DeliverableCard({ item, index }: { item: typeof DELIVERABLES[0]; index:
 }
 
 function HandoffDeliverables() {
+  const hdHdrRef = useRef<HTMLDivElement>(null);
+  const hdHdrInView = useInView(hdHdrRef, { once: false, amount: 0.5 });
   return (
     <section
       id="auto-deliverables"
@@ -1265,7 +1231,7 @@ function HandoffDeliverables() {
       style={{
         backgroundColor: 'var(--dark-bg)',
         borderTop: '1px solid var(--dark-border)',
-        minHeight: '100dvh',
+        minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
         padding: '0 32px',
@@ -1280,9 +1246,8 @@ function HandoffDeliverables() {
 
         {/* Header — compact, headline left, subtext right */}
         <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.5 }}
+          ref={hdHdrRef}
+          animate={{ opacity: hdHdrInView ? 1 : 0 }}
           transition={{ duration: 0.65, ease: EASE }}
           style={{ marginBottom: 32, flexShrink: 0 }}
         >

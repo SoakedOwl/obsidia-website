@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
 
 interface ItemProps {
   faq: { q: string; a: string };
@@ -128,16 +128,22 @@ interface FAQAccordionProps {
   dark?: boolean;
   heading?: string;
   label?: string;
+  hideHeader?: boolean;
 }
 
 export default function FAQAccordion({
   dark = false,
   heading,
   label,
+  hideHeader = false,
 }: FAQAccordionProps) {
   const resolvedHeading = heading ?? 'Common questions.';
   const resolvedLabel = label ?? 'FAQ';
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const labelRef = useRef<HTMLDivElement>(null);
+  const labelInView = useInView(labelRef, { once: false, amount: 0.5 });
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const headingInView = useInView(headingRef, { once: false, amount: 0.45 });
 
   const FAQS = [
     { q: 'What kinds of workflows can you automate?', a: 'Anything that has a clear trigger and a repeatable outcome. Invoice approvals, lead routing, report generation, data syncing between tools, onboarding sequences, internal notifications. If your team does the same thing more than twice a week, it is a candidate.' },
@@ -151,11 +157,10 @@ export default function FAQAccordion({
   return (
     <div>
       {/* Section header */}
-      <div style={{ marginBottom: '56px' }}>
+      {!hideHeader && <div style={{ marginBottom: '56px' }}>
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.5 }}
+          ref={labelRef}
+          animate={{ opacity: labelInView ? 1 : 0 }}
           transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
           className="section-label"
           style={{
@@ -168,10 +173,9 @@ export default function FAQAccordion({
           </span>
         </motion.div>
         <motion.h2
+          ref={headingRef}
           className="font-heading"
-          initial={{ opacity: 0, y: 28 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.45 }}
+          animate={{ opacity: headingInView ? 1 : 0 }}
           transition={{ duration: 0.78, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
           style={{
             fontSize: 'clamp(32px, 3.8vw, 52px)',
@@ -183,7 +187,7 @@ export default function FAQAccordion({
         >
           {resolvedHeading}
         </motion.h2>
-      </div>
+      </div>}
 
       {/* Items */}
       <div style={{ borderTop: `1px solid ${dark ? '#2A2A28' : 'var(--border)'}` }}>

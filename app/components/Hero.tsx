@@ -48,29 +48,33 @@ export default function Hero() {
       data-section-label="Home"
       style={{
         position: 'relative',
-        minHeight: '100dvh',
+        minHeight: '100vh',
         display: 'grid',
         gridTemplateColumns: '44% 56%',
         gridTemplateRows: '1fr',
         alignItems: 'stretch',
         overflow: 'hidden',
         backgroundColor: 'var(--bg)',
+        paddingTop: '92px',
       }}
       className="hero-grid"
     >
       {/* ── Left panel — dot grid ─────────────────────────── */}
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          inset: 0,
-          width: '55%',
-          backgroundImage: 'radial-gradient(circle, rgba(128,128,128,0.3) 1.5px, transparent 1.5px)',
-          backgroundSize: '28px 28px',
-          opacity: 0.85,
-          pointerEvents: 'none',
-        }}
-      />
+     <div
+  aria-hidden
+  style={{
+    position: 'absolute',
+    top: '92px',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: '55%',
+    backgroundImage: 'radial-gradient(circle, rgba(128,128,128,0.3) 1.5px, transparent 1.5px)',
+    backgroundSize: '28px 28px',
+    opacity: 0.85,
+    pointerEvents: 'none',
+  }}
+/>
 
       {/* ── Ambient crimson glow — left panel ────────────── */}
       <div
@@ -247,7 +251,7 @@ export default function Hero() {
         @media (max-width: 1024px) {
           .hero-grid {
             grid-template-columns: 1fr !important;
-            min-height: 100dvh !important;
+            min-height: 100vh !important;
           }
           .hero-grid > div:last-child {
             display: none !important;

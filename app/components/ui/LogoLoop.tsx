@@ -81,6 +81,14 @@ const useImageLoader = (
   }, dependencies);
 };
 
+// ── Drag state refs passed into the animation loop ───────────────
+interface DragRefs {
+  isDragging: React.RefObject<boolean>; // pointer down + movement detected
+  isHeld: React.RefObject<boolean>;     // pointer down (including pre-drag hold)
+  pointerX: React.RefObject<number>;    // latest pointer X (updated by event handlers)
+  prevPointerX: React.RefObject<number>;// pointer X at previous rAF frame (updated by loop)
+}
+
 const useAnimationLoop = (
   trackRef: React.RefObject<HTMLDivElement | null>,
   targetVelocity: number,
@@ -88,7 +96,8 @@ const useAnimationLoop = (
   seqHeight: number,
   isHovered: boolean,
   hoverSpeed: number | undefined,
-  isVertical: boolean
+  isVertical: boolean,
+  drag: DragRefs,
 ) => {
   const rafRef = useRef<number | null>(null);
   const lastTimestampRef = useRef<number | null>(null);
@@ -112,6 +121,40 @@ const useAnimationLoop = (
       if (lastTimestampRef.current === null) lastTimestampRef.current = timestamp;
       const dt = Math.max(0, timestamp - lastTimestampRef.current) / 1000;
       lastTimestampRef.current = timestamp;
+
+      // ── Drag: held still (no movement yet) ────────────────────
+      // Freeze the belt and keep prevPointerX in sync so the first
+      // dragging frame has zero initial delta.
+      if (!isVertical && drag.isHeld.current && !drag.isDragging.current) {
+        drag.prevPointerX.current = drag.pointerX.current;
+        velocityRef.current = 0;
+        rafRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
+      // ── Drag: active 1:1 movement ──────────────────────────────
+      // Belt follows pointer exactly. Offset decreases when dragging
+      // right (drag right → belt moves right → transform shifts right).
+      if (!isVertical && drag.isDragging.current) {
+        const dx = drag.pointerX.current - drag.prevPointerX.current;
+        drag.prevPointerX.current = drag.pointerX.current;
+        if (seqSize > 0) {
+          let next = offsetRef.current - dx; // drag right (+dx) → offset decreases
+          next = ((next % seqSize) + seqSize) % seqSize;
+          offsetRef.current = next;
+          track.style.transform = `translate3d(${-next}px, 0, 0)`;
+        }
+        // Record instantaneous velocity (px/s) for coasting on release.
+        // Negate dx: drag right = positive dx = belt moves right = negative
+        // velocity in the offset-space (offset was decreasing).
+        velocityRef.current = dt > 0 ? -dx / dt : 0;
+        rafRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
+      // ── Normal path: auto-scroll, pause on hover, coast after drag ─
+      // When drag just ended, velocityRef holds the last drag velocity.
+      // The lerp below coasts it naturally back toward targetVelocity.
       const target = isHovered && hoverSpeed !== undefined ? hoverSpeed : targetVelocity;
       const ease = 1 - Math.exp(-dt / ANIMATION_CONFIG.SMOOTH_TAU);
       velocityRef.current += (target - velocityRef.current) * ease;
@@ -131,7 +174,7 @@ const useAnimationLoop = (
       if (rafRef.current !== null) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
       lastTimestampRef.current = null;
     };
-  }, [targetVelocity, seqWidth, seqHeight, isHovered, hoverSpeed, isVertical]);
+  }, [targetVelocity, seqWidth, seqHeight, isHovered, hoverSpeed, isVertical, drag]);
 };
 
 export const LogoLoop = React.memo<LogoLoopProps>(({
@@ -159,6 +202,26 @@ export const LogoLoop = React.memo<LogoLoopProps>(({
   const [seqHeight, setSeqHeight] = useState(0);
   const [copyCount, setCopyCount] = useState<number>(ANIMATION_CONFIG.MIN_COPIES);
   const [isHovered, setIsHovered] = useState(false);
+
+  // ── Drag state refs ──────────────────────────────────────────
+  const isDraggingRef  = useRef(false);
+  const isHeldRef      = useRef(false);
+  const pointerXRef    = useRef(0);
+  const prevPointerXRef = useRef(0);
+
+  const drag: DragRefs = useMemo(() => ({
+    isDragging:  isDraggingRef,
+    isHeld:      isHeldRef,
+    pointerX:    pointerXRef,
+    prevPointerX: prevPointerXRef,
+  // refs are stable — no deps needed
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }), []);
+
+  // ── Set initial cursor on container ─────────────────────────
+  useEffect(() => {
+    if (containerRef.current) containerRef.current.style.cursor = 'grab';
+  }, []);
 
   const effectiveHoverSpeed = useMemo(() => {
     if (hoverSpeed !== undefined) return hoverSpeed;
@@ -199,10 +262,61 @@ export const LogoLoop = React.memo<LogoLoopProps>(({
 
   useResizeObserver(updateDimensions, [containerRef, seqRef], [logos, gap, logoHeight, isVertical]);
   useImageLoader(seqRef, updateDimensions, [logos, gap, logoHeight, isVertical]);
-  useAnimationLoop(trackRef, targetVelocity, seqWidth, seqHeight, isHovered, effectiveHoverSpeed, isVertical);
+  useAnimationLoop(trackRef, targetVelocity, seqWidth, seqHeight, isHovered, effectiveHoverSpeed, isVertical, drag);
 
+  // ── Hover handlers (unchanged) ───────────────────────────────
   const handleMouseEnter = useCallback(() => { if (effectiveHoverSpeed !== undefined) setIsHovered(true); }, [effectiveHoverSpeed]);
   const handleMouseLeave = useCallback(() => { if (effectiveHoverSpeed !== undefined) setIsHovered(false); }, [effectiveHoverSpeed]);
+
+  // ── Drag handlers ────────────────────────────────────────────
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    isHeldRef.current     = true;
+    isDraggingRef.current = false;
+    pointerXRef.current    = e.clientX;
+    prevPointerXRef.current = e.clientX;
+    if (containerRef.current) containerRef.current.style.cursor = 'grabbing';
+  }, []);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 0) return;
+    isHeldRef.current      = true;
+    isDraggingRef.current  = false;
+    pointerXRef.current     = e.touches[0].clientX;
+    prevPointerXRef.current = e.touches[0].clientX;
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!isHeldRef.current || e.touches.length === 0) return;
+    pointerXRef.current    = e.touches[0].clientX;
+    isDraggingRef.current  = true;
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    isHeldRef.current     = false;
+    isDraggingRef.current = false;
+  }, []);
+
+  // Window-level mouse move + up so drag continues outside the component
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      if (!isHeldRef.current) return;
+      pointerXRef.current    = e.clientX;
+      isDraggingRef.current  = true;
+    };
+    const onUp = () => {
+      if (!isHeldRef.current) return;
+      isHeldRef.current     = false;
+      isDraggingRef.current = false;
+      if (containerRef.current) containerRef.current.style.cursor = 'grab';
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup',   onUp);
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup',   onUp);
+    };
+  }, []);
 
   const cssVariables = useMemo(() => ({
     '--logoloop-gap': `${gap}px`,
@@ -316,6 +430,11 @@ export const LogoLoop = React.memo<LogoLoopProps>(({
         ref={trackRef}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchEnd}
       >
         {logoLists}
       </div>

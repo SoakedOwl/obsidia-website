@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useState, useCallback } from 'react';
-import { motion, useMotionValue, useTransform } from 'framer-motion';
+import { motion, useMotionValue, useTransform, useInView } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 
@@ -280,6 +280,12 @@ function PhaseText({ phase, from }: { phase: Phase; from: 'left' | 'right' }) {
         hidden: {},
         visible: { transition: { staggerChildren: 0.1, delayChildren: 0.05 } },
       }}
+      style={{
+        backgroundColor: '#ffffff',
+        borderRadius: '18px',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.05), 0 4px 20px rgba(0,0,0,0.05)',
+        padding: '36px 40px',
+      }}
     >
       <motion.h2
         variants={itemV}
@@ -340,6 +346,10 @@ function PhaseNode({ number }: { number: string }) {
 export default function ApproachClient() {
   const [lineDrawn, setLineDrawn] = useState(false);
   const scrollDir = useScrollDirection();
+  const processHdrRef = useRef<HTMLDivElement>(null);
+  const processHdrInView = useInView(processHdrRef, { once: false, amount: 0.5 });
+  const ctaHdrRef = useRef<HTMLDivElement>(null);
+  const ctaHdrInView = useInView(ctaHdrRef, { once: false, amount: 0.4 });
 
   const PHASES: Phase[] = [
     { number: '01', name: 'Audit',   id: 'phase-audit',   descriptor: 'Map every manual step before we design anything.',         deliverables: ['Process map', 'ROI ranking', 'Automation scope'],             body: 'We find where your time actually goes, rank the manual tasks bleeding the most hours, and prioritize those first.',                                                                              image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80' },
@@ -555,9 +565,8 @@ export default function ApproachClient() {
       >
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.5 }}
+            ref={processHdrRef}
+            animate={{ opacity: processHdrInView ? 1 : 0 }}
             transition={{ duration: 0.65, ease: EASE }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
@@ -645,9 +654,8 @@ export default function ApproachClient() {
       >
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.4 }}
+            ref={ctaHdrRef}
+            animate={{ opacity: ctaHdrInView ? 1 : 0 }}
             transition={{ duration: 0.65, ease: EASE }}
             style={{ marginBottom: 28 }}
           >
@@ -696,7 +704,7 @@ export default function ApproachClient() {
           backgroundColor: 'var(--dark-surface)',
           borderTop: '1px solid var(--dark-border)',
           overflow: 'hidden',
-          height: '100dvh',
+          minHeight: '100dvh',
           paddingTop: '76px',
           boxSizing: 'border-box',
         }}

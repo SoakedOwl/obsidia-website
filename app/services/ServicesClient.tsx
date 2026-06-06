@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import CTABand from '../components/CTABand';
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 
 /* ── Types ────────────────────────────────────────────────── */
 interface ServiceItem {
@@ -111,7 +112,7 @@ function TriptychPanel({
             color: isActive ? 'var(--accent)' : 'rgba(220,225,245,0.3)',
             transition: 'color 400ms ease',
           }}>
-            {service.number}
+          
           </span>
           <div style={{
             height: '1px', flex: 1, maxWidth: '32px',
@@ -125,9 +126,10 @@ function TriptychPanel({
           <span style={{
             display: 'block',
             fontFamily: 'var(--font-mono), monospace',
-            fontSize: '9px', letterSpacing: '0.2em', textTransform: 'uppercase',
-            color: 'rgba(220,225,245,0.28)',
-            marginBottom: '12px',
+            fontSize: '11.5px', letterSpacing: '0.18em', textTransform: 'uppercase',
+            color: isActive ? 'rgba(220,225,245,0.92)' : 'rgba(220,225,245,0.62)',
+            marginBottom: '14px',
+            transition: 'color 400ms ease',
           }}>
             {service.title}
           </span>
@@ -266,67 +268,54 @@ function ServiceImage({
   service: ServiceItem;
   fromRight: boolean;
 }) {
-  const [hov, setHov] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: false, amount: 0.4 });
 
   return (
     <motion.div
+      ref={ref}
       initial={{ opacity: 0, x: fromRight ? 40 : -40 }}
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: false, amount: 0.3 }}
       transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.18 }}
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
       style={{
         position: 'relative', aspectRatio: '4 / 3', overflow: 'hidden',
       }}
     >
-      <img
+      <Image
         src={service.image}
         alt={`${service.title} — Obsidia`}
-        loading="lazy"
-        decoding="async"
+        fill
+        sizes="(max-width: 900px) 100vw, 50vw"
         style={{
-          width: '100%', height: '100%', objectFit: 'cover', objectPosition: service.imgPosition ?? 'center center', display: 'block',
-          filter: hov
+          objectFit: 'cover',
+          objectPosition: service.imgPosition ?? 'center center',
+          filter: inView
             ? 'grayscale(0%) brightness(0.78) contrast(1.06)'
             : 'grayscale(75%) brightness(0.5)',
-          transform: hov ? 'scale(1.05)' : 'scale(1.0)',
+          transform: inView ? 'scale(1.05)' : 'scale(1.0)',
           transition: 'filter 1.1s cubic-bezier(0.22,1,0.36,1), transform 1.3s cubic-bezier(0.22,1,0.36,1)',
+          transitionDelay: inView ? '600ms' : '0ms',
         }}
       />
 
-      <div style={{
-        position: 'absolute', inset: 0,
-        boxShadow: hov
-          ? 'inset 0 0 0 1px rgba(61,82,230,0.65)'
-          : 'inset 0 0 0 0px rgba(61,82,230,0)',
-        transition: 'box-shadow 550ms ease',
-        pointerEvents: 'none', zIndex: 2,
-      }} />
-
-      <div style={{
-        position: 'absolute', bottom: 0, left: 0, right: 0,
-        padding: '52px 20px 20px',
-        background: 'linear-gradient(to top, rgba(6,8,15,0.88) 0%, transparent 100%)',
-        display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end',
-        opacity: hov ? 1 : 0,
-        transform: hov ? 'translateY(0)' : 'translateY(12px)',
-        transition: 'opacity 400ms ease, transform 480ms cubic-bezier(0.22,1,0.36,1)',
-        pointerEvents: 'none', zIndex: 2,
-      }}>
-        <span style={{
-          fontFamily: 'var(--font-mono), monospace', fontSize: '9px',
-          letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.72)',
-        }}>
-          {service.title}
-        </span>
-        <span style={{
-          fontFamily: 'var(--font-mono), monospace', fontSize: '9px',
-          letterSpacing: '0.12em', color: 'rgba(255,255,255,0.3)',
-        }}>
-          {service.number} / 03
-        </span>
-      </div>
+<div style={{
+  position: 'absolute', bottom: 0, left: 0, right: 0,
+  padding: '52px 20px 20px',
+  background: 'linear-gradient(to top, rgba(6,8,15,0.88) 0%, transparent 100%)',
+  display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end',
+  opacity: inView ? 1 : 0,
+  transform: inView ? 'translateY(0)' : 'translateY(12px)',
+  transition: 'opacity 400ms ease, transform 480ms cubic-bezier(0.22,1,0.36,1)',
+  pointerEvents: 'none', zIndex: 2,
+}}>
+  <span style={{
+    fontFamily: 'var(--font-mono), monospace', fontSize: '9px',
+    letterSpacing: '0.12em', color: 'rgba(255,255,255,0.3)',
+  }}>
+    {service.number} / 03
+  </span>
+</div>
 
       {[
         { top: 0,    left: 0,    borderTop: '2px solid', borderLeft: '2px solid' },
@@ -341,10 +330,9 @@ function ServiceImage({
             width: '18px', height: '18px',
             ...s,
             borderColor: 'rgba(61,82,230,0.8)',
-            opacity: hov ? 1 : 0,
-            transform: hov ? 'scale(1)' : 'scale(0.6)',
-            transition: `opacity 280ms ease ${i * 50}ms, transform 320ms cubic-bezier(0.22,1,0.36,1) ${i * 50}ms`,
-            pointerEvents: 'none', zIndex: 3,
+            opacity: inView ? 1 : 0,
+            transform: inView ? 'scale(1)' : 'scale(0.6)',
+            transition: `opacity 280ms ease ${600 + i * 50}ms, transform 320ms cubic-bezier(0.22,1,0.36,1) ${600 + i * 50}ms`,            pointerEvents: 'none', zIndex: 3,
           }}
         />
       ))}
@@ -428,21 +416,30 @@ function ServiceSection({
 
           {/* Title */}
           <h2 className="font-heading" style={{
-            fontSize: 'clamp(32px, 3.8vw, 56px)',
-            fontWeight: 500, letterSpacing: '-0.028em',
-            color: 'var(--dark-text)', lineHeight: 1.02, marginBottom: '18px',
+            fontSize: 'clamp(56px, 6.5vw, 100px)',
+            fontWeight: 500, letterSpacing: '-0.035em',
+            color: '#F0EFF8', lineHeight: 0.98, marginBottom: '22px',
           }}>
             {service.title}
           </h2>
 
           {/* Summary */}
-          <p className="font-body" style={{
-            fontSize: 'clamp(14px, 1.15vw, 16px)',
-            lineHeight: 1.88, color: 'rgba(220,225,245,0.52)',
-            marginBottom: '36px', maxWidth: '440px',
+          <div style={{
+            background: 'rgba(255,255,255,0.03)',
+            border: '1px solid rgba(255,255,255,0.07)',
+            borderRadius: '12px',
+            padding: '20px 24px',
+            marginBottom: '36px',
+            maxWidth: '440px',
           }}>
-            {service.summary}
-          </p>
+            <p className="font-body" style={{
+              fontSize: 'clamp(14px, 1.15vw, 16px)',
+              lineHeight: 1.88, color: 'rgba(220,225,245,0.85)',
+              margin: 0,
+            }}>
+              {service.summary}
+            </p>
+          </div>
 
           {/* CTA */}
           <Link
@@ -500,7 +497,7 @@ export default function ServicesClient() {
       number: '01', title: 'Workflow Automation', tagline: 'Replace manual processes with self-executing digital workflows.',
       summary: 'We replace the manual, repetitive processes your team runs every day with digital workflows that execute themselves — approval chains, data syncs, reporting pipelines, and custom operations built to your exact specification.',
       href: '/services/automation',
-      image: '/auto_service_photo.png',
+      image: '/auto_service_photo.webp',
       imgPosition: 'left center',
       bgImage: '/main_services_page_hero.jpg',
       panel1: 'Automate', panel2: 'the routine.',
@@ -509,7 +506,7 @@ export default function ServicesClient() {
       number: '02', title: 'Website Development', tagline: 'Sites built to convert, not just to exist.',
       summary: 'We build websites that do real work: landing pages that convert, corporate sites that establish credibility, and web applications that users actually come back to. Fast, precise, and built to last.',
       href: '/services/websites',
-      image: '/web_dev_service_photo.png',
+      image: '/web_dev_service_photo.webp',
       bgImage: '/main_services_page_hero.jpg',
       panel1: 'Build sites', panel2: 'that convert.',
     },
@@ -517,7 +514,7 @@ export default function ServicesClient() {
       number: '03', title: 'Application Development', tagline: 'Software built for how your team actually operates.',
       summary: 'We build the software your team actually needs — mobile apps, internal tools, client portals, and dashboards designed around how your business works, not how off-the-shelf software wants it to work.',
       href: '/services/apps',
-      image: '/app_dev_service_photo.png',
+      image: '/app_dev_service_photo.webp',
       bgImage: '/main_services_page_hero.jpg',
       panel1: 'Software', panel2: 'to your spec.',
     },

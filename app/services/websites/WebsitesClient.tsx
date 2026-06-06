@@ -11,6 +11,137 @@ const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
 
 
+/* ── Website section mockup sub-components ────────────────── */
+function SiteNavSection() {
+  return (
+    <div style={{ width: '100%', height: '100%', backgroundColor: '#0F1225', borderBottom: '1px solid rgba(61,82,230,0.1)', display: 'flex', alignItems: 'center', padding: '0 16px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginRight: 'auto', flexShrink: 0 }}>
+        <div style={{ width: '9px', height: '9px', backgroundColor: 'var(--accent)', transform: 'rotate(45deg)', flexShrink: 0 }} />
+        <span style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '8px', fontWeight: 600, color: 'rgba(220,225,248,0.82)', letterSpacing: '0.06em' }}>OBSIDIA</span>
+      </div>
+      <div style={{ display: 'flex', gap: '12px' }}>
+        {['Services', 'Work', 'About', 'Contact'].map(l => (
+          <span key={l} style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '7px', color: 'rgba(220,225,248,0.38)', letterSpacing: '0.03em' }}>{l}</span>
+        ))}
+      </div>
+      <div style={{ marginLeft: '12px', backgroundColor: 'rgba(61,82,230,0.75)', borderRadius: '2px', padding: '3px 9px', flexShrink: 0 }}>
+        <span style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '7px', color: 'rgba(255,255,255,0.9)', letterSpacing: '0.05em' }}>Get Started</span>
+      </div>
+    </div>
+  );
+}
+
+function SiteHeroSection() {
+  return (
+    <div style={{ width: '100%', height: '100%', backgroundColor: '#0B0D1A', display: 'grid', gridTemplateColumns: '1fr 0.8fr', padding: '18px 16px', gap: '12px', alignItems: 'center', position: 'relative', overflow: 'hidden' }}>
+      <div aria-hidden style={{ position: 'absolute', top: '-10%', right: '5%', width: '180px', height: '160px', background: 'radial-gradient(circle, rgba(61,82,230,0.11) 0%, transparent 65%)', pointerEvents: 'none' }} />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', position: 'relative' }}>
+        <div style={{ fontSize: '5.5px', fontFamily: 'var(--font-mono), monospace', letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(61,82,230,0.65)' }}>Digital Solutions</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5px', margin: '2px 0' }}>
+          <div style={{ height: '11px', width: '92%', backgroundColor: 'rgba(220,225,248,0.80)', borderRadius: '1.5px' }} />
+          <div style={{ height: '11px', width: '78%', backgroundColor: 'rgba(220,225,248,0.80)', borderRadius: '1.5px' }} />
+          <div style={{ height: '11px', width: '62%', backgroundColor: 'rgba(220,225,248,0.80)', borderRadius: '1.5px' }} />
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginTop: '2px' }}>
+          <div style={{ height: '5.5px', width: '88%', backgroundColor: 'rgba(220,225,248,0.20)', borderRadius: '1px' }} />
+          <div style={{ height: '5.5px', width: '72%', backgroundColor: 'rgba(220,225,248,0.20)', borderRadius: '1px' }} />
+        </div>
+        <div style={{ display: 'flex', gap: '7px', alignItems: 'center', marginTop: '5px' }}>
+          <div style={{ backgroundColor: 'var(--accent)', borderRadius: '2px', padding: '4px 12px' }}>
+            <span style={{ fontSize: '7px', fontFamily: 'var(--font-body), sans-serif', color: '#FAFBFF', letterSpacing: '0.05em' }}>Start a project</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+            <span style={{ fontSize: '7px', fontFamily: 'var(--font-body), sans-serif', color: 'rgba(61,82,230,0.65)', letterSpacing: '0.03em' }}>View work</span>
+            <span style={{ fontSize: '8px', color: 'rgba(61,82,230,0.5)', lineHeight: 1 }}>→</span>
+          </div>
+        </div>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+        <div style={{ position: 'relative', width: '88px', height: '72px' }}>
+          <div style={{ position: 'absolute', top: '10px', right: 0, width: '76px', height: '58px', backgroundColor: 'rgba(61,82,230,0.06)', border: '1px solid rgba(61,82,230,0.12)', borderRadius: '4px' }} />
+          <div style={{ position: 'absolute', top: '5px', right: '5px', width: '76px', height: '58px', backgroundColor: 'rgba(61,82,230,0.09)', border: '1px solid rgba(61,82,230,0.16)', borderRadius: '4px' }} />
+          <div style={{ position: 'absolute', top: 0, right: '10px', width: '76px', height: '58px', backgroundColor: '#141628', border: '1px solid rgba(61,82,230,0.24)', borderRadius: '4px', padding: '7px 8px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'rgba(34,197,94,0.55)' }} />
+              <div style={{ height: '3.5px', width: '36px', backgroundColor: 'rgba(220,225,248,0.28)', borderRadius: '1px' }} />
+              <div style={{ marginLeft: 'auto', height: '3.5px', width: '16px', backgroundColor: 'rgba(61,82,230,0.45)', borderRadius: '1px' }} />
+            </div>
+            <div style={{ display: 'flex', gap: '2px', alignItems: 'flex-end', height: '22px' }}>
+              {[35, 55, 28, 72, 42, 65, 38, 58].map((h, j) => (
+                <div key={j} style={{ flex: 1, height: `${h * 0.3}px`, backgroundColor: j === 3 || j === 5 ? 'rgba(61,82,230,0.7)' : 'rgba(220,225,248,0.14)', borderRadius: '1px 1px 0 0' }} />
+              ))}
+            </div>
+            <div style={{ height: '2.5px', width: '100%', backgroundColor: 'rgba(220,225,248,0.06)', borderRadius: '1px', overflow: 'hidden' }}>
+              <div style={{ height: '100%', width: '64%', backgroundColor: 'rgba(61,82,230,0.55)', borderRadius: '1px' }} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SiteFeaturesSection() {
+  return (
+    <div style={{ width: '100%', height: '100%', backgroundColor: '#0E1120', borderTop: '1px solid rgba(61,82,230,0.07)', padding: '10px 16px 8px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+        <div style={{ width: '14px', height: '1px', backgroundColor: 'rgba(61,82,230,0.45)' }} />
+        <span style={{ fontSize: '5px', fontFamily: 'var(--font-mono), monospace', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(61,82,230,0.55)' }}>What We Build</span>
+      </div>
+      <div style={{ height: '8px', width: '48%', backgroundColor: 'rgba(220,225,248,0.68)', borderRadius: '1.5px', flexShrink: 0 }} />
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '5px', flex: 1, minHeight: 0 }}>
+        {([
+          { col: 'rgba(61,82,230,0.7)',  tw: '80%' },
+          { col: 'rgba(123,79,212,0.7)', tw: '72%' },
+          { col: 'rgba(34,197,94,0.5)',  tw: '76%' },
+        ] as const).map((f, i) => (
+          <div key={i} style={{ backgroundColor: '#0F1226', border: '1px solid rgba(61,82,230,0.1)', borderRadius: '4px', padding: '7px 8px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <div style={{ width: '13px', height: '13px', backgroundColor: 'rgba(61,82,230,0.12)', border: '1px solid rgba(61,82,230,0.2)', borderRadius: '3px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: '5px', height: '5px', backgroundColor: f.col, borderRadius: '0.5px' }} />
+            </div>
+            <div style={{ height: '5.5px', width: '70%', backgroundColor: 'rgba(220,225,248,0.62)', borderRadius: '1px' }} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+              <div style={{ height: '4px', width: '95%', backgroundColor: 'rgba(220,225,248,0.18)', borderRadius: '1px' }} />
+              <div style={{ height: '4px', width: f.tw, backgroundColor: 'rgba(220,225,248,0.18)', borderRadius: '1px' }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SiteCtaSection() {
+  return (
+    <div style={{ width: '100%', height: '100%', backgroundColor: '#0D1028', backgroundImage: 'linear-gradient(135deg, rgba(61,82,230,0.14) 0%, rgba(61,82,230,0.06) 100%)', borderTop: '1px solid rgba(61,82,230,0.14)', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '16px' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '3.5px' }}>
+        <div style={{ height: '8px', width: '72%', backgroundColor: 'rgba(220,225,248,0.72)', borderRadius: '1.5px' }} />
+        <div style={{ height: '5.5px', width: '50%', backgroundColor: 'rgba(220,225,248,0.28)', borderRadius: '1px' }} />
+      </div>
+      <div style={{ backgroundColor: 'rgba(61,82,230,0.8)', borderRadius: '2px', padding: '4.5px 11px', flexShrink: 0, boxShadow: '0 0 14px rgba(61,82,230,0.35)' }}>
+        <span style={{ fontSize: '7px', fontFamily: 'var(--font-body), sans-serif', color: '#FAFBFF', letterSpacing: '0.05em' }}>Contact us</span>
+      </div>
+    </div>
+  );
+}
+
+function SiteFooterSection() {
+  return (
+    <div style={{ width: '100%', height: '100%', backgroundColor: '#090B16', borderTop: '1px solid rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '12px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
+        <div style={{ width: '7px', height: '7px', backgroundColor: 'rgba(61,82,230,0.55)', transform: 'rotate(45deg)' }} />
+        <span style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '7px', color: 'rgba(220,225,248,0.30)', letterSpacing: '0.07em' }}>OBSIDIA</span>
+      </div>
+      <div style={{ flex: 1, display: 'flex', gap: '10px', justifyContent: 'center' }}>
+        {['Services', 'Work', 'About', 'Careers'].map(l => (
+          <span key={l} style={{ fontSize: '6px', fontFamily: 'var(--font-body), sans-serif', color: 'rgba(220,225,248,0.18)' }}>{l}</span>
+        ))}
+      </div>
+      <span style={{ fontSize: '5.5px', fontFamily: 'var(--font-mono), monospace', color: 'rgba(220,225,248,0.14)', letterSpacing: '0.08em' }}>© 2024 OBSIDIA</span>
+    </div>
+  );
+}
+
 /* ── Animated browser build visual ───────────────────────── */
 function BrowserBuildVisual() {
   const [phase, setPhase] = useState(0);
@@ -23,13 +154,13 @@ function BrowserBuildVisual() {
     return () => clearInterval(id);
   }, [mounted]);
 
-  const lines = [
-    { label: 'Nav bar',      w: '100%', delay: 0 },
-    { label: 'Hero section', w: '100%', delay: 1 },
-    { label: 'Feature grid', w: '100%', delay: 2 },
-    { label: 'CTA band',     w: '100%', delay: 3 },
-    { label: 'Footer',       w: '100%', delay: 4 },
-  ];
+  const SECTIONS = [
+    { id: 'nav',      flex: 0.85 },
+    { id: 'hero',     flex: 3.8  },
+    { id: 'features', flex: 2.6  },
+    { id: 'cta',      flex: 1.1  },
+    { id: 'footer',   flex: 0.75 },
+  ] as const;
 
   return (
     <div style={{ position: 'absolute', inset: 0, backgroundColor: '#0D0F1A', overflow: 'hidden' }}>
@@ -43,7 +174,10 @@ function BrowserBuildVisual() {
         <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#22C55E', animation: 'statPulse 2s ease-in-out infinite' }} />
         <span style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '9px', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(220,225,248,0.32)' }}>Building</span>
       </div>
+
+      {/* Browser window */}
       <div style={{ position: 'absolute', inset: '52px 24px 28px', backgroundColor: '#0E1020', border: '1px solid rgba(61,82,230,0.2)', borderRadius: '4px', overflow: 'hidden', opacity: mounted ? 1 : 0, transition: 'opacity 600ms ease' }}>
+        {/* Browser chrome */}
         <div style={{ height: '28px', backgroundColor: '#141628', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: '6px', padding: '0 14px', flexShrink: 0 }}>
           <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--accent)', opacity: 0.7 }} />
           <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#2A2A38' }} />
@@ -52,26 +186,48 @@ function BrowserBuildVisual() {
             <span style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '7px', color: 'rgba(255,255,255,0.2)', letterSpacing: '0.04em' }}>yourbrand.com</span>
           </div>
         </div>
-        <div style={{ padding: '0', height: 'calc(100% - 28px)', display: 'flex', flexDirection: 'column', gap: '1px', backgroundColor: 'rgba(255,255,255,0.03)' }}>
-          {lines.map((line, i) => {
+
+        {/* Website sections */}
+        <div style={{ height: 'calc(100% - 28px)', display: 'flex', flexDirection: 'column' }}>
+          {SECTIONS.map((section, i) => {
             const built = i <= phase;
+            const isBuilding = i === phase;
             return (
-              <div key={i} style={{ flex: i === 1 ? 3 : 1, backgroundColor: built ? '#0E1020' : '#0C0D18', borderBottom: i < lines.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none', position: 'relative', overflow: 'hidden', transition: 'background-color 400ms ease' }}>
-                {built && <div style={{ position: 'absolute', top: 0, left: 0, height: '1px', backgroundColor: 'var(--accent)', width: '100%', opacity: 0.5 }} />}
-                <div style={{ position: 'absolute', top: '50%', left: '12px', transform: 'translateY(-50%)', fontFamily: 'var(--font-body), sans-serif', fontSize: '7px', letterSpacing: '0.12em', textTransform: 'uppercase', color: built ? 'rgba(255,255,255,0.28)' : 'rgba(255,255,255,0.07)', transition: 'color 400ms ease' }}>{line.label}</div>
-                {i === 1 && built && (
-                  <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 40px', gap: '6px' }}>
-                    <div style={{ height: '10px', width: '55%', backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: '2px' }} />
-                    <div style={{ height: '7px', width: '38%', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '2px' }} />
-                    <div style={{ height: '20px', width: '88px', backgroundColor: 'rgba(61,82,230,0.25)', borderRadius: '2px', border: '1px solid rgba(61,82,230,0.4)', marginTop: '4px' }} />
-                  </div>
+              <div key={section.id} style={{ flex: section.flex, position: 'relative', overflow: 'hidden' }}>
+                {/* Scan line — sweeps down as section renders */}
+                {isBuilding && (
+                  <motion.div
+                    key={phase}
+                    initial={{ y: 0, opacity: 1 }}
+                    animate={{ y: 260, opacity: 0 }}
+                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    style={{
+                      position: 'absolute', top: 0, left: 0, right: 0, height: '2px',
+                      background: 'linear-gradient(90deg, transparent 0%, rgba(61,82,230,0.55) 20%, rgba(200,215,255,0.95) 50%, rgba(61,82,230,0.55) 80%, transparent 100%)',
+                      boxShadow: '0 0 10px rgba(61,82,230,0.7), 0 0 4px rgba(200,215,255,0.5)',
+                      zIndex: 20, pointerEvents: 'none',
+                    }}
+                  />
                 )}
-                {built && <div style={{ position: 'absolute', top: '50%', right: '12px', transform: 'translateY(-50%)', opacity: 0.7 }}><Check size={9} color="var(--accent)" strokeWidth={2} /></div>}
+                {/* Content: fades in when built, ghost-dim when waiting */}
+                <motion.div
+                  animate={{ opacity: built ? 1 : 0.04 }}
+                  transition={{ duration: 0.42, delay: isBuilding ? 0.22 : 0, ease: [0.22, 1, 0.36, 1] }}
+                  style={{ position: 'absolute', inset: 0 }}
+                >
+                  {section.id === 'nav'      && <SiteNavSection />}
+                  {section.id === 'hero'     && <SiteHeroSection />}
+                  {section.id === 'features' && <SiteFeaturesSection />}
+                  {section.id === 'cta'      && <SiteCtaSection />}
+                  {section.id === 'footer'   && <SiteFooterSection />}
+                </motion.div>
               </div>
             );
           })}
         </div>
       </div>
+
+      {/* Progress counter — kept from original */}
       <div style={{ position: 'absolute', bottom: '8px', left: '50%', transform: 'translateX(-50%)', fontFamily: 'var(--font-mono), monospace', fontSize: '8px', color: 'rgba(61,82,230,0.45)', letterSpacing: '0.12em', opacity: mounted ? 1 : 0, transition: 'opacity 600ms ease 400ms' }}>
         {Math.min(phase + 1, 5)}/5 SECTIONS · {Math.min((phase + 1) * 20, 100)}% BUILT
       </div>
@@ -89,8 +245,8 @@ function WebsitesHero() {
   }, []);
 
   return (
-    <section data-nav-theme="dark" id="web-hero" data-section-label="Overview" style={{ position: 'relative', minHeight: '100dvh', display: 'grid', gridTemplateColumns: '55% 45%', alignItems: 'stretch', overflow: 'hidden', backgroundColor: 'var(--dark-bg)', paddingTop: '76px' }} className="web-hero-grid">
-      <div aria-hidden style={{ position: 'absolute', inset: 0, width: '55%', backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
+    <section data-nav-theme="dark" id="web-hero" data-section-label="Overview" style={{ position: 'relative', minHeight: '100vh', display: 'grid', gridTemplateColumns: '55% 45%', alignItems: 'stretch', overflow: 'hidden', backgroundColor: 'var(--dark-bg)', paddingTop: '92px' }} className="web-hero-grid">
+      <div aria-hidden style={{ position: 'absolute', top: '92px', left: 0, right: 0, bottom: 0, width: '55%', backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
       <div aria-hidden style={{ position: 'absolute', bottom: '-80px', left: '-60px', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(61,82,230,0.09) 0%, transparent 60%)', pointerEvents: 'none', zIndex: 0 }} />
 
       <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '80px 48px 80px 32px', maxWidth: '680px' }}>
@@ -159,42 +315,90 @@ const WEB_PROBLEMS = [
   },
 ];
 
-/* ── Micro-animation widgets ──────────────────────────────── */
+/* ── Shared diagnostic design language ────────────────────── */
 
 const EASE_OUT = [0.22, 1, 0.36, 1] as [number,number,number,number];
 const EASE_IN  = [0.55, 0, 1, 0.45] as [number,number,number,number];
 
+/* Severity palette — one language shared by the left widgets and the
+   right console: cobalt baseline, amber strain, red failure */
+const SEV = {
+  healthy:  '#3D52E6',
+  warning:  '#F59E0B',
+  critical: '#EF4444',
+};
+
+function usePrefersReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const sync = () => setReduced(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
+  return reduced;
+}
+
+/* Light instrument cell — frames each left widget so the three read as
+   one diagnostic rig and inherit the console's severity bar motif */
+function InstrumentCell({ active, children }: { active: boolean; children: React.ReactNode }) {
+  return (
+    <div style={{
+      width: '100%',
+      background: 'var(--surface)',
+      border: '1px solid var(--border)',
+      borderRadius: '10px',
+      padding: '8px 10px 8px',
+      height: '125px',
+      overflow: 'hidden',
+      boxShadow: '0 1px 2px rgba(8,9,14,0.05), inset 0 1px 0 rgba(255,255,255,0.7)',
+      display: 'flex', flexDirection: 'column', alignItems: 'center',
+      position: 'relative',
+    }}>
+      <div aria-hidden style={{
+        position: 'absolute', top: 0, left: 0, right: 0, height: '2px',
+        background: active ? SEV.critical : SEV.healthy,
+        opacity: active ? 0.95 : 0.45,
+        boxShadow: active ? `0 0 10px ${SEV.critical}` : 'none',
+        transition: 'background-color 500ms ease, opacity 500ms ease, box-shadow 500ms ease',
+      }} />
+      {children}
+    </div>
+  );
+}
+
 /* 01 — Dual bar: YOUR SITE drains, COMPETITOR fills */
 function BarComparisonWidget({ active }: { active: boolean }) {
   return (
-    <div aria-hidden style={{ width: '100px' }}>
+    <div aria-hidden style={{ width: '100%' }}>
       {/* Visitor counts — move in opposite directions */}
-      <div style={{ display: 'flex', gap: '6px', marginBottom: '5px' }}>
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '8px' }}>
         {/* YOUR SITE — drops */}
-        <div style={{ flex: 1, height: '14px', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ flex: 1, height: '20px', position: 'relative', overflow: 'hidden' }}>
           <AnimatePresence mode="wait">
             <motion.span
               key={active ? 'sl' : 'sh'}
-              initial={{ opacity: 0, y: active ? 8 : -8 }}
+              initial={{ opacity: 0, y: active ? 10 : -10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: active ? -8 : 8 }}
+              exit={{ opacity: 0, y: active ? -10 : 10 }}
               transition={{ duration: active ? 0.65 : 0.5, ease: active ? EASE_IN : EASE_OUT }}
-              style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-mono),monospace', fontSize: '9px', color: active ? '#EF4444' : 'rgba(61,82,230,0.75)' }}
+              style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-mono),monospace', fontSize: '11px', fontWeight: 700, color: active ? SEV.critical : 'rgba(61,82,230,0.8)' }}
             >
               {active ? '341' : '1,247'}
             </motion.span>
           </AnimatePresence>
         </div>
         {/* COMPETITOR — rises */}
-        <div style={{ flex: 1, height: '14px', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ flex: 1, height: '20px', position: 'relative', overflow: 'hidden' }}>
           <AnimatePresence mode="wait">
             <motion.span
               key={active ? 'ch' : 'cl'}
-              initial={{ opacity: 0, y: active ? -8 : 8 }}
+              initial={{ opacity: 0, y: active ? -10 : 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: active ? 8 : -8 }}
+              exit={{ opacity: 0, y: active ? 10 : -10 }}
               transition={{ duration: active ? 0.65 : 0.5, ease: active ? EASE_IN : EASE_OUT }}
-              style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-mono),monospace', fontSize: '9px', color: active ? 'rgba(34,197,94,0.9)' : 'rgba(61,82,230,0.5)' }}
+              style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-mono),monospace', fontSize: '14px', fontWeight: 700, color: active ? 'rgba(34,197,94,0.95)' : 'rgba(61,82,230,0.55)' }}
             >
               {active ? '1,831' : '891'}
             </motion.span>
@@ -203,29 +407,29 @@ function BarComparisonWidget({ active }: { active: boolean }) {
       </div>
 
       {/* Bars */}
-      <div style={{ display: 'flex', gap: '6px', height: '72px', alignItems: 'flex-end' }}>
+      <div style={{ display: 'flex', gap: '6px', height: '50px', width: '100%', alignItems: 'flex-end' }}>
         {/* YOUR SITE — drains */}
-        <div style={{ flex: 1, height: '100%', backgroundColor: 'rgba(61,82,230,0.07)', borderRadius: '2px 2px 0 0', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ flex: 1, height: '100%', backgroundColor: 'rgba(61,82,230,0.07)', borderRadius: '3px 3px 0 0', position: 'relative', overflow: 'hidden' }}>
           <motion.div
             animate={{ height: active ? '22%' : '65%' }}
             transition={{ duration: active ? 0.72 : 0.52, ease: active ? EASE_IN : EASE_OUT }}
-            style={{ position: 'absolute', bottom: 0, left: 0, right: 0, borderRadius: '1px 1px 0 0', backgroundColor: active ? 'rgba(239,68,68,0.78)' : 'rgba(61,82,230,0.62)', transition: 'background-color 480ms ease' }}
+            style={{ position: 'absolute', bottom: 0, left: 0, right: 0, borderRadius: '2px 2px 0 0', backgroundColor: active ? 'rgba(239,68,68,0.85)' : 'rgba(61,82,230,0.62)', transition: 'background-color 480ms ease' }}
           />
         </div>
         {/* COMPETITOR — fills */}
-        <div style={{ flex: 1, height: '100%', backgroundColor: 'rgba(61,82,230,0.07)', borderRadius: '2px 2px 0 0', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ flex: 1, height: '100%', backgroundColor: 'rgba(61,82,230,0.07)', borderRadius: '3px 3px 0 0', position: 'relative', overflow: 'hidden' }}>
           <motion.div
             animate={{ height: active ? '78%' : '35%' }}
             transition={{ duration: active ? 0.72 : 0.52, ease: active ? EASE_IN : EASE_OUT }}
-            style={{ position: 'absolute', bottom: 0, left: 0, right: 0, borderRadius: '1px 1px 0 0', backgroundColor: active ? 'rgba(34,197,94,0.72)' : 'rgba(61,82,230,0.42)', transition: 'background-color 480ms ease' }}
+            style={{ position: 'absolute', bottom: 0, left: 0, right: 0, borderRadius: '2px 2px 0 0', backgroundColor: active ? 'rgba(34,197,94,0.78)' : 'rgba(61,82,230,0.42)', transition: 'background-color 480ms ease' }}
           />
         </div>
       </div>
 
       {/* Labels */}
-      <div style={{ display: 'flex', gap: '6px', marginTop: '5px' }}>
+      <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
         {(['YOUR\nSITE', 'COMP'] as const).map(lbl => (
-          <span key={lbl} style={{ flex: 1, textAlign: 'center', fontFamily: 'var(--font-mono),monospace', fontSize: '7px', letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(13,17,71,0.38)', whiteSpace: 'pre-line', lineHeight: 1.3 }}>{lbl}</span>
+          <span key={lbl} style={{ flex: 1, textAlign: 'center', fontFamily: 'var(--font-mono),monospace', fontSize: '8px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(13,17,71,0.42)', whiteSpace: 'pre-line', lineHeight: 1.3 }}>{lbl}</span>
         ))}
       </div>
     </div>
@@ -234,40 +438,40 @@ function BarComparisonWidget({ active }: { active: boolean }) {
 
 /* 02 — Score dial: 92 → 24, TRUSTED → DISMISSED, COMPETITOR → YOUR SITE */
 function ScoreDialWidget({ active }: { active: boolean }) {
-  const r = 29, cx = 36, cy = 36;
-  const circ   = 2 * Math.PI * r;          // 138.23
-  const arcLen = (200 / 360) * circ;       // 76.79
-  const gapLen = circ - arcLen;            // 61.44
+  const r = 40, cx = 50, cy = 50;
+  const circ   = 2 * Math.PI * r;          // 251.33
+  const arcLen = (200 / 360) * circ;       // 139.63
+  const gapLen = circ - arcLen;            // 111.70
   const score  = active ? 24 : 92;
   const offset = arcLen * (1 - score / 100);
-  const fillColor = active ? '#EF4444' : '#22C55E';
+  const fillColor = active ? SEV.critical : '#22C55E';
 
   return (
-    <div aria-hidden style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', width: '90px' }}>
+    <div aria-hidden style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', width: '100%' }}>
       {/* Status word */}
       <AnimatePresence mode="wait">
         <motion.span
           key={active ? 'd' : 't'}
-          initial={{ opacity: 0, y: active ? -5 : 5 }}
+          initial={{ opacity: 0, y: active ? -6 : 6 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0 }}
           transition={{ duration: active ? 0.26 : 0.95, ease: active ? EASE_IN : EASE_OUT }}
-          style={{ fontFamily: 'var(--font-mono),monospace', fontSize: '9px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: active ? '#EF4444' : 'rgba(13,17,71,0.55)' }}
+          style={{ fontFamily: 'var(--font-mono),monospace', fontSize: '11px', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: active ? SEV.critical : 'rgba(13,17,71,0.55)' }}
         >
           {active ? 'DISMISSED' : 'TRUSTED'}
         </motion.span>
       </AnimatePresence>
 
       {/* SVG gauge */}
-      <div style={{ position: 'relative', width: '72px', height: '72px' }}>
-        <svg width="72" height="72" viewBox="0 0 72 72" overflow="visible">
+      <div style={{ position: 'relative', width: '60px', height: '60px' }}>
+        <svg width="60" height="60" viewBox="0 0 100 100" overflow="visible">
           {/* Track */}
-          <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(61,82,230,0.1)" strokeWidth="4.5" strokeLinecap="round"
+          <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(61,82,230,0.12)" strokeWidth="6" strokeLinecap="round"
             strokeDasharray={`${arcLen} ${gapLen}`}
             style={{ transform: 'rotate(145deg)', transformOrigin: `${cx}px ${cy}px` }}
           />
           {/* Fill — CSS transition for directional timing */}
-          <circle cx={cx} cy={cy} r={r} fill="none" strokeWidth="4.5" strokeLinecap="round"
+          <circle cx={cx} cy={cy} r={r} fill="none" strokeWidth="6" strokeLinecap="round"
             stroke={fillColor}
             strokeDasharray={`${arcLen} ${gapLen}`}
             strokeDashoffset={offset}
@@ -289,7 +493,7 @@ function ScoreDialWidget({ active }: { active: boolean }) {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.84 }}
               transition={{ duration: active ? 0.24 : 0.9, ease: active ? EASE_IN : EASE_OUT }}
-              style={{ fontFamily: 'var(--font-mono),monospace', fontSize: '18px', fontWeight: 700, lineHeight: 1, color: fillColor }}
+              style={{ fontFamily: 'var(--font-mono),monospace', fontSize: '8px', fontWeight: 700, lineHeight: 1, color: fillColor }}
             >
               {score}
             </motion.span>
@@ -301,11 +505,11 @@ function ScoreDialWidget({ active }: { active: boolean }) {
       <AnimatePresence mode="wait">
         <motion.span
           key={active ? 'y' : 'c'}
-          initial={{ opacity: 0, y: active ? -3 : 3 }}
+          initial={{ opacity: 0, y: active ? -4 : 4 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0 }}
           transition={{ duration: active ? 0.28 : 0.82, ease: active ? EASE_IN : EASE_OUT, delay: active ? 0.18 : 0 }}
-          style={{ fontFamily: 'var(--font-mono),monospace', fontSize: '8px', letterSpacing: '0.12em', textTransform: 'uppercase', color: active ? 'rgba(239,68,68,0.62)' : 'rgba(61,82,230,0.5)' }}
+          style={{ fontFamily: 'var(--font-mono),monospace', fontSize: '9px', letterSpacing: '0.14em', textTransform: 'uppercase', color: active ? 'rgba(239,68,68,0.65)' : 'rgba(61,82,230,0.55)' }}
         >
           {active ? 'YOUR SITE' : 'COMPETITOR'}
         </motion.span>
@@ -317,25 +521,25 @@ function ScoreDialWidget({ active }: { active: boolean }) {
 /* 03 — Morphing layout: headline updates, surrounding frame stays frozen */
 function MorphingLayoutWidget({ active }: { active: boolean }) {
   return (
-    <div aria-hidden style={{ width: '110px', height: '90px', backgroundColor: '#F5F5FA', border: '1px solid rgba(61,82,230,0.12)', borderRadius: '2px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+    <div aria-hidden style={{ width: '100%', height: '80px', maxWidth: '100%', backgroundColor: '#F5F5FA', border: '1px solid rgba(61,82,230,0.14)', borderRadius: '4px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
       {/* Frozen nav */}
-      <div style={{ height: '14px', flexShrink: 0, backgroundColor: 'rgba(61,82,230,0.055)', borderBottom: '1px solid rgba(61,82,230,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 6px' }}>
-        <div style={{ width: '8px', height: '3px', backgroundColor: 'rgba(61,82,230,0.22)', borderRadius: '0.5px' }} />
-        <div style={{ display: 'flex', gap: '3px' }}>
-          {[10,8,6].map((w,i) => <div key={i} style={{ width: `${w}px`, height: '2px', backgroundColor: 'rgba(61,82,230,0.14)', borderRadius: '0.5px' }} />)}
+      <div style={{ height: '20px', flexShrink: 0, backgroundColor: 'rgba(61,82,230,0.06)', borderBottom: '1px solid rgba(61,82,230,0.09)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 10px' }}>
+        <div style={{ width: '12px', height: '4px', backgroundColor: 'rgba(61,82,230,0.24)', borderRadius: '1px' }} />
+        <div style={{ display: 'flex', gap: '4px' }}>
+          {[14,11,8].map((w,i) => <div key={i} style={{ width: `${w}px`, height: '3px', backgroundColor: 'rgba(61,82,230,0.16)', borderRadius: '1px' }} />)}
         </div>
       </div>
 
       {/* Content area */}
-      <div style={{ flex: 1, padding: '5px 5px 4px', display: 'flex', flexDirection: 'column', gap: '3px' }}>
+      <div style={{ flex: 1, padding: '-4px -4px -4px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
         {/* Morphing headline */}
-        <div style={{ height: '14px', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ height: '20px', position: 'relative', overflow: 'hidden' }}>
           <AnimatePresence mode="wait">
             <motion.span
               key={active ? 'stale' : 'fresh'}
-              initial={{ opacity: 0, y: active ? 6 : -6 }}
+              initial={{ opacity: 0, y: active ? 8 : -8 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: active ? -6 : 6 }}
+              exit={{ opacity: 0, y: active ? -8 : 8 }}
               transition={{ duration: 0.38, ease: EASE_OUT }}
               style={{
                 position: 'absolute', display: 'flex', alignItems: 'center', inset: 0,
@@ -354,17 +558,17 @@ function MorphingLayoutWidget({ active }: { active: boolean }) {
         </div>
 
         {/* Frozen sub-line */}
-        <div style={{ width: '40px', height: '2px', backgroundColor: 'rgba(61,82,230,0.11)', borderRadius: '1px' }} />
+        <div style={{ width: '56px', height: '3px', backgroundColor: 'rgba(61,82,230,0.12)', borderRadius: '1px' }} />
 
         {/* Frozen CTA — fixed size regardless of headline length */}
-        <div style={{ display: 'flex', gap: '3px', marginTop: '1px' }}>
-          <div style={{ width: '24px', height: '6px', backgroundColor: 'rgba(61,82,230,0.25)', borderRadius: '1px' }} />
-          <div style={{ width: '14px', height: '6px', backgroundColor: 'rgba(61,82,230,0.08)', borderRadius: '1px' }} />
+        <div style={{ display: 'flex', gap: '5px', marginTop: '2px' }}>
+          <div style={{ width: '34px', height: '9px', backgroundColor: 'rgba(61,82,230,0.26)', borderRadius: '1.5px' }} />
+          <div style={{ width: '20px', height: '9px', backgroundColor: 'rgba(61,82,230,0.09)', borderRadius: '1.5px' }} />
         </div>
 
         {/* Frozen 3-col blocks */}
-        <div style={{ display: 'flex', gap: '2px', marginTop: 'auto' }}>
-          {[1,1,1].map((_,i) => <div key={i} style={{ flex: 1, height: '12px', backgroundColor: 'rgba(61,82,230,0.05)', border: '1px solid rgba(61,82,230,0.08)', borderRadius: '1px' }} />)}
+        <div style={{ display: 'flex', gap: '4px', marginTop: 'auto' }}>
+          {[1,1,1].map((_,i) => <div key={i} style={{ flex: 1, height: '18px', backgroundColor: 'rgba(61,82,230,0.05)', border: '1px solid rgba(61,82,230,0.09)', borderRadius: '1.5px' }} />)}
         </div>
       </div>
     </div>
@@ -373,7 +577,7 @@ function MorphingLayoutWidget({ active }: { active: boolean }) {
 
 const PROB_WIDGETS = [BarComparisonWidget, ScoreDialWidget, MorphingLayoutWidget];
 
-/* ── Problem item row ─────────────────────────────────────── */
+/* ── Problem item row — generous, instrument-framed widgets ─── */
 function ProblemItem({
   item, index,
 }: {
@@ -391,38 +595,41 @@ function ProblemItem({
         hidden: { opacity: 0, x: -24 },
         visible: { opacity: 1, x: 0, transition: { duration: 0.68, ease: EASE_OUT } },
       }}
+      className="web-prob-item"
       style={{
         display: 'grid',
-        gridTemplateColumns: 'auto 1fr',
-        gap: '28px',
-        alignItems: 'start',
-        paddingBottom: isLast ? 0 : '24px',
-        marginBottom: isLast ? 0 : '24px',
+        gridTemplateColumns: '160px 1fr',
+        gap: '22px',
+        alignItems: 'center',
+        paddingBottom: isLast ? 0 : '14px',
+        marginBottom: isLast ? 0 : '14px',
         borderBottom: isLast ? 'none' : '1px solid var(--border)',
         cursor: 'default',
       }}
     >
       {/* Number + widget column */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px', paddingTop: '2px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '8px', width: '120px' }}>
         <span style={{
           fontFamily: 'var(--font-mono), monospace',
-          fontSize: '10px', fontWeight: 500,
-          letterSpacing: '0.16em', color: 'var(--accent)',
+          fontSize: '11px', fontWeight: 600,
+          letterSpacing: '0.18em', color: 'var(--accent)',
         }}>
           {item.n}
         </span>
-        <Widget active={hovered} />
+        <InstrumentCell active={hovered}>
+          <Widget active={hovered} />
+        </InstrumentCell>
       </div>
 
       {/* Text column */}
       <div>
         {/* Title: shifts + cobalt underline draws on hover */}
-        <div style={{ position: 'relative', marginBottom: '10px' }}>
+        <div style={{ position: 'relative', marginBottom: '14px', display: 'inline-block' }}>
           <h3 className="font-heading" style={{
-            fontSize: 'clamp(20px, 1.9vw, 28px)',
+            fontSize: 'clamp(15px, 1.5vw, 21px)',
             fontWeight: 500, letterSpacing: '-0.025em',
-            color: 'var(--text)', lineHeight: 1.14,
-            transform: hovered ? 'translateX(5px)' : 'translateX(0)',
+            color: 'var(--text)', lineHeight: 1.1,
+            transform: hovered ? 'translateX(6px)' : 'translateX(0)',
             transition: 'transform 400ms cubic-bezier(0.22,1,0.36,1)',
           }}>
             {item.title}
@@ -435,16 +642,16 @@ function ProblemItem({
               opacity: { duration: 0.18 },
             }}
             style={{
-              position: 'absolute', bottom: '-2px', left: 0,
-              width: '100%', height: '1.5px',
+              position: 'absolute', bottom: '-4px', left: 0,
+              width: '100%', height: '2px',
               backgroundColor: 'var(--accent)',
               transformOrigin: 'left center',
             }}
           />
         </div>
         <p className="font-body" style={{
-          fontSize: '15px', lineHeight: 1.78,
-          color: 'var(--text-secondary)', margin: 0,
+          fontSize: '13px', lineHeight: 1.55,
+          color: 'var(--text-secondary)', margin: 0, maxWidth: '54ch',
         }}>
           {item.body}
         </p>
@@ -453,142 +660,179 @@ function ProblemItem({
   );
 }
 
-/* ── Live Diagnostic card — coordinated system ────────────── */
-function LiveDiagnosticCard({ visible }: { visible: boolean }) {
-  const [revenueLost, setRevenueLost] = useState(12840);
-  const [tick, setTick] = useState(0);
+/* ── Live Diagnostic — event stream + degrading vitals ──────── */
+type LogEvent = { id: number; ts: string; type: 'BOUNCE' | 'ABANDONED' | 'TIMEOUT' | 'EXIT'; path: string };
 
-  /* Single interval drives all four values as one system */
+const SEED_EVENTS: LogEvent[] = [
+  { id: 5, ts: '09:44:12', type: 'BOUNCE',    path: '/services'  },
+  { id: 4, ts: '09:44:08', type: 'ABANDONED', path: '/contact'   },
+  { id: 3, ts: '09:44:01', type: 'TIMEOUT',   path: '/products'  },
+  { id: 2, ts: '09:43:55', type: 'EXIT',      path: '/'          },
+  { id: 1, ts: '09:43:50', type: 'BOUNCE',    path: '/pricing'   },
+];
+
+function LiveDiagnosticCard(_: { visible: boolean }) {
+  const reduced = usePrefersReducedMotion();
+  const [rev, setRev] = useState(14480);
+  const [bump, setBump] = useState(0);
+  const [tick, setTick] = useState(0);
+  const [events, setEvents] = useState<LogEvent[]>(SEED_EVENTS);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const cardInView = useInView(cardRef, { once: false, amount: 0.15 });
+  const eidRef = useRef(100);
+
   useEffect(() => {
-    if (!visible) return;
+    const TYPES: LogEvent['type'][] = ['BOUNCE', 'ABANDONED', 'TIMEOUT', 'EXIT', 'BOUNCE', 'EXIT'];
+    const PATHS = ['/services', '/pricing', '/contact', '/', '/about', '/solutions'];
     const id = setInterval(() => {
-      setRevenueLost(prev => prev + Math.floor(Math.random() * 28 + 12));
-      setTick(t => Math.min(t + 1, 20));
+      const now = new Date();
+      const ts = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+      setRev(r => r + Math.floor(Math.random() * 28 + 14));
+      setBump(b => b + 1);
+      setTick(t => (t >= 20 ? 0 : t + 1));
+      setEvents(prev => [{
+        id: eidRef.current++,
+        ts,
+        type: TYPES[Math.floor(Math.random() * TYPES.length)],
+        path: PATHS[Math.floor(Math.random() * PATHS.length)],
+      }, ...prev.slice(0, 6)]);
     }, 1400);
     return () => clearInterval(id);
-  }, [visible]);
+  }, []);
 
-  const p = tick / 20; // 0 → 1 as system degrades
-  const bounceRate = 44 + (78 - 44) * p;       // 44% → 78% (worsening)
-  const convRate   = 3.4 - (3.4 - 0.8) * p;    // 3.4% → 0.8% (declining)
-  const loadTime   = 1.3 + (4.2 - 1.3) * p;    // 1.3s → 4.2s (increasing)
+  const p = tick / 20;
+  const bounceRate = 44 + (78 - 44) * p;
+  const convRate   = 3.4 - (3.4 - 0.8) * p;
+  const loadTime   = 1.3 + (4.2 - 1.3) * p;
 
-  /* Bar widths track the worsening values */
-  const bounceBar = 28 + 62 * p;   // grows red (bad)
-  const convBar   = 72 - 60 * p;   // shrinks (declining is bad)
-  const loadBar   = 16 + 74 * p;   // grows amber (bad)
+  const typeColor = (t: LogEvent['type']) => (t === 'BOUNCE' || t === 'EXIT') ? '#EF4444' : '#F59E0B';
 
-  const VITALS = [
-    { label: 'Bounce Rate', display: `${bounceRate.toFixed(0)}%`,  barW: bounceBar, status: 'critical' as const, delay: 0.28 },
-    { label: 'Conversion',  display: `${convRate.toFixed(1)}%`,    barW: convBar,   status: 'critical' as const, delay: 0.44 },
-    { label: 'Load Time',   display: `${loadTime.toFixed(1)}s`,    barW: loadBar,   status: 'warning'  as const, delay: 0.6  },
+  const vitals = [
+    { label: 'BOUNCE RATE', val: `${bounceRate.toFixed(0)}%`, bar: 28 + 62 * p, col: '#EF4444' },
+    { label: 'CONVERSION',  val: `${convRate.toFixed(1)}%`,   bar: 72 - 60 * p, col: '#EF4444' },
+    { label: 'LOAD TIME',   val: `${loadTime.toFixed(1)}s`,   bar: 16 + 74 * p, col: '#F59E0B' },
   ];
-
-  const pathVariants = {
-    hidden: { pathLength: 0, opacity: 0 },
-    visible: { pathLength: 1, opacity: 1, transition: { duration: 2, ease: 'easeInOut' as const } },
-  };
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 52, scale: 0.93 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: false, amount: 0.22 }}
+      ref={cardRef}
+      animate={{ opacity: cardInView ? 1 : 0 }}
       transition={{ duration: 0.92, ease: [0.22, 1, 0.36, 1] }}
       style={{
         width: '100%',
-        background: 'var(--surface)',
-        border: '1px solid var(--border)',
+        height: 'calc(100dvh - 160px)',
+        display: 'flex',
+        flexDirection: 'column',
+        background: '#06080F',
+        border: '1px solid rgba(61,82,230,0.18)',
         borderRadius: '14px',
-        padding: '40px 36px',
         position: 'relative', overflow: 'hidden',
-        boxShadow: '0 24px 64px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.9)',
+        fontFamily: 'var(--font-mono), monospace',
+        boxShadow: '0 0 0 1px rgba(61,82,230,0.08), 0 8px 32px rgba(6,8,15,0.72), 0 32px 64px rgba(61,82,230,0.14)',
       }}
     >
-      <div aria-hidden style={{ position: 'absolute', top: '-40px', right: '-40px', width: '240px', height: '240px', background: 'radial-gradient(circle, rgba(239,68,68,0.07) 0%, transparent 65%)', filter: 'blur(32px)', pointerEvents: 'none' }} />
+      {/* Dot grid */}
+      <div aria-hidden style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle, rgba(120,130,200,0.045) 1px, transparent 1px)', backgroundSize: '20px 20px', pointerEvents: 'none' }} />
+      {/* Scan lines */}
+      <div aria-hidden style={{ position: 'absolute', inset: 0, backgroundImage: 'repeating-linear-gradient(0deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 3px)', pointerEvents: 'none' }} />
+      {/* Corner glows */}
+      <div aria-hidden style={{ position: 'absolute', top: '-40px', right: '-40px', width: '200px', height: '200px', background: 'radial-gradient(circle, rgba(239,68,68,0.12) 0%, transparent 65%)', filter: 'blur(28px)', pointerEvents: 'none' }} />
+      <div aria-hidden style={{ position: 'absolute', bottom: '-50px', left: '-30px', width: '180px', height: '180px', background: 'radial-gradient(circle, rgba(61,82,230,0.10) 0%, transparent 65%)', filter: 'blur(32px)', pointerEvents: 'none' }} />
 
-      {/* Card header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '36px' }}>
-        <motion.div
-          animate={{ opacity: [1, 0.3, 1] }}
-          transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-          style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#EF4444', flexShrink: 0 }}
-        />
-        <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '11px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.18em', color: 'var(--text-secondary)' }}>
-          Live Diagnostic
-        </span>
-      </div>
-
-      {/* Revenue — lead figure */}
-      <div style={{ marginBottom: '40px' }}>
-        <div style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '10px', letterSpacing: '0.01em' }}>
-          Estimated Monthly Loss
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 'clamp(38px, 3.8vw, 52px)', color: '#EF4444', fontFamily: 'var(--font-heading), serif', fontWeight: 500, letterSpacing: '-0.03em', lineHeight: 1 }}>
-            ${revenueLost.toLocaleString()}
-          </span>
-          <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '11px', padding: '5px 12px', background: 'rgba(239,68,68,0.07)', color: '#EF4444', borderRadius: '4px', letterSpacing: '0.06em', fontWeight: 600 }}>
-            LIVE
-          </span>
-        </div>
-      </div>
-
-      {/* Downward trend chart */}
-      <div style={{ height: '100px', width: '100%', marginBottom: '36px' }}>
-        <svg viewBox="0 0 260 100" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
-          {[22, 50, 78].map(y => (
-            <line key={y} x1="0" y1={y} x2="260" y2={y} stroke="var(--border)" strokeWidth="1" strokeDasharray="4 4" />
+      {/* Title bar */}
+      <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px', borderBottom: '1px solid rgba(255,255,255,0.055)', background: 'rgba(255,255,255,0.015)' }}>
+        <div style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
+          {(['#EF4444', '#F59E0B', '#22C55E'] as const).map((c, i) => (
+            <span key={i} style={{ width: '7px', height: '7px', borderRadius: '50%', background: c, opacity: i === 2 ? 0.4 : 0.8 }} />
           ))}
-          <motion.path
-            d="M 0 8 Q 55 8, 100 28 T 175 60 T 260 90"
-            fill="none" stroke="#EF4444" strokeWidth="2.5" strokeLinecap="round"
-            variants={pathVariants} initial="hidden" animate={visible ? 'visible' : 'hidden'}
-          />
-          <motion.circle
-            cx="260" cy="90" r="4.5" fill="#EF4444"
-            initial={{ scale: 0, opacity: 0 }}
-            animate={visible ? { scale: [1, 1.6, 1], opacity: [1, 0.4, 1] } : { scale: 0, opacity: 0 }}
-            transition={{ delay: 2.1, duration: 1.5, repeat: Infinity }}
-          />
-        </svg>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+          {/* Sonar-ping live indicator */}
+          <span style={{ position: 'relative', width: '6px', height: '6px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <motion.span
+              animate={reduced ? {} : { scale: [1, 3.8], opacity: [0.65, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeOut', repeatDelay: 0 }}
+              style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '1.5px solid #22C55E', transformOrigin: 'center' }}
+            />
+            <span style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: '#22C55E', boxShadow: '0 0 8px rgba(34,197,94,0.85)', zIndex: 1 }} />
+          </span>
+          <span style={{ fontSize: '9px', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(34,197,94,0.75)' }}>
+            LIVE AUDIT
+          </span>
+        </div>
       </div>
 
-      {/* Vital rows — all four values move together as one system */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        {VITALS.map(v => (
-          <motion.div
-            key={v.label}
-            initial={{ opacity: 0, x: -12 }}
-            animate={visible ? { opacity: 1, x: 0 } : { opacity: 0, x: -12 }}
-            transition={{ duration: 0.52, delay: v.delay, ease: EASE_OUT }}
-            style={{
-              padding: '12px 18px 10px',
-              background: v.status === 'critical' ? 'rgba(239,68,68,0.05)' : 'rgba(245,158,11,0.05)',
-              borderRadius: '6px',
-              border: `1px solid ${v.status === 'critical' ? 'rgba(239,68,68,0.15)' : 'rgba(245,158,11,0.15)'}`,
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '7px' }}>
-              <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '11px', letterSpacing: '0.04em', color: 'var(--text-secondary)' }}>
-                {v.label}
-              </span>
-              <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '13px', fontWeight: 700, color: v.status === 'critical' ? '#EF4444' : '#F59E0B' }}>
-                {v.display}
-              </span>
+      <div style={{ position: 'relative', zIndex: 1, padding: '20px 22px', flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+
+        {/* Revenue accumulator */}
+        <div style={{ marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.06)', flexShrink: 0 }}>
+          <div style={{ fontSize: '8.5px', letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(239,68,68,0.5)', marginBottom: '8px' }}>
+            EST. REVENUE LOST — THIS MONTH
+          </div>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px' }}>
+            <motion.span
+              key={bump}
+              initial={reduced ? false : { color: '#FF8888' }}
+              animate={{ color: '#EF4444' }}
+              transition={{ duration: 0.75, ease: 'easeOut' }}
+              style={{ fontSize: 'clamp(32px, 3.2vw, 46px)', fontWeight: 500, color: '#EF4444', letterSpacing: '-0.03em', lineHeight: 1, fontFamily: 'var(--font-heading), serif', textShadow: '0 0 28px rgba(239,68,68,0.3)' }}
+            >
+              ${rev.toLocaleString()}
+            </motion.span>
+            <div>
+              <div style={{ fontSize: '9px', color: 'rgba(239,68,68,0.55)', letterSpacing: '0.08em' }}>↑ +$21 / 1.4s</div>
+              <div style={{ fontSize: '8px', color: 'rgba(239,68,68,0.3)', letterSpacing: '0.06em', marginTop: '2px' }}>ACCUMULATING</div>
             </div>
-            {/* Severity bar — advances with every tick, same timing as the revenue counter */}
-            <div style={{ height: '2px', backgroundColor: v.status === 'critical' ? 'rgba(239,68,68,0.1)' : 'rgba(245,158,11,0.1)', borderRadius: '1px', overflow: 'hidden' }}>
-              <div style={{
-                height: '100%',
-                width: `${v.barW}%`,
-                backgroundColor: v.status === 'critical' ? '#EF4444' : '#F59E0B',
-                borderRadius: '1px',
-                transition: 'width 1.4s cubic-bezier(0.22,1,0.36,1)',
-              }} />
-            </div>
-          </motion.div>
-        ))}
+          </div>
+        </div>
+
+        {/* Event stream — flex: 1 so it fills remaining height */}
+        <div style={{ marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.06)', flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+          <div style={{ fontSize: '8.5px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(120,130,200,0.45)', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+            <span>EVENT STREAM</span>
+            <span style={{ flex: 1, height: '1px', background: 'rgba(120,130,200,0.12)' }} />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', overflow: 'hidden', flex: 1 }}>
+            <AnimatePresence initial={false}>
+              {events.map((ev, idx) => (
+                <motion.div
+                  key={ev.id}
+                  initial={{ opacity: 0, y: -14 }}
+                  animate={{ opacity: 1 - idx * 0.13, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3, ease: EASE_OUT }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '11px', lineHeight: 1, padding: '3px 0' }}
+                >
+                  <span style={{ color: 'rgba(120,130,200,0.3)', flexShrink: 0, letterSpacing: '0.04em', fontSize: '10px' }}>{ev.ts}</span>
+                  <span style={{ color: typeColor(ev.type), letterSpacing: '0.1em', minWidth: '72px', flexShrink: 0, textShadow: `0 0 9px ${typeColor(ev.type)}55`, fontWeight: 600 }}>{ev.type}</span>
+                  <span style={{ color: 'rgba(220,225,248,0.28)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ev.path}</span>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* Vitals */}
+        <div style={{ flexShrink: 0 }}>
+          <div style={{ fontSize: '8.5px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(120,130,200,0.45)', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span>SITE VITALS</span>
+            <span style={{ flex: 1, height: '1px', background: 'rgba(120,130,200,0.12)' }} />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {vitals.map(v => (
+              <div key={v.label}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
+                  <span style={{ fontSize: '9px', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(120,130,200,0.42)' }}>{v.label}</span>
+                  <span style={{ fontSize: '13px', fontWeight: 700, color: v.col, textShadow: `0 0 10px ${v.col}55` }}>{v.val}</span>
+                </div>
+                <div style={{ height: '3px', background: 'rgba(255,255,255,0.06)', borderRadius: '2px', overflow: 'hidden' }}>
+                  <div style={{ height: '100%', width: `${v.bar}%`, background: `linear-gradient(90deg, ${v.col}66, ${v.col})`, borderRadius: '2px', boxShadow: `0 0 6px ${v.col}88`, transition: 'width 1.4s cubic-bezier(0.22,1,0.36,1)' }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
       </div>
     </motion.div>
   );
@@ -598,6 +842,10 @@ function LiveDiagnosticCard({ visible }: { visible: boolean }) {
 function WebStickyProblem() {
   const ref = useRef<HTMLElement>(null);
   const visible = useInView(ref, { once: false, amount: 0.05 });
+  const labelRef = useRef<HTMLDivElement>(null);
+  const labelInView = useInView(labelRef, { once: false, amount: 0.5 });
+  const headlineRef = useRef<HTMLDivElement>(null);
+  const headlineInView = useInView(headlineRef, { once: false, amount: 0.45 });
 
   return (
     <section
@@ -608,32 +856,33 @@ function WebStickyProblem() {
       style={{
         backgroundColor: 'var(--bg)',
         borderBottom: '1px solid var(--border)',
-        minHeight: '100dvh',
+        height: '100dvh',
         display: 'flex',
         alignItems: 'center',
+        overflow: 'hidden',
       }}
     >
       <div
         className="web-prob-outer"
         style={{
           width: '100%',
-          padding: '56px 48px 56px 72px',
+          height: '100%',
+          padding: '40px 40px 40px 52px',
           display: 'grid',
-          gridTemplateColumns: '1fr 480px',
-          gap: '72px',
-          alignItems: 'stretch',
+          gridTemplateColumns: '1fr 380px',
+          gap: '48px',
+          alignItems: 'center',
         }}
       >
         {/* ── Left — fills remaining width ── */}
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', minWidth: 0 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', minWidth: 0, paddingTop: '40px' }}>
 
           {/* Section label */}
           <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.5 }}
+            ref={labelRef}
+            animate={{ opacity: labelInView ? 1 : 0 }}
             transition={{ duration: 0.55, ease: EASE }}
-            style={{ marginBottom: '20px' }}
+            style={{ marginBottom: '8px' }}
           >
             <span style={{
               fontFamily: 'var(--font-mono), monospace',
@@ -647,14 +896,13 @@ function WebStickyProblem() {
 
           {/* Headline */}
           <motion.div
-            initial={{ opacity: 0, y: 36, clipPath: 'inset(0 0 20% 0)' }}
-            whileInView={{ opacity: 1, y: 0, clipPath: 'inset(0 0 0% 0)' }}
-            viewport={{ once: false, amount: 0.45 }}
+            ref={headlineRef}
+            animate={{ opacity: headlineInView ? 1 : 0 }}
             transition={{ duration: 0.85, ease: EASE, delay: 0.1 }}
-            style={{ marginBottom: '36px' }}
+            style={{ marginBottom: '14px' }}
           >
             <h2 className="font-heading" style={{
-              fontSize: 'clamp(38px, 4.5vw, 64px)',
+              fontSize: 'clamp(28px, 3.2vw, 46px)',
               fontWeight: 500, letterSpacing: '-0.042em',
               color: 'var(--text)', lineHeight: 0.96,
             }}>
@@ -679,8 +927,8 @@ function WebStickyProblem() {
           </motion.div>
         </div>
 
-        {/* ── Right 45% — Live Diagnostic card only ── */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        {/* ── Right — Live Diagnostic card, full height ── */}
+        <div style={{ display: 'flex', alignItems: 'stretch', justifyContent: 'center', alignSelf: 'stretch', paddingTop: '70px' }}>
           <LiveDiagnosticCard visible={visible} />
         </div>
       </div>
@@ -690,11 +938,17 @@ function WebStickyProblem() {
           .web-prob-outer {
             grid-template-columns: 1fr !important;
             gap: 56px !important;
-            padding: 56px 40px !important;
+            padding: 64px 40px !important;
           }
         }
         @media (max-width: 640px) {
           .web-prob-outer { padding: 48px 24px !important; }
+          .web-prob-item {
+            grid-template-columns: 1fr !important;
+            gap: 22px !important;
+            align-items: start !important;
+          }
+          .web-prob-item > div:first-child { width: 100% !important; max-width: 280px; }
         }
       `}</style>
     </section>
@@ -709,114 +963,251 @@ const WEB_SERVICES = [
   { n: '04', tag: 'Applications', title: 'Web Applications', body: 'Browser-based tools built entirely around your workflow, not a generic template.' },
 ];
 
-/* Faint wireframe SVG motifs per card */
-function WireframeBg({ index }: { index: number }) {
-  if (index === 0) return (
-    <svg viewBox="0 0 200 140" fill="none" width="200" style={{ position: 'absolute', bottom: 0, right: 0, opacity: 0.055, pointerEvents: 'none' }}>
-      <rect x="8" y="8" width="184" height="124" rx="2" stroke="white" strokeWidth="1"/>
-      <rect x="8" y="8" width="184" height="22" stroke="white" strokeWidth="1" fill="none"/>
-      <rect x="20" y="44" width="160" height="16" rx="1" stroke="white" strokeWidth="0.8"/>
-      <rect x="20" y="68" width="120" height="10" rx="1" stroke="white" strokeWidth="0.6"/>
-      <rect x="20" y="86" width="72" height="20" rx="2" stroke="white" strokeWidth="0.8"/>
-    </svg>
-  );
-  if (index === 1) return (
-    <svg viewBox="0 0 200 140" fill="none" width="200" style={{ position: 'absolute', bottom: 0, right: 0, opacity: 0.055, pointerEvents: 'none' }}>
-      <rect x="8" y="8" width="184" height="20" rx="1" stroke="white" strokeWidth="1"/>
-      <rect x="8" y="36" width="184" height="48" rx="1" stroke="white" strokeWidth="0.8"/>
-      <rect x="8" y="92" width="88" height="40" rx="1" stroke="white" strokeWidth="0.6"/>
-      <rect x="104" y="92" width="88" height="40" rx="1" stroke="white" strokeWidth="0.6"/>
-    </svg>
-  );
-  if (index === 2) return (
-    <svg viewBox="0 0 200 140" fill="none" width="200" style={{ position: 'absolute', bottom: 0, right: 0, opacity: 0.055, pointerEvents: 'none' }}>
-      {[0,1,2].map(col => [0,1].map(row => (
-        <rect key={`${col}-${row}`} x={8 + col*64} y={8 + row*68} width="56" height="60" rx="1" stroke="white" strokeWidth="0.8"/>
-      )))}
-      <rect x="8" y="128" width="184" height="4" rx="1" stroke="white" strokeWidth="0.6"/>
-    </svg>
-  );
+/* ── Services: equal-width four-card horizontal grid ────────── */
+
+/* Decorative art — unique motif per card, sits in the open middle area */
+function FunnelArt({ hov }: { hov: boolean }) {
   return (
-    <svg viewBox="0 0 200 140" fill="none" width="200" style={{ position: 'absolute', bottom: 0, right: 0, opacity: 0.055, pointerEvents: 'none' }}>
-      <rect x="8" y="8" width="184" height="18" rx="1" stroke="white" strokeWidth="1"/>
-      <rect x="8" y="34" width="56" height="98" rx="1" stroke="white" strokeWidth="0.6"/>
-      <rect x="72" y="34" width="120" height="44" rx="1" stroke="white" strokeWidth="0.8"/>
-      <rect x="72" y="86" width="56" height="46" rx="1" stroke="white" strokeWidth="0.6"/>
-      <rect x="136" y="86" width="56" height="46" rx="1" stroke="white" strokeWidth="0.6"/>
+    <svg viewBox="0 0 160 120" fill="none" width="100%" style={{
+      opacity: hov ? 0.24 : 0.07,
+      transition: 'opacity 480ms cubic-bezier(0.25,1,0.5,1)',
+    }}>
+      <path d="M16 18 L144 18 L96 58 L96 102 L64 102 L64 58 Z" stroke="white" strokeWidth="1" fill="none"/>
+      <line x1="16" y1="18" x2="144" y2="18" stroke="white" strokeWidth="0.6"/>
+      <line x1="30" y1="34" x2="130" y2="34" stroke="white" strokeWidth="0.5"/>
+      <line x1="46" y1="50" x2="114" y2="50" stroke="white" strokeWidth="0.4"/>
+      <rect x="70" y="74" width="20" height="14" rx="2" stroke="white" strokeWidth="0.8"/>
     </svg>
   );
 }
 
-function WebServiceCard({ s, index }: { s: typeof WEB_SERVICES[0]; index: number }) {
+function BrowserArt({ hov }: { hov: boolean }) {
+  return (
+    <svg viewBox="0 0 160 120" fill="none" width="100%" style={{
+      opacity: hov ? 0.24 : 0.07,
+      transition: 'opacity 480ms cubic-bezier(0.25,1,0.5,1)',
+    }}>
+      <rect x="10" y="10" width="140" height="100" rx="3" stroke="white" strokeWidth="1"/>
+      <line x1="10" y1="30" x2="150" y2="30" stroke="white" strokeWidth="0.8"/>
+      <circle cx="23" cy="20" r="3" stroke="white" strokeWidth="0.7"/>
+      <circle cx="35" cy="20" r="3" stroke="white" strokeWidth="0.7"/>
+      <circle cx="47" cy="20" r="3" stroke="white" strokeWidth="0.7"/>
+      <rect x="18" y="42" width="124" height="10" rx="1" stroke="white" strokeWidth="0.6"/>
+      <rect x="18" y="60" width="84" height="8" rx="1" stroke="white" strokeWidth="0.5"/>
+      <rect x="18" y="76" width="52" height="18" rx="2" stroke="white" strokeWidth="0.8"/>
+    </svg>
+  );
+}
+
+function ProductGridArt({ hov }: { hov: boolean }) {
+  return (
+    <svg viewBox="0 0 160 120" fill="none" width="100%" style={{
+      opacity: hov ? 0.24 : 0.07,
+      transition: 'opacity 480ms cubic-bezier(0.25,1,0.5,1)',
+    }}>
+      {([0,1,2] as number[]).map(col => ([0,1] as number[]).map(row => (
+        <rect key={`${col}-${row}`}
+          x={10 + col * 50} y={8 + row * 56}
+          width="44" height="50" rx="2"
+          stroke="white" strokeWidth="0.8"
+        />
+      )))}
+      <rect x="10" y="106" width="140" height="5" rx="1" stroke="white" strokeWidth="0.5"/>
+    </svg>
+  );
+}
+
+function DashboardArt({ hov }: { hov: boolean }) {
+  return (
+    <svg viewBox="0 0 160 120" fill="none" width="100%" style={{
+      opacity: hov ? 0.24 : 0.07,
+      transition: 'opacity 480ms cubic-bezier(0.25,1,0.5,1)',
+    }}>
+      <rect x="10" y="10" width="44" height="100" rx="2" stroke="white" strokeWidth="0.7"/>
+      <rect x="62" y="10" width="88" height="46" rx="2" stroke="white" strokeWidth="0.9"/>
+      <rect x="62" y="64" width="40" height="46" rx="2" stroke="white" strokeWidth="0.6"/>
+      <rect x="110" y="64" width="40" height="46" rx="2" stroke="white" strokeWidth="0.6"/>
+      <line x1="70" y1="26" x2="142" y2="26" stroke="white" strokeWidth="0.5"/>
+      <line x1="70" y1="38" x2="118" y2="38" stroke="white" strokeWidth="0.4"/>
+    </svg>
+  );
+}
+
+const CARD_ARTS = [FunnelArt, BrowserArt, ProductGridArt, DashboardArt];
+
+function ServiceCard({ s, index }: { s: typeof WEB_SERVICES[0]; index: number }) {
   const [hov, setHov] = useState(false);
+  const Art = CARD_ARTS[index];
+  const scRef = useRef<HTMLDivElement>(null);
+  const scInView = useInView(scRef, { once: false, amount: 0.2 });
   return (
     <motion.div
+      ref={scRef}
       onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-      initial={{ opacity: 0, y: 32 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: false, amount: 0.2 }}
-      transition={{ duration: 0.62, ease: EASE, delay: index * 0.10 + 0.12 }}
+      animate={{ opacity: scInView ? 1 : 0 }}
+      transition={{ duration: 0.68, ease: [0.25, 1, 0.5, 1] as [number,number,number,number], delay: index * 0.08 }}
+      whileHover={{ y: -4, transition: { duration: 0.22, ease: 'easeOut' } }}
       style={{
-        background: hov
-          ? 'rgba(255,255,255,0.10)'
-          : 'rgba(255,255,255,0.06)',
-        backdropFilter: 'blur(24px) saturate(160%)',
-        WebkitBackdropFilter: 'blur(24px) saturate(160%)',
-        border: `1px solid ${hov ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.13)'}`,
-        borderTop: `1px solid ${hov ? 'rgba(255,255,255,0.32)' : 'rgba(255,255,255,0.20)'}`,
-        padding: '28px 24px',
+        display: 'flex', flexDirection: 'column',
         position: 'relative', overflow: 'hidden',
-        borderRadius: '2px',
-        transform: hov ? 'translateY(-4px)' : undefined,
-        transition: [
-          'background 250ms ease',
-          'border-color 250ms ease',
-          'box-shadow 250ms ease',
-          'transform 250ms ease',
-        ].join(', '),
-        boxShadow: hov
-          ? '0 20px 56px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15)'
-          : 'inset 0 1px 0 rgba(255,255,255,0.07)',
+        padding: '28px 26px 26px',
+        backgroundColor: hov ? 'rgba(255,255,255,0.055)' : 'rgba(255,255,255,0.028)',
+        borderRadius: '16px',
+        border: `1px solid ${hov ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.07)'}`,
+        transition: 'background-color 320ms cubic-bezier(0.25,1,0.5,1), border-color 320ms cubic-bezier(0.25,1,0.5,1)',
+        cursor: 'default',
+        minHeight: '420px',
       }}
     >
-      {/* Top gradient border highlight */}
-      <div aria-hidden style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, rgba(61,82,230,0.7) 0%, rgba(123,79,212,0.5) 100%)', opacity: hov ? 1 : 0.5, transition: 'opacity 250ms ease', pointerEvents: 'none' }} />
-      <WireframeBg index={index} />
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', position: 'relative', zIndex: 1 }}>
-        <span style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '11px', fontWeight: 600, letterSpacing: '0.18em', color: 'var(--accent)' }}>{s.n}</span>
-        <span style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '9px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(240,239,233,0.5)', backgroundColor: 'rgba(61,82,230,0.1)', border: '1px solid rgba(61,82,230,0.25)', padding: '4px 10px' }}>{s.tag}</span>
+      {/* Top: number + tag */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px', position: 'relative', zIndex: 1 }}>
+        <span style={{
+          fontFamily: 'var(--font-mono), monospace', fontSize: '10px',
+          letterSpacing: '0.2em', textTransform: 'uppercase',
+          color: hov ? 'var(--accent)' : 'rgba(255,255,255,0.22)',
+          transition: 'color 280ms cubic-bezier(0.25,1,0.5,1)',
+        }}>{s.n}</span>
+        <span style={{
+          fontFamily: 'var(--font-mono), monospace', fontSize: '8px',
+          letterSpacing: '0.14em', textTransform: 'uppercase',
+          color: 'rgba(220,225,248,0.28)',
+        }}>{s.tag}</span>
       </div>
-      <h3 className="font-heading" style={{ fontSize: 'clamp(22px, 2.2vw, 32px)', fontWeight: 500, letterSpacing: '-0.02em', color: 'var(--dark-text)', lineHeight: 1.12, marginBottom: '16px', position: 'relative', zIndex: 1 }}>{s.title}</h3>
-      <p className="font-body" style={{ fontSize: '14px', lineHeight: 1.8, color: 'rgba(240,239,233,0.55)', position: 'relative', zIndex: 1 }}>{s.body}</p>
+
+      {/* Title */}
+      <h3 className="font-heading" style={{
+        fontSize: 'clamp(17px, 1.8vw, 24px)',
+        fontWeight: 500, letterSpacing: '-0.02em',
+        color: 'var(--dark-text)', lineHeight: 1.1,
+        margin: 0, position: 'relative', zIndex: 1,
+      }}>{s.title}</h3>
+
+      {/* Art — flex middle, open breathing room */}
+      <div style={{
+        flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '28px 0 20px', position: 'relative', zIndex: 1,
+      }}>
+        <Art hov={hov} />
+      </div>
+
+      {/* Bottom: body text + hover reveal */}
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <p className="font-body" style={{
+          fontSize: '13px', lineHeight: 1.78,
+          color: 'rgba(220,225,248,0.48)',
+          margin: 0,
+        }}>{s.body}</p>
+
+        {/* "Explore →" fades up on hover */}
+        <motion.span
+          animate={{ opacity: hov ? 1 : 0, y: hov ? 0 : 6 }}
+          transition={{ duration: 0.32, ease: [0.25, 1, 0.5, 1] as [number,number,number,number], delay: hov ? 0.07 : 0 }}
+          style={{
+            display: 'block', marginTop: '14px',
+            fontFamily: 'var(--font-mono), monospace', fontSize: '9px',
+            letterSpacing: '0.18em', textTransform: 'uppercase',
+            color: 'rgba(61,82,230,0.72)',
+          }}
+        >
+          Explore →
+        </motion.span>
+      </div>
+
+      {/* Bottom accent line draws on hover */}
+      <motion.div
+        animate={{ scaleX: hov ? 1 : 0, opacity: hov ? 1 : 0 }}
+        initial={{ scaleX: 0, opacity: 0 }}
+        transition={{
+          scaleX: { duration: hov ? 0.52 : 0.24, ease: [0.16, 1, 0.3, 1] as [number,number,number,number] },
+          opacity: { duration: 0.14 },
+        }}
+        style={{
+          position: 'absolute', bottom: 0, left: 0,
+          width: '100%', height: '1px',
+          backgroundColor: 'rgba(61,82,230,0.4)',
+          transformOrigin: 'left center', pointerEvents: 'none',
+        }}
+      />
     </motion.div>
   );
 }
 
 function WebServicesGrid() {
+  const gridHdrRef = useRef<HTMLDivElement>(null);
+  const gridHdrInView = useInView(gridHdrRef, { once: false, amount: 0.4 });
   return (
-    <section id="web-services" data-section-label="What We Design" style={{ backgroundColor: 'var(--dark-bg)', backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.035) 1px, transparent 1px)', backgroundSize: '28px 28px', padding: '64px 32px', position: 'relative', overflow: 'hidden' }}>
-      {/* Ambient glows — behind the glass cards */}
-      <div aria-hidden style={{ position: 'absolute', top: '10%', left: '10%', width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(61,82,230,0.18) 0%, transparent 60%)', pointerEvents: 'none' }} />
-      <div aria-hidden style={{ position: 'absolute', bottom: '5%', right: '8%', width: '420px', height: '420px', background: 'radial-gradient(circle, rgba(123,79,212,0.14) 0%, transparent 60%)', pointerEvents: 'none' }} />
-      <div aria-hidden style={{ position: 'absolute', top: '45%', left: '50%', transform: 'translateX(-50%)', width: '600px', height: '300px', background: 'radial-gradient(ellipse, rgba(61,82,230,0.10) 0%, transparent 65%)', pointerEvents: 'none' }} />
+    <section
+      id="web-services"
+      data-section-label="What We Design"
+      style={{
+        backgroundColor: 'var(--dark-bg)',
+        backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.035) 1px, transparent 1px)',
+        backgroundSize: '28px 28px',
+        padding: '80px 32px 96px',
+        position: 'relative', overflow: 'hidden',
+      }}
+    >
+      {/* Ambient glow */}
+      <div aria-hidden style={{
+        position: 'absolute', top: '50%', left: '40%',
+        width: '700px', height: '500px',
+        background: 'radial-gradient(ellipse, rgba(61,82,230,0.08) 0%, transparent 65%)',
+        pointerEvents: 'none', transform: 'translate(-50%, -50%)',
+      }} />
+
       <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+
+        {/* Section header */}
         <motion.div
-          initial={{ opacity: 0, y: 28 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.4 }}
-          transition={{ duration: 0.72, ease: EASE }}
-          style={{ marginBottom: '32px' }}
+          ref={gridHdrRef}
+          animate={{ opacity: gridHdrInView ? 1 : 0 }}
+          transition={{ duration: 0.72, ease: [0.25, 1, 0.5, 1] as [number,number,number,number] }}
+          style={{ marginBottom: '52px' }}
         >
-          <div style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '9px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--accent)', border: '1px solid rgba(61,82,230,0.25)', padding: '5px 12px', display: 'inline-block', marginBottom: '20px' }}>What We Design</div>
-          <h2 className="font-heading" style={{ fontSize: 'clamp(34px, 4vw, 52px)', fontWeight: 500, letterSpacing: '-0.025em', color: 'var(--dark-text)', lineHeight: 1.1 }}>
-            The four types of website<br />we build for businesses.
+          <div style={{
+            fontFamily: 'var(--font-body), sans-serif', fontSize: '9px',
+            fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase',
+            color: 'var(--accent)', border: '1px solid rgba(61,82,230,0.25)',
+            padding: '5px 12px', display: 'inline-block', marginBottom: '24px',
+          }}>What We Design</div>
+
+          <h2 className="font-heading" style={{
+            fontSize: 'clamp(48px, 7vw, 88px)',
+            fontWeight: 500, letterSpacing: '-0.044em',
+            color: 'var(--dark-text)', lineHeight: 0.94,
+          }}>
+            Four formats.<br />
+            <em style={{ fontStyle: 'italic' }}>Built to win.</em>
           </h2>
         </motion.div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }} className="web-svc-grid">
-          {WEB_SERVICES.map((s, i) => <WebServiceCard key={i} s={s} index={i} />)}
+
+        {/* Equal 4-column grid */}
+        <div
+          className="web-svc-grid"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gap: '10px',
+          }}
+        >
+          {WEB_SERVICES.map((s, i) => (
+            <ServiceCard key={s.n} s={s} index={i} />
+          ))}
         </div>
       </div>
-      <style>{`@media (max-width: 900px) { .web-svc-grid { grid-template-columns: 1fr !important; } }`}</style>
+
+      <style>{`
+        @media (max-width: 900px) {
+          .web-svc-grid {
+            grid-template-columns: 1fr 1fr !important;
+          }
+        }
+        @media (max-width: 560px) {
+          .web-svc-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

@@ -10,6 +10,7 @@ import Navigation from './components/Navigation';
 import Footer from './components/Footer';
 import SideNav from './components/ui/SideNav';
 import BackToTop from './components/ui/BackToTop';
+import ScrollbarHover from './components/ui/ScrollbarHover';
 import CustomCursor from './components/CustomCursor';
 import StyledComponentsRegistry from './lib/StyledComponentsRegistry';
 import PageLoader from './components/ui/PageLoader';
@@ -77,6 +78,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             Skip to content
           </a>
           <div className="grain-overlay" aria-hidden />
+          <ScrollbarHover />
           <Navigation />
           <SideNav />
           <BackToTop />

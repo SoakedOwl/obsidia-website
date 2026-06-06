@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useImperativeHandle, forwardRef } from 'react';
 
 interface GlareHoverProps {
   width?: string;
@@ -19,7 +19,12 @@ interface GlareHoverProps {
   style?: React.CSSProperties;
 }
 
-const GlareHover: React.FC<GlareHoverProps> = ({
+export interface GlareHoverHandle {
+  animateIn: () => void;
+  animateOut: () => void;
+}
+
+const GlareHover = forwardRef<GlareHoverHandle, GlareHoverProps>(({
   width = '500px',
   height = '500px',
   background = '#000',
@@ -33,8 +38,8 @@ const GlareHover: React.FC<GlareHoverProps> = ({
   transitionDuration = 650,
   playOnce = false,
   className = '',
-  style = {}
-}) => {
+  style = {},
+}, ref) => {
   const hex = glareColor.replace('#', '');
   let rgba = glareColor;
   if (/^[\dA-Fa-f]{6}$/.test(hex)) {
@@ -54,57 +59,52 @@ const GlareHover: React.FC<GlareHoverProps> = ({
   const animateIn = () => {
     const el = overlayRef.current;
     if (!el) return;
-
     el.style.transition = 'none';
-    el.style.backgroundPosition = '-100% -100%, 0 0';
-    el.style.transition = `${transitionDuration}ms ease`;
-    el.style.backgroundPosition = '100% 100%, 0 0';
+    el.style.backgroundPosition = '-100% -100%';
+    void el.getBoundingClientRect();
+    el.style.transition = `background-position ${transitionDuration}ms ease`;
+    el.style.backgroundPosition = '100% 100%';
+    console.log('after animateIn:', el.style.backgroundPosition, el.style.transition);
   };
 
   const animateOut = () => {
     const el = overlayRef.current;
     if (!el) return;
-
     if (playOnce) {
       el.style.transition = 'none';
-      el.style.backgroundPosition = '-100% -100%, 0 0';
+      el.style.backgroundPosition = '-100% -100%';
     } else {
-      el.style.transition = `${transitionDuration}ms ease`;
-      el.style.backgroundPosition = '-100% -100%, 0 0';
+      el.style.transition = `background-position ${transitionDuration}ms ease`;
+      el.style.backgroundPosition = '-100% -100%';
     }
   };
+
+  useImperativeHandle(ref, () => ({ animateIn, animateOut }));
 
   const overlayStyle: React.CSSProperties = {
     position: 'absolute',
     inset: 0,
-    background: `linear-gradient(${glareAngle}deg,
-        hsla(0,0%,0%,0) 60%,
-        ${rgba} 70%,
-        hsla(0,0%,0%,0) 100%)`,
-    backgroundSize: `${glareSize}% ${glareSize}%, 100% 100%`,
+    backgroundImage: `linear-gradient(${glareAngle}deg,
+      hsla(0,0%,0%,0) 60%,
+      ${rgba} 70%,
+      hsla(0,0%,0%,0) 100%)`,
+    backgroundSize: `${glareSize}% ${glareSize}%`,
     backgroundRepeat: 'no-repeat',
-    backgroundPosition: '-100% -100%, 0 0',
-    pointerEvents: 'none'
+    backgroundPosition: '-100% -100%',
+    pointerEvents: 'none',
   };
 
   return (
     <div
-      className={`relative grid place-items-center overflow-hidden border cursor-pointer ${className}`}
-      style={{
-        width,
-        height,
-        background,
-        borderRadius,
-        borderColor,
-        ...style
-      }}
-      onMouseEnter={animateIn}
-      onMouseLeave={animateOut}
+      className={`relative overflow-hidden ${className}`}
+      style={{ width, height, background, borderRadius, borderColor, ...style }}
     >
       <div ref={overlayRef} style={overlayStyle} />
       {children}
     </div>
   );
-};
+});
+
+GlareHover.displayName = 'GlareHover';
 
 export default GlareHover;

@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useInView } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import CTABand from '../../components/CTABand';
 import MagneticButton from '../../components/MagneticButton';
+import GlareHover, { GlareHoverHandle } from '../../components/ui/GlareHover';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
@@ -139,8 +140,8 @@ function AppsHero() {
   }, []);
 
   return (
-    <section data-nav-theme="dark" id="apps-hero" data-section-label="Overview" style={{ position: 'relative', minHeight: '100dvh', display: 'grid', gridTemplateColumns: '55% 45%', alignItems: 'stretch', overflow: 'hidden', backgroundColor: 'var(--dark-bg)', paddingTop: '76px' }} className="apps-hero-grid">
-      <div aria-hidden style={{ position: 'absolute', inset: 0, width: '55%', backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
+    <section data-nav-theme="dark" id="apps-hero" data-section-label="Overview" style={{ position: 'relative', minHeight: '100vh', display: 'grid', gridTemplateColumns: '55% 45%', alignItems: 'stretch', overflow: 'hidden', backgroundColor: 'var(--dark-bg)', paddingTop: '92px' }} className="apps-hero-grid">
+      <div aria-hidden style={{ position: 'absolute', top: '92px', left: 0, right: 0, bottom: 0, width: '55%', backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
       <div aria-hidden style={{ position: 'absolute', top: '10%', right: '40%', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(61,82,230,0.08) 0%, transparent 60%)', pointerEvents: 'none', zIndex: 0 }} />
       <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '80px 48px 80px 32px', maxWidth: '680px' }}>
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE }} style={{ marginBottom: '28px' }}>
@@ -213,8 +214,116 @@ const PROBLEMS = [
   },
 ];
 
+function ProblemCard({ p, i, isHov, onMouseEnter, onMouseLeave }: {
+  p: typeof PROBLEMS[0]; i: number; isHov: boolean;
+  onMouseEnter: () => void; onMouseLeave: () => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const glareRef = useRef<GlareHoverHandle>(null);
+  const inView = useInView(ref, { once: false, amount: 0.25 });
+
+  const cardStyles: React.CSSProperties[] = [
+    { borderTop: isHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderLeft: isHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderBottom: '5px solid transparent', borderRight: '5px solid transparent' },
+    { borderTop: isHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderRight: isHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderBottom: '5px solid transparent', borderLeft: '5px solid transparent' },
+    { borderBottom: isHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderLeft: isHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderTop: '5px solid transparent', borderRight: '5px solid transparent' },
+    { borderBottom: isHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderRight: isHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderTop: '5px solid transparent', borderLeft: '5px solid transparent' },
+  ];
+
+  return (
+    <motion.div
+      ref={ref}
+      onMouseEnter={() => { console.log('glareRef:', glareRef.current); onMouseEnter(); glareRef.current?.animateIn(); }}      
+      onMouseLeave={() => { onMouseLeave(); glareRef.current?.animateOut(); }}
+      animate={{ opacity: inView ? 1 : 0 }}
+      transition={{ duration: 0.68, ease: EASE, delay: i * 0.10 }}
+      style={{
+        position: 'relative',
+        backgroundColor: '#0D1020',
+        overflow: 'visible',
+        transition: 'background-color 300ms ease, box-shadow 280ms ease',
+        cursor: 'default',
+        ...cardStyles[i],
+      }}
+    >
+      <GlareHover
+        ref={glareRef}
+        width="100%"
+        height="100%"
+        background="transparent"
+        borderRadius="0"
+        borderColor="transparent"
+        glareColor="#ffffff"
+        glareOpacity={0.07}
+        glareAngle={-30}
+        glareSize={320}
+        transitionDuration={750}
+        style={{ padding: '22px 28px', display: 'flex', flexDirection: 'column' }}
+      >
+        {/* Indicator */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '9px', marginBottom: '16px' }}>
+          <div style={{
+            width: '6px', height: '6px', borderRadius: '50%',
+            backgroundColor: isHov ? 'var(--accent)' : 'rgba(61,82,230,0.5)',
+            boxShadow: isHov ? '0 0 12px rgba(61,82,230,0.6)' : 'none',
+            transition: 'background-color 250ms ease, box-shadow 250ms ease',
+            animation: `statPulse ${1.8 + i * 0.4}s ease-in-out infinite`,
+            flexShrink: 0,
+          }} />
+          <span style={{
+            fontFamily: 'var(--font-mono), monospace', fontSize: '9px',
+            letterSpacing: '0.2em', textTransform: 'uppercase',
+            color: isHov ? 'var(--accent)' : 'rgba(220,225,248,0.22)',
+            transition: 'color 250ms ease',
+          }}>
+            {p.indicator}
+          </span>
+        </div>
+
+        {/* Title */}
+        <h3
+          className="font-heading"
+          style={{
+            fontSize: 'clamp(19px, 2.1vw, 28px)',
+            fontWeight: 500, fontStyle: 'italic',
+            letterSpacing: '-0.025em',
+            color: isHov ? 'var(--dark-text)' : 'rgba(220,225,248,0.65)',
+            lineHeight: 1.14, marginBottom: '14px',
+            whiteSpace: 'pre-line',
+            transition: 'color 250ms ease',
+            position: 'relative', zIndex: 1,
+          }}
+        >
+          {p.title}
+        </h3>
+
+        {/* Body */}
+        <p className="font-body" style={{
+          fontSize: '12.5px', lineHeight: 1.68,
+          color: 'rgba(220,225,248,0.68)',
+          position: 'relative', zIndex: 1,
+        }}>
+          {p.body}
+        </p>
+      </GlareHover>
+
+      {(i === 2 || i === 3) && (
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0, height: '2px',
+          backgroundColor: 'var(--accent)',
+          transform: isHov ? 'scaleX(1)' : 'scaleX(0)',
+          transformOrigin: 'left center',
+          transition: 'transform 400ms cubic-bezier(0.22,1,0.36,1)',
+          pointerEvents: 'none',
+        }} />
+      )}
+    </motion.div>
+  );
+}
+
 function AppsProblemStatement() {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const headerInView = useInView(headerRef, { once: false, amount: 0.4 });
 
   return (
     <section
@@ -225,7 +334,7 @@ function AppsProblemStatement() {
         backgroundColor: 'var(--dark-surface)',
         borderTop: '1px solid var(--dark-border)',
         borderBottom: '1px solid var(--dark-border)',
-        minHeight: '100dvh',
+        minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -235,7 +344,7 @@ function AppsProblemStatement() {
       }}
     >
       {/* Dot grid */}
-      <div aria-hidden style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.022) 1px, transparent 1px)', backgroundSize: '32px 32px', pointerEvents: 'none' }} />
+      <div aria-hidden style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.12) 1.5px, transparent 1.5px)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
       {/* Ambient glow */}
       <div aria-hidden style={{ position: 'absolute', top: '-30%', right: '-5%', width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(61,82,230,0.07) 0%, transparent 60%)', pointerEvents: 'none' }} />
 
@@ -243,9 +352,8 @@ function AppsProblemStatement() {
 
         {/* Header — compact */}
         <motion.div
-          initial={{ opacity: 0, y: 28 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.4 }}
+          ref={headerRef}
+          animate={{ opacity: headerInView ? 1 : 0 }}
           transition={{ duration: 0.75, ease: EASE }}
           style={{
             display: 'flex',
@@ -273,94 +381,15 @@ function AppsProblemStatement() {
           className="apps-prob-grid"
           style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}
         >
-          {PROBLEMS.map((p, i) => {
-            const isHov = hoveredIdx === i;
-            const ACTIVE = '2px solid rgba(61,82,230,0.65)';
-            const NONE = '2px solid transparent';
-            const outerBorder = i === 0
-              ? { borderTop: isHov ? ACTIVE : NONE, borderLeft: isHov ? ACTIVE : NONE, borderBottom: NONE, borderRight: NONE }
-              : i === 1
-              ? { borderTop: isHov ? ACTIVE : NONE, borderRight: isHov ? ACTIVE : NONE, borderBottom: NONE, borderLeft: NONE }
-              : i === 2
-              ? { borderBottom: isHov ? ACTIVE : NONE, borderLeft: isHov ? ACTIVE : NONE, borderTop: NONE, borderRight: NONE }
-              : { borderBottom: isHov ? ACTIVE : NONE, borderRight: isHov ? ACTIVE : NONE, borderTop: NONE, borderLeft: NONE };
-            return (
-              <motion.div
-                key={i}
-                onMouseEnter={() => setHoveredIdx(i)}
-                onMouseLeave={() => setHoveredIdx(null)}
-                initial={{ opacity: 0, y: 28 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.25 }}
-                transition={{ duration: 0.68, ease: EASE, delay: i * 0.10 }}
-                style={{
-                  position: 'relative',
-                  padding: '22px 28px',
-                  backgroundColor: isHov ? 'rgba(61,82,230,0.1)' : '#0D1020',
-                  overflow: 'hidden',
-                  transition: 'background-color 300ms ease, border-color 280ms ease',
-                  cursor: 'default',
-                  ...outerBorder,
-                }}
-              >
-                {/* Indicator */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '9px', marginBottom: '16px' }}>
-                  <div style={{
-                    width: '6px', height: '6px', borderRadius: '50%',
-                    backgroundColor: isHov ? 'var(--accent)' : 'rgba(61,82,230,0.5)',
-                    boxShadow: isHov ? '0 0 12px rgba(61,82,230,0.6)' : 'none',
-                    transition: 'background-color 250ms ease, box-shadow 250ms ease',
-                    animation: `statPulse ${1.8 + i * 0.4}s ease-in-out infinite`,
-                    flexShrink: 0,
-                  }} />
-                  <span style={{
-                    fontFamily: 'var(--font-mono), monospace', fontSize: '9px',
-                    letterSpacing: '0.2em', textTransform: 'uppercase',
-                    color: isHov ? 'var(--accent)' : 'rgba(220,225,248,0.22)',
-                    transition: 'color 250ms ease',
-                  }}>
-                    {p.indicator}
-                  </span>
-                </div>
-
-                {/* Title */}
-                <h3
-                  className="font-heading"
-                  style={{
-                    fontSize: 'clamp(19px, 2.1vw, 28px)',
-                    fontWeight: 500, fontStyle: 'italic',
-                    letterSpacing: '-0.025em',
-                    color: isHov ? 'var(--dark-text)' : 'rgba(220,225,248,0.65)',
-                    lineHeight: 1.14, marginBottom: '14px',
-                    whiteSpace: 'pre-line',
-                    transition: 'color 250ms ease',
-                    position: 'relative', zIndex: 1,
-                  }}
-                >
-                  {p.title}
-                </h3>
-
-                {/* Body */}
-                <p className="font-body" style={{
-                  fontSize: '12.5px', lineHeight: 1.68,
-                  color: 'rgba(220,225,248,0.68)',
-                  position: 'relative', zIndex: 1,
-                }}>
-                  {p.body}
-                </p>
-
-                {/* Bottom accent */}
-                <div style={{
-                  position: 'absolute', bottom: 0, left: 0, right: 0, height: '2px',
-                  backgroundColor: 'var(--accent)',
-                  transform: isHov ? 'scaleX(1)' : 'scaleX(0)',
-                  transformOrigin: 'left center',
-                  transition: 'transform 400ms cubic-bezier(0.22,1,0.36,1)',
-                  pointerEvents: 'none',
-                }} />
-              </motion.div>
-            );
-          })}
+{PROBLEMS.map((p, i) => (
+  <ProblemCard
+    key={i}
+    p={p} i={i}
+    isHov={hoveredIdx === i}
+    onMouseEnter={() => setHoveredIdx(i)}
+    onMouseLeave={() => setHoveredIdx(null)}
+  />
+))}
         </div>
       </div>
 
@@ -692,6 +721,8 @@ function AppServicesGrid() {
   const [activeIdx, setActiveIdx] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const mouseX = useMotionValue(0);
+  const svcHdrRef = useRef<HTMLDivElement>(null);
+  const svcHdrInView = useInView(svcHdrRef, { once: false, amount: 0.35 });
 
   useEffect(() => {
     if (isHovered) return;
@@ -737,9 +768,8 @@ function AppServicesGrid() {
       <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
         {/* Section header */}
         <motion.div
-          initial={{ opacity: 0, y: 28 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.35 }}
+          ref={svcHdrRef}
+          animate={{ opacity: svcHdrInView ? 1 : 0 }}
           transition={{ duration: 0.72, ease: EASE }}
           style={{ marginBottom: '24px' }}
         >
@@ -748,8 +778,7 @@ function AppServicesGrid() {
             className="font-heading"
             style={{ fontSize: 'clamp(36px, 4.5vw, 60px)', fontWeight: 500, letterSpacing: '-0.03em', color: 'var(--dark-text)', lineHeight: 1.04, maxWidth: '520px' }}
           >
-            Four types of application,
-            <em style={{ color: 'var(--accent)', fontStyle: 'italic' }}> one team.</em>
+            The right build for the right business.
           </h2>
         </motion.div>
 
@@ -1035,8 +1064,169 @@ const APP_PHASES = [
   },
 ];
 
+function AppPhaseCard({ phase, i, isActive, onMouseEnter, onMouseLeave }: {
+  phase: typeof APP_PHASES[0]; i: number; isActive: boolean;
+  onMouseEnter: () => void; onMouseLeave: () => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: false, amount: 0.2 });
+
+  return (
+    <motion.div
+      ref={ref}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      animate={{ opacity: inView ? 1 : 0 }}
+      transition={{ duration: 0.68, ease: EASE, delay: i * 0.11 + 0.08 }}
+      style={{
+        position: 'relative',
+        backgroundColor: isActive ? 'rgba(61,82,230,0.09)' : '#070B18',
+        padding: '36px 28px 32px',
+        overflow: 'hidden',
+        minHeight: '360px',
+        display: 'flex',
+        flexDirection: 'column',
+        transition: 'background-color 320ms ease',
+        cursor: 'default',
+      }}
+    >
+      {/* Top accent line sweeps in on hover */}
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0, height: '2px',
+        backgroundColor: 'var(--accent)',
+        transform: `scaleX(${isActive ? 1 : 0})`,
+        transformOrigin: 'left center',
+        transition: 'transform 420ms cubic-bezier(0.22,1,0.36,1)',
+        pointerEvents: 'none',
+      }} />
+
+      {/* Phase meta */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '28px' }}>
+        <div style={{
+          width: '7px', height: '7px', borderRadius: '50%',
+          backgroundColor: isActive ? 'var(--accent)' : 'rgba(61,82,230,0.4)',
+          boxShadow: isActive ? '0 0 14px rgba(61,82,230,0.65)' : 'none',
+          transition: 'all 280ms ease',
+          animation: `statPulse ${2 + i * 0.3}s ease-in-out infinite`,
+          flexShrink: 0,
+        }} />
+        <span style={{
+          fontFamily: 'var(--font-mono), monospace', fontSize: '9px', letterSpacing: '0.18em', textTransform: 'uppercase',
+          color: isActive ? 'var(--accent)' : 'rgba(220,225,248,0.22)',
+          transition: 'color 250ms ease',
+        }}>
+          {phase.phase}
+        </span>
+      </div>
+
+      {/* Phase title */}
+      <h3
+        className="font-heading"
+        style={{
+          fontSize: 'clamp(24px, 2.4vw, 34px)',
+          fontWeight: 500, fontStyle: 'italic',
+          letterSpacing: '-0.025em', lineHeight: 1.06,
+          color: isActive ? 'var(--dark-text)' : 'rgba(220,225,248,0.65)',
+          marginBottom: '5px',
+          transition: 'color 250ms ease',
+        }}
+      >
+        {phase.title}
+      </h3>
+      <div style={{
+        fontFamily: 'var(--font-body), sans-serif', fontSize: '11px',
+        color: isActive ? 'rgba(220,225,248,0.42)' : 'rgba(220,225,248,0.18)',
+        marginBottom: '24px',
+        transition: 'color 250ms ease',
+      }}>
+        {phase.subtitle}
+      </div>
+
+      {/* Bullets */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '9px', flex: 1 }}>
+        {phase.bullets.map((bullet, j) => (
+          <div key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: '9px' }}>
+            <div style={{
+              width: '3px', height: '3px', borderRadius: '50%', marginTop: '7px', flexShrink: 0,
+              backgroundColor: isActive ? 'var(--accent)' : 'rgba(61,82,230,0.4)',
+              transition: 'background-color 250ms ease',
+            }} />
+            <span style={{
+              fontFamily: 'var(--font-body), sans-serif', fontSize: '12px', lineHeight: 1.62,
+              color: isActive ? 'rgba(220,225,248,0.58)' : 'rgba(220,225,248,0.28)',
+              transition: 'color 250ms ease',
+            }}>
+              {bullet}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* Deliverable */}
+      <div style={{
+        borderTop: `1px solid ${isActive ? 'rgba(61,82,230,0.25)' : 'rgba(255,255,255,0.07)'}`,
+        paddingTop: '14px', marginTop: '20px',
+        display: 'flex', alignItems: 'center', gap: '9px',
+        transition: 'border-color 250ms ease',
+      }}>
+        <div style={{
+          width: '5px', height: '5px', borderRadius: '1px',
+          backgroundColor: isActive ? 'var(--accent)' : 'rgba(61,82,230,0.3)',
+          transition: 'background-color 250ms ease', flexShrink: 0,
+        }} />
+        <span style={{
+          fontFamily: 'var(--font-body), sans-serif', fontSize: '11px',
+          color: isActive ? 'rgba(220,225,248,0.48)' : 'rgba(220,225,248,0.2)',
+          transition: 'color 250ms ease',
+        }}>
+          {phase.deliverable}
+        </span>
+      </div>
+
+      {/* Terminal preview — slides up from bottom on hover */}
+      <div style={{
+        position: 'absolute',
+        bottom: 0, left: 0, right: 0,
+        height: '196px',
+        backgroundColor: '#040710',
+        borderTop: '1px solid rgba(61,82,230,0.22)',
+        transform: isActive ? 'translateY(0)' : 'translateY(100%)',
+        transition: 'transform 420ms cubic-bezier(0.22,1,0.36,1)',
+        overflow: 'hidden',
+        padding: '14px 16px 12px',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '10px', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '9px' }}>
+          {['#FF5F57', '#FEBC2E', '#28C840'].map((c, k) => (
+            <div key={k} style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: c, opacity: 0.65 }} />
+          ))}
+          <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '8px', color: 'rgba(220,225,248,0.3)', marginLeft: '6px', letterSpacing: '0.1em' }}>
+            {phase.previewTitle}
+          </span>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+          {phase.previewLines.map((line, k) => (
+            <span key={k} style={{
+              fontFamily: 'var(--font-mono), monospace',
+              fontSize: '9px', lineHeight: 1.55, display: 'block',
+              color: line.startsWith('✓') ? '#22C55E'
+                : line.startsWith('●') ? 'var(--accent)'
+                : line.startsWith('#') ? 'rgba(220,225,248,0.72)'
+                : line === '' ? 'transparent'
+                : 'rgba(220,225,248,0.42)',
+            }}>
+              {line || ' '}
+            </span>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 function AppProcessSection() {
   const [activePhase, setActivePhase] = useState<number | null>(null);
+  const procHdrRef = useRef<HTMLDivElement>(null);
+  const procHdrInView = useInView(procHdrRef, { once: false, amount: 0.3 });
 
   return (
     <section
@@ -1058,10 +1248,9 @@ function AppProcessSection() {
       <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
         {/* Header */}
         <motion.div
+          ref={procHdrRef}
           className="apps-proc-hdr"
-          initial={{ opacity: 0, y: 28 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.3 }}
+          animate={{ opacity: procHdrInView ? 1 : 0 }}
           transition={{ duration: 0.75, ease: EASE }}
           style={{
             display: 'grid',
@@ -1093,163 +1282,15 @@ function AppProcessSection() {
           className="apps-phases-grid"
           style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', backgroundColor: 'rgba(255,255,255,0.06)' }}
         >
-          {APP_PHASES.map((phase, i) => {
-            const isActive = activePhase === i;
-            return (
-              <motion.div
-                key={i}
-                onMouseEnter={() => setActivePhase(i)}
-                onMouseLeave={() => setActivePhase(null)}
-                initial={{ opacity: 0, y: 32 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.2 }}
-                transition={{ duration: 0.68, ease: EASE, delay: i * 0.11 + 0.08 }}
-                style={{
-                  position: 'relative',
-                  backgroundColor: isActive ? 'rgba(61,82,230,0.09)' : '#070B18',
-                  padding: '36px 28px 32px',
-                  overflow: 'hidden',
-                  minHeight: '360px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  transition: 'background-color 320ms ease',
-                  cursor: 'default',
-                }}
-              >
-                {/* Top accent line sweeps in on hover */}
-                <div style={{
-                  position: 'absolute', top: 0, left: 0, right: 0, height: '2px',
-                  backgroundColor: 'var(--accent)',
-                  transform: `scaleX(${isActive ? 1 : 0})`,
-                  transformOrigin: 'left center',
-                  transition: 'transform 420ms cubic-bezier(0.22,1,0.36,1)',
-                  pointerEvents: 'none',
-                }} />
-
-                {/* Phase meta */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '28px' }}>
-                  <div style={{
-                    width: '7px', height: '7px', borderRadius: '50%',
-                    backgroundColor: isActive ? 'var(--accent)' : 'rgba(61,82,230,0.4)',
-                    boxShadow: isActive ? '0 0 14px rgba(61,82,230,0.65)' : 'none',
-                    transition: 'all 280ms ease',
-                    animation: `statPulse ${2 + i * 0.3}s ease-in-out infinite`,
-                    flexShrink: 0,
-                  }} />
-                  <span style={{
-                    fontFamily: 'var(--font-mono), monospace', fontSize: '9px', letterSpacing: '0.18em', textTransform: 'uppercase',
-                    color: isActive ? 'var(--accent)' : 'rgba(220,225,248,0.22)',
-                    transition: 'color 250ms ease',
-                  }}>
-                    {phase.phase}
-                  </span>
-                </div>
-
-                {/* Phase title */}
-                <h3
-                  className="font-heading"
-                  style={{
-                    fontSize: 'clamp(24px, 2.4vw, 34px)',
-                    fontWeight: 500, fontStyle: 'italic',
-                    letterSpacing: '-0.025em', lineHeight: 1.06,
-                    color: isActive ? 'var(--dark-text)' : 'rgba(220,225,248,0.65)',
-                    marginBottom: '5px',
-                    transition: 'color 250ms ease',
-                  }}
-                >
-                  {phase.title}
-                </h3>
-                <div style={{
-                  fontFamily: 'var(--font-body), sans-serif', fontSize: '11px',
-                  color: isActive ? 'rgba(220,225,248,0.42)' : 'rgba(220,225,248,0.18)',
-                  marginBottom: '24px',
-                  transition: 'color 250ms ease',
-                }}>
-                  {phase.subtitle}
-                </div>
-
-                {/* Bullets */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '9px', flex: 1 }}>
-                  {phase.bullets.map((bullet, j) => (
-                    <div key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: '9px' }}>
-                      <div style={{
-                        width: '3px', height: '3px', borderRadius: '50%', marginTop: '7px', flexShrink: 0,
-                        backgroundColor: isActive ? 'var(--accent)' : 'rgba(61,82,230,0.4)',
-                        transition: 'background-color 250ms ease',
-                      }} />
-                      <span style={{
-                        fontFamily: 'var(--font-body), sans-serif', fontSize: '12px', lineHeight: 1.62,
-                        color: isActive ? 'rgba(220,225,248,0.58)' : 'rgba(220,225,248,0.28)',
-                        transition: 'color 250ms ease',
-                      }}>
-                        {bullet}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Deliverable */}
-                <div style={{
-                  borderTop: `1px solid ${isActive ? 'rgba(61,82,230,0.25)' : 'rgba(255,255,255,0.07)'}`,
-                  paddingTop: '14px', marginTop: '20px',
-                  display: 'flex', alignItems: 'center', gap: '9px',
-                  transition: 'border-color 250ms ease',
-                }}>
-                  <div style={{
-                    width: '5px', height: '5px', borderRadius: '1px',
-                    backgroundColor: isActive ? 'var(--accent)' : 'rgba(61,82,230,0.3)',
-                    transition: 'background-color 250ms ease', flexShrink: 0,
-                  }} />
-                  <span style={{
-                    fontFamily: 'var(--font-body), sans-serif', fontSize: '11px',
-                    color: isActive ? 'rgba(220,225,248,0.48)' : 'rgba(220,225,248,0.2)',
-                    transition: 'color 250ms ease',
-                  }}>
-                    {phase.deliverable}
-                  </span>
-                </div>
-
-                {/* Terminal preview — slides up from bottom on hover */}
-                <div style={{
-                  position: 'absolute',
-                  bottom: 0, left: 0, right: 0,
-                  height: '196px',
-                  backgroundColor: '#040710',
-                  borderTop: '1px solid rgba(61,82,230,0.22)',
-                  transform: isActive ? 'translateY(0)' : 'translateY(100%)',
-                  transition: 'transform 420ms cubic-bezier(0.22,1,0.36,1)',
-                  overflow: 'hidden',
-                  padding: '14px 16px 12px',
-                }}>
-                  {/* Terminal header */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '10px', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '9px' }}>
-                    {['#FF5F57', '#FEBC2E', '#28C840'].map((c, k) => (
-                      <div key={k} style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: c, opacity: 0.65 }} />
-                    ))}
-                    <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '8px', color: 'rgba(220,225,248,0.3)', marginLeft: '6px', letterSpacing: '0.1em' }}>
-                      {phase.previewTitle}
-                    </span>
-                  </div>
-                  {/* Terminal lines */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                    {phase.previewLines.map((line, k) => (
-                      <span key={k} style={{
-                        fontFamily: 'var(--font-mono), monospace',
-                        fontSize: '9px', lineHeight: 1.55, display: 'block',
-                        color: line.startsWith('✓') ? '#22C55E'
-                          : line.startsWith('●') ? 'var(--accent)'
-                          : line.startsWith('#') ? 'rgba(220,225,248,0.72)'
-                          : line === '' ? 'transparent'
-                          : 'rgba(220,225,248,0.42)',
-                      }}>
-                        {line || ' '}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
+          {APP_PHASES.map((phase, i) => (
+            <AppPhaseCard
+              key={i}
+              phase={phase} i={i}
+              isActive={activePhase === i}
+              onMouseEnter={() => setActivePhase(i)}
+              onMouseLeave={() => setActivePhase(null)}
+            />
+          ))}
         </div>
       </div>
 
