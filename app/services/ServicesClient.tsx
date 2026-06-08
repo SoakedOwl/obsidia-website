@@ -206,12 +206,203 @@ function TriptychPanel({
 function ServicesHero({ services }: { services: ServiceItem[] }) {
   const [vis, setVis]             = useState(false);
   const [activePanel, setActive]  = useState<number | null>(null);
+  const [isMobile, setIsMobile]   = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const id = setTimeout(() => setVis(true), 80);
     return () => clearTimeout(id);
   }, []);
 
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener('resize', check, { passive: true });
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const handleScroll = () => {
+      if (!wrapperRef.current) return;
+      const rect         = wrapperRef.current.getBoundingClientRect();
+      const sectionTop   = rect.top + window.scrollY;
+      const sectionHeight = wrapperRef.current.offsetHeight;
+      const windowHeight  = window.innerHeight;
+      const raw = (window.scrollY - sectionTop) / (sectionHeight - windowHeight);
+      setScrollProgress(Math.max(0, Math.min(1, raw)));
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isMobile]);
+
+  /* ── Mobile: scroll-hijacked horizontal pan ─── */
+  if (isMobile) {
+    return (
+      <div
+        ref={wrapperRef}
+        id="services-hero"
+        data-nav-theme="dark"
+        data-section-label="Services"
+        style={{ height: '300vh', position: 'relative' }}
+      >
+        <div style={{
+          position: 'sticky',
+          top: 0,
+          height: '100vh',
+          overflow: 'hidden',
+          backgroundColor: 'var(--dark-bg)',
+        }}>
+          {/* Horizontal track — 300vw, driven by scroll */}
+          <div
+            style={{
+              display: 'flex',
+              width: '300vw',
+              height: '100%',
+              transform: `translateX(-${scrollProgress * 200}vw)`,
+              transition: 'transform 0.1s linear',
+              willChange: 'transform',
+            }}
+          >
+            {services.map((svc, i) => (
+              <div
+                key={svc.number}
+                style={{
+                  width: '100vw',
+                  height: '100vh',
+                  flexShrink: 0,
+                  position: 'relative',
+                  overflow: 'hidden',
+                }}
+              >
+                {/* Background image — fully lit on mobile */}
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  backgroundImage: `url(${svc.bgImage ?? svc.image})`,
+                  backgroundSize: svc.bgImage ? '300% 100%' : 'cover',
+                  backgroundPosition: svc.bgImage
+                    ? (['0% center', '50% center', '100% center'] as const)[i]
+                    : 'center center',
+                  filter: 'grayscale(0%) brightness(0.38) contrast(1.12)',
+                  pointerEvents: 'none',
+                }} />
+
+                {/* Gradient overlay */}
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  background: 'linear-gradient(to bottom, rgba(6,8,15,0.08) 0%, rgba(6,8,15,0.82) 100%)',
+                  pointerEvents: 'none',
+                }} />
+
+                {/* Accent wash */}
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  background: 'radial-gradient(ellipse at 50% 90%, rgba(61,82,230,0.22) 0%, transparent 65%)',
+                  pointerEvents: 'none',
+                }} />
+
+                {/* Clickable content panel */}
+                <Link
+                  href={svc.href}
+                  style={{
+                    position: 'absolute', inset: 0, zIndex: 1,
+                    display: 'flex', flexDirection: 'column',
+                    justifyContent: 'flex-end',
+                    padding: '80px 28px 52px',
+                    textDecoration: 'none',
+                  }}
+                >
+                  {/* Service number */}
+                  <span style={{
+                    fontFamily: 'var(--font-mono), monospace',
+                    fontSize: '9px', letterSpacing: '0.22em', textTransform: 'uppercase',
+                    color: 'rgba(220,225,245,0.32)',
+                    display: 'block', marginBottom: '20px',
+                  }}>
+                    {svc.number} / 03
+                  </span>
+
+                  {/* Category label */}
+                  <span style={{
+                    display: 'block',
+                    fontFamily: 'var(--font-mono), monospace',
+                    fontSize: '11px', letterSpacing: '0.18em', textTransform: 'uppercase',
+                    color: 'rgba(220,225,245,0.75)',
+                    marginBottom: '12px',
+                  }}>
+                    {svc.title}
+                  </span>
+
+                  {/* Headline */}
+                  <h2
+                    className="font-heading"
+                    style={{
+                      fontWeight: 500, letterSpacing: '-0.032em',
+                      color: 'var(--dark-text)',
+                      lineHeight: 1.05, marginBottom: '14px',
+                    }}
+                  >
+                    {svc.panel1}<br /><em style={{ fontStyle: 'italic' }}>{svc.panel2}</em>
+                  </h2>
+
+                  {/* Body */}
+                  <p style={{
+                    fontFamily: 'var(--font-body), sans-serif',
+                    fontSize: '13px', lineHeight: 1.7,
+                    color: 'rgba(220,225,245,0.62)',
+                    maxWidth: '300px',
+                    marginBottom: '24px',
+                  }}>
+                    {svc.tagline}
+                  </p>
+
+                  {/* CTA */}
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{
+                      fontFamily: 'var(--font-body), sans-serif',
+                      fontSize: '10px', fontWeight: 500,
+                      letterSpacing: '0.14em', textTransform: 'uppercase',
+                      color: 'var(--accent)',
+                    }}>
+                      Explore
+                    </span>
+                    <ArrowRight size={10} color="var(--accent)" />
+                  </div>
+                </Link>
+              </div>
+            ))}
+          </div>
+
+          {/* Scroll progress pill indicators */}
+          <div style={{
+            position: 'absolute', bottom: '28px', left: '50%',
+            transform: 'translateX(-50%)',
+            display: 'flex', gap: '5px', zIndex: 10,
+            pointerEvents: 'none',
+          }}>
+            {services.map((_, i) => {
+              const panelIdx = scrollProgress * 2;
+              const isActive = Math.abs(panelIdx - i) < 0.5;
+              return (
+                <div key={i} style={{
+                  height: '3px', borderRadius: '2px',
+                  width: isActive ? '20px' : '6px',
+                  backgroundColor: isActive ? 'var(--accent)' : 'rgba(255,255,255,0.22)',
+                  transition: 'width 280ms ease, background-color 280ms ease',
+                }} />
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ── Desktop: existing triptych grid (unchanged) ─── */
   return (
     <section
       id="services-hero"
@@ -254,6 +445,9 @@ function ServicesHero({ services }: { services: ServiceItem[] }) {
         @media (max-width: 900px) {
           .triptych-grid { grid-template-columns: 1fr !important; gap: 2px !important; min-height: auto !important; }
           .triptych-grid > a { min-height: 40dvh; }
+        }
+        @media (max-width: 600px) {
+          .triptych-grid > a { min-height: 52dvh; }
         }
       `}</style>
     </section>
@@ -484,6 +678,12 @@ function ServiceSection({
             gap: 40px !important;
           }
           .svc-section-grid > div { order: 0 !important; }
+        }
+        @media (max-width: 768px) {
+          .svc-section-grid { padding: 52px 24px !important; gap: 32px !important; }
+        }
+        @media (max-width: 600px) {
+          .svc-section-grid { padding: 44px 20px !important; gap: 28px !important; }
         }
       `}</style>
     </section>

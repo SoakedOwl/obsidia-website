@@ -143,7 +143,7 @@ function AppsHero() {
     <section data-nav-theme="dark" id="apps-hero" data-section-label="Overview" style={{ position: 'relative', minHeight: '100vh', display: 'grid', gridTemplateColumns: '55% 45%', alignItems: 'stretch', overflow: 'hidden', backgroundColor: 'var(--dark-bg)', paddingTop: '92px' }} className="apps-hero-grid">
       <div aria-hidden style={{ position: 'absolute', top: '92px', left: 0, right: 0, bottom: 0, width: '55%', backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
       <div aria-hidden style={{ position: 'absolute', top: '10%', right: '40%', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(61,82,230,0.08) 0%, transparent 60%)', pointerEvents: 'none', zIndex: 0 }} />
-      <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '80px 48px 80px 32px', maxWidth: '680px' }}>
+      <div className="apps-hero-content" style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '80px 48px 80px 32px', maxWidth: '680px' }}>
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE }} style={{ marginBottom: '28px' }}>
           <div className="section-label" style={{ color: 'var(--accent)' }}>Application Development</div>
         </motion.div>
@@ -179,7 +179,10 @@ function AppsHero() {
       <motion.div initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.4 }} style={{ position: 'relative', height: '100%', minHeight: '500px' }}>
         <AppSkeletonVisual />
       </motion.div>
-      <style>{`@media (max-width: 1024px) { .apps-hero-grid { grid-template-columns: 1fr !important; min-height: auto !important; } .apps-hero-grid > div:last-child { display: none !important; } }`}</style>
+      <style>{`
+        @media (max-width: 1024px) { .apps-hero-grid { grid-template-columns: 1fr !important; min-height: auto !important; } .apps-hero-grid > div:last-child { display: none !important; } }
+        @media (max-width: 600px) { .apps-hero-content { padding: 72px 20px 48px 20px !important; } }
+      `}</style>
     </section>
   );
 }
@@ -214,19 +217,20 @@ const PROBLEMS = [
   },
 ];
 
-function ProblemCard({ p, i, isHov, onMouseEnter, onMouseLeave }: {
-  p: typeof PROBLEMS[0]; i: number; isHov: boolean;
+function ProblemCard({ p, i, isHov, forceHov, onMouseEnter, onMouseLeave }: {
+  p: typeof PROBLEMS[0]; i: number; isHov: boolean; forceHov?: boolean;
   onMouseEnter: () => void; onMouseLeave: () => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const glareRef = useRef<GlareHoverHandle>(null);
   const inView = useInView(ref, { once: false, amount: 0.25 });
+  const effectiveHov = isHov || (forceHov ?? false);
 
   const cardStyles: React.CSSProperties[] = [
-    { borderTop: isHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderLeft: isHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderBottom: '5px solid transparent', borderRight: '5px solid transparent' },
-    { borderTop: isHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderRight: isHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderBottom: '5px solid transparent', borderLeft: '5px solid transparent' },
-    { borderBottom: isHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderLeft: isHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderTop: '5px solid transparent', borderRight: '5px solid transparent' },
-    { borderBottom: isHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderRight: isHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderTop: '5px solid transparent', borderLeft: '5px solid transparent' },
+    { borderTop: effectiveHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderLeft: effectiveHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderBottom: '5px solid transparent', borderRight: '5px solid transparent' },
+    { borderTop: effectiveHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderRight: effectiveHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderBottom: '5px solid transparent', borderLeft: '5px solid transparent' },
+    { borderBottom: effectiveHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderLeft: effectiveHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderTop: '5px solid transparent', borderRight: '5px solid transparent' },
+    { borderBottom: effectiveHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderRight: effectiveHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderTop: '5px solid transparent', borderLeft: '5px solid transparent' },
   ];
 
   return (
@@ -263,8 +267,8 @@ function ProblemCard({ p, i, isHov, onMouseEnter, onMouseLeave }: {
         <div style={{ display: 'flex', alignItems: 'center', gap: '9px', marginBottom: '16px' }}>
           <div style={{
             width: '6px', height: '6px', borderRadius: '50%',
-            backgroundColor: isHov ? 'var(--accent)' : 'rgba(61,82,230,0.5)',
-            boxShadow: isHov ? '0 0 12px rgba(61,82,230,0.6)' : 'none',
+            backgroundColor: effectiveHov ? 'var(--accent)' : 'rgba(61,82,230,0.5)',
+            boxShadow: effectiveHov ? '0 0 12px rgba(61,82,230,0.6)' : 'none',
             transition: 'background-color 250ms ease, box-shadow 250ms ease',
             animation: `statPulse ${1.8 + i * 0.4}s ease-in-out infinite`,
             flexShrink: 0,
@@ -272,7 +276,7 @@ function ProblemCard({ p, i, isHov, onMouseEnter, onMouseLeave }: {
           <span style={{
             fontFamily: 'var(--font-mono), monospace', fontSize: '9px',
             letterSpacing: '0.2em', textTransform: 'uppercase',
-            color: isHov ? 'var(--accent)' : 'rgba(220,225,248,0.22)',
+            color: effectiveHov ? 'var(--accent)' : 'rgba(220,225,248,0.22)',
             transition: 'color 250ms ease',
           }}>
             {p.indicator}
@@ -286,7 +290,7 @@ function ProblemCard({ p, i, isHov, onMouseEnter, onMouseLeave }: {
             fontSize: 'clamp(19px, 2.1vw, 28px)',
             fontWeight: 500, fontStyle: 'italic',
             letterSpacing: '-0.025em',
-            color: isHov ? 'var(--dark-text)' : 'rgba(220,225,248,0.65)',
+            color: effectiveHov ? 'var(--dark-text)' : 'rgba(220,225,248,0.65)',
             lineHeight: 1.14, marginBottom: '14px',
             whiteSpace: 'pre-line',
             transition: 'color 250ms ease',
@@ -310,7 +314,7 @@ function ProblemCard({ p, i, isHov, onMouseEnter, onMouseLeave }: {
         <div style={{
           position: 'absolute', bottom: 0, left: 0, right: 0, height: '2px',
           backgroundColor: 'var(--accent)',
-          transform: isHov ? 'scaleX(1)' : 'scaleX(0)',
+          transform: effectiveHov ? 'scaleX(1)' : 'scaleX(0)',
           transformOrigin: 'left center',
           transition: 'transform 400ms cubic-bezier(0.22,1,0.36,1)',
           pointerEvents: 'none',
@@ -322,8 +326,117 @@ function ProblemCard({ p, i, isHov, onMouseEnter, onMouseLeave }: {
 
 function AppsProblemStatement() {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [activeCardIdx, setActiveCardIdx] = useState(0);
+  const [forceHovIdx, setForceHovIdx] = useState<number | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const forceHovTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const headerInView = useInView(headerRef, { once: false, amount: 0.4 });
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth <= 768);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobile) return;
+    if (forceHovTimer.current) clearTimeout(forceHovTimer.current);
+    setForceHovIdx(null);
+    forceHovTimer.current = setTimeout(() => setForceHovIdx(activeCardIdx), 1500);
+    return () => { if (forceHovTimer.current) clearTimeout(forceHovTimer.current); };
+  }, [activeCardIdx, isMobile]);
+
+  const handleScroll = () => {
+    if (!scrollContainerRef.current) return;
+    const el = scrollContainerRef.current;
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    if (maxScroll <= 0) return;
+    const idx = Math.round((el.scrollLeft / maxScroll) * (PROBLEMS.length - 1));
+    setActiveCardIdx(Math.min(Math.max(idx, 0), PROBLEMS.length - 1));
+  };
+
+  const sectionBase: React.CSSProperties = {
+    backgroundColor: 'var(--dark-surface)',
+    borderTop: '1px solid var(--dark-border)',
+    borderBottom: '1px solid var(--dark-border)',
+    position: 'relative',
+    overflow: 'hidden',
+  };
+
+  if (isMobile) {
+    return (
+      <section id="apps-problem" data-nav-theme="dark" data-section-label="Built Wrong." style={{ ...sectionBase, padding: '48px 0 40px' }}>
+        <div aria-hidden style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.12) 1.5px, transparent 1.5px)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
+
+        <div style={{ padding: '0 20px', marginBottom: '28px', position: 'relative', zIndex: 1 }}>
+          <div className="section-label" style={{ color: 'var(--accent)', marginBottom: '14px' }}>Built Wrong.</div>
+          <h2 className="font-heading" style={{ fontSize: 'clamp(24px, 7vw, 36px)', fontWeight: 500, lineHeight: 1.05, letterSpacing: '-0.03em', color: 'var(--dark-text)' }}>
+            Your biggest bottleneck
+            <br /><em style={{ color: 'var(--accent)' }}>is missing software.</em>
+          </h2>
+        </div>
+
+        <div
+          ref={scrollContainerRef}
+          className="apps-swipe-container"
+          onScroll={handleScroll}
+          style={{
+            display: 'flex',
+            gap: '12px',
+            overflowX: 'auto',
+            scrollSnapType: 'x mandatory',
+            paddingLeft: '20px',
+            paddingRight: '20px',
+            paddingBottom: '8px',
+            WebkitOverflowScrolling: 'touch' as React.CSSProperties['WebkitOverflowScrolling'],
+            position: 'relative',
+            zIndex: 1,
+          }}
+        >
+          {PROBLEMS.map((p, i) => (
+            <div
+              key={i}
+              style={{
+                flexShrink: 0,
+                width: '85vw',
+                scrollSnapAlign: 'center',
+                transform: `scale(${i === activeCardIdx ? 1.02 : 0.95})`,
+                transition: 'transform 350ms cubic-bezier(0.22,1,0.36,1)',
+              }}
+            >
+              <ProblemCard
+                p={p} i={i}
+                isHov={hoveredIdx === i}
+                forceHov={forceHovIdx === i}
+                onMouseEnter={() => setHoveredIdx(i)}
+                onMouseLeave={() => setHoveredIdx(null)}
+              />
+            </div>
+          ))}
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', paddingTop: '18px', position: 'relative', zIndex: 1 }}>
+          {PROBLEMS.map((_, i) => (
+            <div
+              key={i}
+              style={{
+                height: '5px',
+                width: i === activeCardIdx ? '20px' : '5px',
+                borderRadius: '3px',
+                backgroundColor: i === activeCardIdx ? 'var(--accent)' : 'rgba(61,82,230,0.3)',
+                transition: 'all 300ms cubic-bezier(0.22,1,0.36,1)',
+              }}
+            />
+          ))}
+        </div>
+
+        <style>{`
+          .apps-swipe-container { scrollbar-width: none; -ms-overflow-style: none; }
+          .apps-swipe-container::-webkit-scrollbar { display: none; }
+        `}</style>
+      </section>
+    );
+  }
 
   return (
     <section
@@ -331,16 +444,12 @@ function AppsProblemStatement() {
       data-nav-theme="dark"
       data-section-label="Built Wrong."
       style={{
-        backgroundColor: 'var(--dark-surface)',
-        borderTop: '1px solid var(--dark-border)',
-        borderBottom: '1px solid var(--dark-border)',
+        ...sectionBase,
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         padding: '64px 32px',
-        position: 'relative',
-        overflow: 'hidden',
       }}
     >
       {/* Dot grid */}
@@ -349,55 +458,41 @@ function AppsProblemStatement() {
       <div aria-hidden style={{ position: 'absolute', top: '-30%', right: '-5%', width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(61,82,230,0.07) 0%, transparent 60%)', pointerEvents: 'none' }} />
 
       <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
-
-        {/* Header — compact */}
         <motion.div
           ref={headerRef}
           animate={{ opacity: headerInView ? 1 : 0 }}
           transition={{ duration: 0.75, ease: EASE }}
-          style={{
-            display: 'flex',
-            alignItems: 'flex-end',
-            justifyContent: 'space-between',
-            gap: '48px',
-            marginBottom: '16px',
-          }}
+          style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '48px', marginBottom: '16px' }}
           className="apps-prob-hdr"
         >
           <div>
             <div className="section-label" style={{ color: 'var(--accent)', marginBottom: '14px' }}>Built Wrong.</div>
-            <h2
-              className="font-heading"
-              style={{ fontSize: 'clamp(24px, 3.2vw, 40px)', fontWeight: 500, lineHeight: 1.05, letterSpacing: '-0.03em', color: 'var(--dark-text)' }}
-            >
+            <h2 className="font-heading" style={{ fontSize: 'clamp(24px, 3.2vw, 40px)', fontWeight: 500, lineHeight: 1.05, letterSpacing: '-0.03em', color: 'var(--dark-text)' }}>
               Your biggest bottleneck
               <br /><em style={{ color: 'var(--accent)' }}>is missing software.</em>
             </h2>
           </div>
         </motion.div>
 
-        {/* 2×2 diagnostic grid */}
-        <div
-          className="apps-prob-grid"
-          style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}
-        >
-{PROBLEMS.map((p, i) => (
-  <ProblemCard
-    key={i}
-    p={p} i={i}
-    isHov={hoveredIdx === i}
-    onMouseEnter={() => setHoveredIdx(i)}
-    onMouseLeave={() => setHoveredIdx(null)}
-  />
-))}
+        <div className="apps-prob-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
+          {PROBLEMS.map((p, i) => (
+            <ProblemCard
+              key={i}
+              p={p} i={i}
+              isHov={hoveredIdx === i}
+              onMouseEnter={() => setHoveredIdx(i)}
+              onMouseLeave={() => setHoveredIdx(null)}
+            />
+          ))}
         </div>
       </div>
 
       <style>{`
         @media (max-width: 768px) {
           .apps-prob-hdr { flex-direction: column !important; align-items: flex-start !important; }
-          .apps-prob-hdr > p { max-width: 100% !important; }
           .apps-prob-grid { grid-template-columns: 1fr !important; }
+          #apps-problem { padding: 48px 20px !important; min-height: auto !important; }
+          #apps-services { padding: 20px 20px 28px !important; }
         }
       `}</style>
     </section>
@@ -965,6 +1060,9 @@ function AppServicesGrid() {
             gap: 56px !important;
           }
         }
+        @media (max-width: 600px) {
+          .apps-svc-layout { gap: 40px !important; }
+        }
       `}</style>
     </section>
   );
@@ -1225,8 +1323,126 @@ function AppPhaseCard({ phase, i, isActive, onMouseEnter, onMouseLeave }: {
 
 function AppProcessSection() {
   const [activePhase, setActivePhase] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [openPhase, setOpenPhase] = useState<number | null>(null);
   const procHdrRef = useRef<HTMLDivElement>(null);
   const procHdrInView = useInView(procHdrRef, { once: false, amount: 0.3 });
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth <= 768);
+  }, []);
+
+  if (isMobile) {
+    return (
+      <section
+        id="apps-process"
+        data-section-label="How We Build"
+        style={{ backgroundColor: 'var(--dark-bg)', borderTop: '1px solid var(--dark-border)', padding: '48px 20px 56px', position: 'relative', overflow: 'hidden' }}
+      >
+        <div aria-hidden style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
+
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <div style={{ marginBottom: '40px' }}>
+            <div className="section-label" style={{ color: 'var(--accent)', marginBottom: '14px' }}>How We Build</div>
+            <h2 className="font-heading" style={{ fontSize: 'clamp(28px, 7vw, 40px)', fontWeight: 500, letterSpacing: '-0.025em', color: 'var(--dark-text)', lineHeight: 1.08 }}>
+              From first call<br />to a live application.
+            </h2>
+          </div>
+
+          {APP_PHASES.map((phase, i) => {
+            const isOpen = openPhase === i;
+            const isLast = i === APP_PHASES.length - 1;
+            return (
+              <div key={i} style={{ display: 'flex', gap: '16px' }}>
+                {/* Left: dot + connecting line */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '16px', flexShrink: 0, paddingTop: '16px' }}>
+                  <div style={{
+                    width: '10px', height: '10px', borderRadius: '50%', flexShrink: 0,
+                    backgroundColor: isOpen ? 'var(--accent)' : 'rgba(61,82,230,0.35)',
+                    boxShadow: isOpen ? '0 0 12px rgba(61,82,230,0.55)' : 'none',
+                    transition: 'all 280ms ease',
+                  }} />
+                  {!isLast && (
+                    <div style={{ width: '1px', flex: 1, minHeight: '32px', backgroundColor: 'rgba(61,82,230,0.18)', marginTop: '4px' }} />
+                  )}
+                </div>
+
+                {/* Right: header + accordion */}
+                <div style={{ flex: 1 }}>
+                  <div
+                    onClick={() => setOpenPhase(isOpen ? null : i)}
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0 12px', cursor: 'pointer', userSelect: 'none' }}
+                  >
+                    <div>
+                      <div style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '9px', letterSpacing: '0.18em', textTransform: 'uppercase', color: isOpen ? 'var(--accent)' : 'rgba(220,225,248,0.3)', marginBottom: '4px', transition: 'color 250ms ease' }}>
+                        {phase.phase} · {phase.time}
+                      </div>
+                      <div className="font-heading" style={{ fontSize: '21px', fontWeight: 500, fontStyle: 'italic', color: isOpen ? 'var(--dark-text)' : 'rgba(220,225,248,0.65)', letterSpacing: '-0.02em', transition: 'color 250ms ease' }}>
+                        {phase.title}
+                      </div>
+                    </div>
+                    <div style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 300ms ease', color: isOpen ? 'var(--accent)' : 'rgba(220,225,248,0.3)', flexShrink: 0, marginLeft: '16px' }}>
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <path d="M3 5L7 9L11 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateRows: isOpen ? '1fr' : '0fr', transition: 'grid-template-rows 380ms cubic-bezier(0.22,1,0.36,1)' }}>
+                    <div style={{ overflow: 'hidden', minHeight: 0 }}>
+                      <div style={{ paddingBottom: '24px' }}>
+                        <div style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '11.5px', color: 'rgba(220,225,248,0.42)', marginBottom: '14px' }}>{phase.subtitle}</div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '9px', marginBottom: '16px' }}>
+                          {phase.bullets.map((bullet, j) => (
+                            <div key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                              <div style={{ width: '3px', height: '3px', borderRadius: '50%', marginTop: '7px', flexShrink: 0, backgroundColor: 'var(--accent)' }} />
+                              <span style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '13px', lineHeight: 1.62, color: 'rgba(220,225,248,0.58)' }}>{bullet}</span>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '7px', padding: '7px 12px', backgroundColor: 'rgba(61,82,230,0.08)', border: '1px solid rgba(61,82,230,0.18)', borderRadius: '4px', marginBottom: '14px' }}>
+                          <div style={{ width: '5px', height: '5px', borderRadius: '1px', backgroundColor: 'var(--accent)', flexShrink: 0 }} />
+                          <span style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '11px', color: 'rgba(220,225,248,0.48)' }}>{phase.deliverable}</span>
+                        </div>
+
+                        <div style={{ backgroundColor: '#040710', border: '1px solid rgba(61,82,230,0.22)', borderRadius: '4px', padding: '12px 14px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '8px', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '8px' }}>
+                            {['#FF5F57', '#FEBC2E', '#28C840'].map((c, k) => (
+                              <div key={k} style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: c, opacity: 0.65 }} />
+                            ))}
+                            <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '8px', color: 'rgba(220,225,248,0.3)', marginLeft: '5px', letterSpacing: '0.1em' }}>{phase.previewTitle}</span>
+                          </div>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                            {phase.previewLines.map((line, k) => (
+                              <span key={k} style={{
+                                fontFamily: 'var(--font-mono), monospace',
+                                fontSize: '9px', lineHeight: 1.55, display: 'block',
+                                color: line.startsWith('✓') ? '#22C55E'
+                                  : line.startsWith('●') ? 'var(--accent)'
+                                  : line.startsWith('#') ? 'rgba(220,225,248,0.72)'
+                                  : line === '' ? 'transparent'
+                                  : 'rgba(220,225,248,0.42)',
+                              }}>
+                                {line || ' '}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {!isLast && <div style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.07)' }} />}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section
@@ -1245,27 +1461,17 @@ function AppProcessSection() {
       {/* Ambient glow */}
       <div aria-hidden style={{ position: 'absolute', bottom: '-10%', left: '20%', width: '600px', height: '400px', background: 'radial-gradient(circle, rgba(61,82,230,0.07) 0%, transparent 65%)', pointerEvents: 'none' }} />
 
-      <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
-        {/* Header */}
+      <div className="apps-proc-section" style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
         <motion.div
           ref={procHdrRef}
           className="apps-proc-hdr"
           animate={{ opacity: procHdrInView ? 1 : 0 }}
           transition={{ duration: 0.75, ease: EASE }}
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '80px',
-            alignItems: 'end',
-            marginBottom: '64px',
-          }}
+          style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'end', marginBottom: '64px' }}
         >
           <div>
             <div className="section-label" style={{ color: 'var(--accent)', marginBottom: '24px' }}>How We Build</div>
-            <h2
-              className="font-heading"
-              style={{ fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: 500, letterSpacing: '-0.025em', color: 'var(--dark-text)', lineHeight: 1.08 }}
-            >
+            <h2 className="font-heading" style={{ fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: 500, letterSpacing: '-0.025em', color: 'var(--dark-text)', lineHeight: 1.08 }}>
               From first call
               <br />to a live application.
             </h2>
@@ -1277,11 +1483,7 @@ function AppProcessSection() {
           </div>
         </motion.div>
 
-        {/* Phase cards grid */}
-        <div
-          className="apps-phases-grid"
-          style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', backgroundColor: 'rgba(255,255,255,0.06)' }}
-        >
+        <div className="apps-phases-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', backgroundColor: 'rgba(255,255,255,0.06)' }}>
           {APP_PHASES.map((phase, i) => (
             <AppPhaseCard
               key={i}
@@ -1298,6 +1500,12 @@ function AppProcessSection() {
         @media (max-width: 900px) {
           .apps-proc-hdr { grid-template-columns: 1fr !important; gap: 32px !important; }
           .apps-phases-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+        @media (max-width: 768px) {
+          #apps-process { padding: 48px 0 !important; }
+        }
+        @media (max-width: 600px) {
+          .apps-proc-section { padding: 48px 20px !important; }
         }
         @media (max-width: 560px) {
           .apps-phases-grid { grid-template-columns: 1fr !important; }

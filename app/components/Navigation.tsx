@@ -353,7 +353,6 @@ function MobileMenu({
   links,
   serviceItems,
   allServicesLabel,
-  startProjectLabel,
   companyLabel,
   youAreHereLabel,
   onClose,
@@ -363,7 +362,6 @@ function MobileMenu({
   links: { label: string; href: string }[];
   serviceItems: ServiceItem[];
   allServicesLabel: string;
-  startProjectLabel: string;
   companyLabel: string;
   onClose: () => void;
   youAreHereLabel: string;
@@ -641,26 +639,6 @@ function MobileMenu({
           transition: `opacity 400ms ease ${links.length * 55 + 180}ms`,
         }}>
           <div>
-            <Link
-              href="/contact"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                fontFamily: 'var(--font-body), sans-serif',
-                fontSize: '11px', fontWeight: 500,
-                letterSpacing: '0.16em', textTransform: 'uppercase',
-                color: '#FFFFFF', textDecoration: 'none',
-                backgroundColor: 'var(--accent)',
-                padding: '12px 24px',
-                marginBottom: '16px',
-                transition: 'background-color 200ms ease',
-              }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'var(--accent-hover)'; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'var(--accent)'; }}
-            >
-              {startProjectLabel} <ArrowUpRight size={11} />
-            </Link>
             <div style={{
               fontFamily: 'var(--font-body), sans-serif',
               fontSize: '9px', letterSpacing: '0.18em', textTransform: 'uppercase',
@@ -1027,6 +1005,7 @@ export default function Navigation() {
       >
         {/* ── Unified pill bar ── */}
         <div
+          className="nav-pill"
           style={{
             position: 'relative',
             pointerEvents: 'auto',
@@ -1058,11 +1037,13 @@ export default function Navigation() {
               <img
                 src="/logos/obsidia_logo_offwhite.png"
                 alt="Obsidia"
+                className="nav-logo-icon"
                 style={{ height: '54px', width: 'auto', display: 'block' }}
               />
               <img
                 src="/logos/obsidia_logo_name.png"
                 alt="Obsidia"
+                className="nav-logo-name"
                 style={{ height: '20px', width: 'auto', display: 'block', filter: 'brightness(0) invert(1)', marginLeft: '0.2px' }}
 />
             </Link>
@@ -1184,7 +1165,6 @@ export default function Navigation() {
         links={NAV_LINKS}
         serviceItems={serviceItems}
         allServicesLabel="View all services"
-        startProjectLabel="Start a Project"
         companyLabel="An Obsidia Company"
         youAreHereLabel="You are here"
         onClose={() => setMenuOpen(false)}
@@ -1199,9 +1179,14 @@ export default function Navigation() {
         .nav-cta            { display: inline-flex !important; }
         .nav-mobile-toggle  { display: none !important; }
         @media (max-width: 768px) {
-          .nav-desktop        { display: none !important; }
-          .nav-cta            { display: none !important; }
-          .nav-mobile-toggle  { display: flex !important; align-items: center !important; justify-content: center !important; }
+          .nav-desktop       { display: none !important; }
+          .nav-mobile-toggle { display: flex !important; align-items: center !important; justify-content: center !important; }
+          .nav-logo-icon     { height: 36px !important; }
+          .nav-logo-name     { height: 14px !important; display: block !important; }
+          /* Switch to auto 1fr auto so logo and hamburger size naturally, center stays empty */
+          .nav-pill          { height: 58px !important; grid-template-columns: auto 1fr auto !important; }
+          /* Hide mail icon on mobile — hamburger is the only right-side control */
+          .nav-cta           { display: none !important; }
         }
       `}</style>
     </>

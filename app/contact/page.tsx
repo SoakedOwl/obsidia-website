@@ -295,6 +295,7 @@ export default function ContactPage() {
 
 
               <motion.div
+                className="contact-email-section"
                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: revealed ? 1 : 0, y: revealed ? 0 : 10 }} transition={{ duration: 0.5, ease: EASE, delay: 0.28 }}
                 style={{ marginTop: '180px', display: 'flex', flexDirection: 'column', gap: '14px' }}
               >
@@ -459,8 +460,11 @@ export default function ContactPage() {
         }
         @media (max-width: 600px) {
           .form-two-col { grid-template-columns: 1fr !important; }
-          .contact-left { padding: 48px 24px 40px !important; }
+          .contact-left { padding: 112px 24px 40px !important; }
           .contact-right { padding: 40px 24px 64px !important; }
+          .contact-email-section { margin-top: 36px !important; }
+          #contact-faq { padding: 56px 20px !important; }
+          .faq-two-col { gap: 32px !important; }
         }
         input:-webkit-autofill, input:-webkit-autofill:focus { -webkit-box-shadow: 0 0 0 1000px #FFFFFF inset !important; -webkit-text-fill-color: #0D1147 !important; transition: background-color 0s 600000s; }
         ::placeholder { color: rgba(13,17,71,0.28); opacity: 1; }

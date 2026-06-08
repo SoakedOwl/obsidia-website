@@ -19,6 +19,7 @@ export default function CTABand() {
     <section
       id="home-cta"
       data-section-label="Start a Project"
+      className="cta-section"
       style={{
         backgroundColor: 'var(--dark-bg)',
         padding: '120px 32px',
@@ -39,6 +40,7 @@ export default function CTABand() {
 
         {/* Left: headline */}
         <motion.div
+          className="cta-left"
           initial={{ opacity: 0, x: -24 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: false, amount: 0.3 }}
@@ -50,6 +52,7 @@ export default function CTABand() {
           }}
         >
           <span
+            className="cta-eyebrow"
             style={{
               fontFamily: 'var(--font-mono), monospace',
               fontSize: '10px',
@@ -65,7 +68,7 @@ export default function CTABand() {
             Start a Project
           </span>
           <h2
-            className="font-heading"
+            className="font-heading cta-h2"
             style={{
               fontSize: 'clamp(42px, 5.5vw, 72px)',
               fontWeight: 500,
@@ -80,7 +83,7 @@ export default function CTABand() {
             <em style={{ color: 'var(--accent)' }}>We map the rest.</em>
           </h2>
           <p
-            className="font-body"
+            className="font-body cta-body"
             style={{
               fontSize: '15px',
               lineHeight: 1.75,
@@ -107,6 +110,7 @@ export default function CTABand() {
 
         {/* Right: steps + CTA */}
         <motion.div
+          className="cta-right"
           initial={{ opacity: 0, x: 24 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: false, amount: 0.3 }}
@@ -118,7 +122,7 @@ export default function CTABand() {
           }}
         >
           {/* Steps */}
-          <div style={{ marginBottom: '48px' }}>
+          <div className="cta-steps" style={{ marginBottom: '48px' }}>
             {STEPS.map((step, i) => (
               <div
                 key={step.n}
@@ -157,7 +161,7 @@ export default function CTABand() {
           </div>
 
           {/* CTA */}
-          <div>
+          <div className="cta-btn-wrap">
             <MagneticButton strength={0.18}>
               <Link
                 href="/contact"
@@ -210,7 +214,7 @@ export default function CTABand() {
               </Link>
             </MagneticButton>
 
-            <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
+            <div className="cta-secondary" style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
               <motion.div
                 whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.1)' }}
                 whileTap={{ scale: 0.95 }}
@@ -249,6 +253,14 @@ export default function CTABand() {
             gap: 56px 0 !important;
           }
           .cta-separator { display: none !important; }
+        }
+        @media (max-width: 768px) {
+          .cta-section { padding: 48px 24px !important; }
+          .cta-grid { gap: 28px 0 !important; }
+          .cta-eyebrow, .cta-body, .cta-steps, .cta-secondary { display: none !important; }
+          .cta-left, .cta-right { align-items: center !important; text-align: center; }
+          .cta-h2 { font-size: 30px !important; line-height: 1.1 !important; margin-bottom: 0 !important; }
+          .cta-btn-wrap { display: flex; justify-content: center; }
         }
       `}</style>
     </section>

@@ -38,6 +38,7 @@ export default function Footer() {
             <img
               src="/logos/obsidia_web_black_logo.png"
               alt="Obsidia"
+              className="footer-logo-img"
               style={{ height: '96px', width: 'auto', display: 'block' }}
             />
           </Link>
@@ -57,7 +58,7 @@ export default function Footer() {
         {/* Navigation */}
         <div>
           <Link href="/approach" className="footer-col-label footer-col-link" style={{ textAlign: 'left' }}>Company</Link>
-          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <ul className="footer-nav-list" style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {[
               { label: 'Services',  href: '/services'  },
               { label: 'Approach',  href: '/approach'  },
@@ -75,7 +76,7 @@ export default function Footer() {
         {/* Services */}
         <div>
           <Link href="/services" className="footer-col-label footer-col-link" style={{ textAlign: 'left' }}>Services</Link>
-          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <ul className="footer-nav-list" style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {[
               { label: 'Workflow Automation',    href: '/services/automation' },
               { label: 'Website Development',    href: '/services/websites'   },
@@ -93,7 +94,7 @@ export default function Footer() {
         {/* Contact Us */}
         <div>
           <Link href="/contact" className="footer-col-label footer-col-link" style={{ textAlign: 'left' }}>Contact Us</Link>
-          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <ul className="footer-nav-list" style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <li>
               <a
                 href="https://www.linkedin.com/company/obsidia-space/"
@@ -216,10 +217,16 @@ export default function Footer() {
           .footer-body { grid-template-columns: 2fr 1fr 1fr !important; }
         }
         @media (max-width: 768px) {
-          .footer-body { grid-template-columns: 1fr 1fr !important; }
-        }
-        @media (max-width: 600px) {
-          .footer-body { grid-template-columns: 1fr !important; }
+          .footer-body {
+            grid-template-columns: 1fr !important;
+            padding: 36px 20px 24px !important;
+            gap: 24px !important;
+          }
+          .footer-logo-img { height: 56px !important; }
+          .footer-col-label { font-size: 11px !important; margin-bottom: 10px !important; }
+          .footer-link { font-size: 12px !important; }
+          .footer-bar { padding: 12px 20px !important; }
+          .footer-nav-list { gap: 8px !important; }
         }
       `}</style>
     </footer>

@@ -249,7 +249,7 @@ function WebsitesHero() {
       <div aria-hidden style={{ position: 'absolute', top: '92px', left: 0, right: 0, bottom: 0, width: '55%', backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
       <div aria-hidden style={{ position: 'absolute', bottom: '-80px', left: '-60px', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(61,82,230,0.09) 0%, transparent 60%)', pointerEvents: 'none', zIndex: 0 }} />
 
-      <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '80px 48px 80px 32px', maxWidth: '680px' }}>
+      <div className="web-hero-content" style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '80px 48px 80px 32px', maxWidth: '680px' }}>
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE }} style={{ marginBottom: '28px' }}>
           <div className="section-label" style={{ color: 'var(--accent)' }}>Website Development</div>
         </motion.div>
@@ -289,6 +289,7 @@ function WebsitesHero() {
 
       <style>{`
         @media (max-width: 1024px) { .web-hero-grid { grid-template-columns: 1fr !important; min-height: auto !important; } .web-hero-grid > div:last-child { display: none !important; } }
+        @media (max-width: 600px) { .web-hero-content { padding: 72px 20px 48px 20px !important; } }
       `}</style>
     </section>
   );
@@ -342,15 +343,16 @@ function usePrefersReducedMotion() {
 
 /* Light instrument cell — frames each left widget so the three read as
    one diagnostic rig and inherit the console's severity bar motif */
-function InstrumentCell({ active, children }: { active: boolean; children: React.ReactNode }) {
+function InstrumentCell({ active, small, children }: { active: boolean; small?: boolean; children: React.ReactNode }) {
   return (
-    <div style={{
+    <div className="web-instr-cell" style={{
       width: '100%',
       background: 'var(--surface)',
       border: '1px solid var(--border)',
       borderRadius: '10px',
-      padding: '8px 10px 8px',
-      height: '125px',
+      padding: small ? '6px 8px' : '8px 10px 8px',
+      height: small ? 'auto' : '125px',
+      minHeight: small ? '80px' : undefined,
       overflow: 'hidden',
       boxShadow: '0 1px 2px rgba(8,9,14,0.05), inset 0 1px 0 rgba(255,255,255,0.7)',
       display: 'flex', flexDirection: 'column', alignItems: 'center',
@@ -369,7 +371,7 @@ function InstrumentCell({ active, children }: { active: boolean; children: React
 }
 
 /* 01 — Dual bar: YOUR SITE drains, COMPETITOR fills */
-function BarComparisonWidget({ active }: { active: boolean }) {
+function BarComparisonWidget({ active, small }: { active: boolean; small?: boolean }) {
   return (
     <div aria-hidden style={{ width: '100%' }}>
       {/* Visitor counts — move in opposite directions */}
@@ -383,7 +385,7 @@ function BarComparisonWidget({ active }: { active: boolean }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: active ? -10 : 10 }}
               transition={{ duration: active ? 0.65 : 0.5, ease: active ? EASE_IN : EASE_OUT }}
-              style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-mono),monospace', fontSize: '11px', fontWeight: 700, color: active ? SEV.critical : 'rgba(61,82,230,0.8)' }}
+              style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-mono),monospace', fontSize: small ? '9px' : '11px', fontWeight: 700, color: active ? SEV.critical : 'rgba(61,82,230,0.8)' }}
             >
               {active ? '341' : '1,247'}
             </motion.span>
@@ -398,7 +400,7 @@ function BarComparisonWidget({ active }: { active: boolean }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: active ? 10 : -10 }}
               transition={{ duration: active ? 0.65 : 0.5, ease: active ? EASE_IN : EASE_OUT }}
-              style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-mono),monospace', fontSize: '14px', fontWeight: 700, color: active ? 'rgba(34,197,94,0.95)' : 'rgba(61,82,230,0.55)' }}
+              style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-mono),monospace', fontSize: small ? '11px' : '14px', fontWeight: 700, color: active ? 'rgba(34,197,94,0.95)' : 'rgba(61,82,230,0.55)' }}
             >
               {active ? '1,831' : '891'}
             </motion.span>
@@ -407,7 +409,7 @@ function BarComparisonWidget({ active }: { active: boolean }) {
       </div>
 
       {/* Bars */}
-      <div style={{ display: 'flex', gap: '6px', height: '50px', width: '100%', alignItems: 'flex-end' }}>
+      <div className="web-bar-comp" style={{ display: 'flex', gap: '6px', height: small ? '36px' : '50px', width: '100%', alignItems: 'flex-end' }}>
         {/* YOUR SITE — drains */}
         <div style={{ flex: 1, height: '100%', backgroundColor: 'rgba(61,82,230,0.07)', borderRadius: '3px 3px 0 0', position: 'relative', overflow: 'hidden' }}>
           <motion.div
@@ -437,7 +439,7 @@ function BarComparisonWidget({ active }: { active: boolean }) {
 }
 
 /* 02 — Score dial: 92 → 24, TRUSTED → DISMISSED, COMPETITOR → YOUR SITE */
-function ScoreDialWidget({ active }: { active: boolean }) {
+function ScoreDialWidget({ active, small }: { active: boolean; small?: boolean }) {
   const r = 40, cx = 50, cy = 50;
   const circ   = 2 * Math.PI * r;          // 251.33
   const arcLen = (200 / 360) * circ;       // 139.63
@@ -463,8 +465,8 @@ function ScoreDialWidget({ active }: { active: boolean }) {
       </AnimatePresence>
 
       {/* SVG gauge */}
-      <div style={{ position: 'relative', width: '60px', height: '60px' }}>
-        <svg width="60" height="60" viewBox="0 0 100 100" overflow="visible">
+      <div className="web-score-dial-wrap" style={{ position: 'relative', width: small ? '44px' : '60px', height: small ? '44px' : '60px' }}>
+        <svg width={small ? '44' : '60'} height={small ? '44' : '60'} viewBox="0 0 100 100" overflow="visible">
           {/* Track */}
           <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(61,82,230,0.12)" strokeWidth="6" strokeLinecap="round"
             strokeDasharray={`${arcLen} ${gapLen}`}
@@ -519,9 +521,9 @@ function ScoreDialWidget({ active }: { active: boolean }) {
 }
 
 /* 03 — Morphing layout: headline updates, surrounding frame stays frozen */
-function MorphingLayoutWidget({ active }: { active: boolean }) {
+function MorphingLayoutWidget({ active, small }: { active: boolean; small?: boolean }) {
   return (
-    <div aria-hidden style={{ width: '100%', height: '80px', maxWidth: '100%', backgroundColor: '#F5F5FA', border: '1px solid rgba(61,82,230,0.14)', borderRadius: '4px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+    <div aria-hidden className="web-morph-widget" style={{ width: '100%', height: small ? '48px' : '80px', maxWidth: '100%', backgroundColor: '#F5F5FA', border: '1px solid rgba(61,82,230,0.14)', borderRadius: '4px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
       {/* Frozen nav */}
       <div style={{ height: '20px', flexShrink: 0, backgroundColor: 'rgba(61,82,230,0.06)', borderBottom: '1px solid rgba(61,82,230,0.09)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 10px' }}>
         <div style={{ width: '12px', height: '4px', backgroundColor: 'rgba(61,82,230,0.24)', borderRadius: '1px' }} />
@@ -579,9 +581,9 @@ const PROB_WIDGETS = [BarComparisonWidget, ScoreDialWidget, MorphingLayoutWidget
 
 /* ── Problem item row — generous, instrument-framed widgets ─── */
 function ProblemItem({
-  item, index,
+  item, index, isMobile,
 }: {
-  item: typeof WEB_PROBLEMS[0]; index: number;
+  item: typeof WEB_PROBLEMS[0]; index: number; isMobile?: boolean;
 }) {
   const [hovered, setHovered] = useState(false);
   const Widget = PROB_WIDGETS[index];
@@ -598,8 +600,8 @@ function ProblemItem({
       className="web-prob-item"
       style={{
         display: 'grid',
-        gridTemplateColumns: '160px 1fr',
-        gap: '22px',
+        gridTemplateColumns: isMobile ? '100px 1fr' : '160px 1fr',
+        gap: isMobile ? '12px' : '22px',
         alignItems: 'center',
         paddingBottom: isLast ? 0 : '14px',
         marginBottom: isLast ? 0 : '14px',
@@ -608,7 +610,7 @@ function ProblemItem({
       }}
     >
       {/* Number + widget column */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '8px', width: '120px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '8px', width: isMobile ? '100px' : '120px' }}>
         <span style={{
           fontFamily: 'var(--font-mono), monospace',
           fontSize: '11px', fontWeight: 600,
@@ -616,8 +618,8 @@ function ProblemItem({
         }}>
           {item.n}
         </span>
-        <InstrumentCell active={hovered}>
-          <Widget active={hovered} />
+        <InstrumentCell active={hovered} small={isMobile}>
+          <Widget active={hovered} small={isMobile} />
         </InstrumentCell>
       </div>
 
@@ -626,7 +628,7 @@ function ProblemItem({
         {/* Title: shifts + cobalt underline draws on hover */}
         <div style={{ position: 'relative', marginBottom: '14px', display: 'inline-block' }}>
           <h3 className="font-heading" style={{
-            fontSize: 'clamp(15px, 1.5vw, 21px)',
+            fontSize: isMobile ? '14px' : 'clamp(15px, 1.5vw, 21px)',
             fontWeight: 500, letterSpacing: '-0.025em',
             color: 'var(--text)', lineHeight: 1.1,
             transform: hovered ? 'translateX(6px)' : 'translateX(0)',
@@ -650,7 +652,7 @@ function ProblemItem({
           />
         </div>
         <p className="font-body" style={{
-          fontSize: '13px', lineHeight: 1.55,
+          fontSize: isMobile ? '12px' : '13px', lineHeight: 1.55,
           color: 'var(--text-secondary)', margin: 0, maxWidth: '54ch',
         }}>
           {item.body}
@@ -716,6 +718,7 @@ function LiveDiagnosticCard(_: { visible: boolean }) {
   return (
     <motion.div
       ref={cardRef}
+      className="web-diag-card"
       animate={{ opacity: cardInView ? 1 : 0 }}
       transition={{ duration: 0.92, ease: [0.22, 1, 0.36, 1] }}
       style={{
@@ -846,6 +849,8 @@ function WebStickyProblem() {
   const labelInView = useInView(labelRef, { once: false, amount: 0.5 });
   const headlineRef = useRef<HTMLDivElement>(null);
   const headlineInView = useInView(headlineRef, { once: false, amount: 0.45 });
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => { setIsMobile(window.innerWidth <= 768); }, []);
 
   return (
     <section
@@ -922,13 +927,13 @@ function WebStickyProblem() {
             variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.18, delayChildren: 0.12 } } }}
           >
             {WEB_PROBLEMS.map((p, i) => (
-              <ProblemItem key={i} item={p} index={i} />
+              <ProblemItem key={i} item={p} index={i} isMobile={isMobile} />
             ))}
           </motion.div>
         </div>
 
         {/* ── Right — Live Diagnostic card, full height ── */}
-        <div style={{ display: 'flex', alignItems: 'stretch', justifyContent: 'center', alignSelf: 'stretch', paddingTop: '70px' }}>
+        <div className="web-sticky-right" style={{ display: 'flex', alignItems: 'stretch', justifyContent: 'center', alignSelf: 'stretch', paddingTop: '70px' }}>
           <LiveDiagnosticCard visible={visible} />
         </div>
       </div>
@@ -941,14 +946,25 @@ function WebStickyProblem() {
             padding: 64px 40px !important;
           }
         }
+        @media (max-width: 768px) {
+          .web-diag-card { display: none !important; }
+          .web-sticky-right { display: none !important; }
+          #web-problem { height: auto !important; overflow: visible !important; }
+          .web-prob-outer { height: auto !important; }
+        }
         @media (max-width: 640px) {
-          .web-prob-outer { padding: 48px 24px !important; }
+          .web-prob-outer { padding: 48px 20px !important; }
           .web-prob-item {
-            grid-template-columns: 1fr !important;
-            gap: 22px !important;
-            align-items: start !important;
+            grid-template-columns: 80px 1fr !important;
+            gap: 12px !important;
+            align-items: center !important;
           }
-          .web-prob-item > div:first-child { width: 100% !important; max-width: 280px; }
+          .web-prob-item > div:first-child { width: 80px !important; }
+          .web-instr-cell { height: auto !important; padding: 6px 8px !important; min-height: 0 !important; }
+          .web-bar-comp { height: 32px !important; }
+          .web-score-dial-wrap { width: 38px !important; height: 38px !important; }
+          .web-score-dial-wrap svg { width: 100% !important; height: 100% !important; }
+          .web-morph-widget { height: 40px !important; }
         }
       `}</style>
     </section>
@@ -1035,11 +1051,79 @@ function DashboardArt({ hov }: { hov: boolean }) {
 
 const CARD_ARTS = [FunnelArt, BrowserArt, ProductGridArt, DashboardArt];
 
-function ServiceCard({ s, index }: { s: typeof WEB_SERVICES[0]; index: number }) {
+function ServiceCard({
+  s, index, isMobile = false, isExpanded = false, onToggle,
+}: {
+  s: typeof WEB_SERVICES[0]; index: number;
+  isMobile?: boolean; isExpanded?: boolean; onToggle?: () => void;
+}) {
   const [hov, setHov] = useState(false);
   const Art = CARD_ARTS[index];
   const scRef = useRef<HTMLDivElement>(null);
   const scInView = useInView(scRef, { once: false, amount: 0.2 });
+
+  /* ── Mobile accordion ─── */
+  if (isMobile) {
+    return (
+      <div
+        ref={scRef}
+        style={{
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+        }}
+      >
+        {/* Collapsed header — always visible */}
+        <div
+          onClick={onToggle}
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '18px 20px', cursor: 'pointer',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <span style={{
+              fontFamily: 'var(--font-mono), monospace', fontSize: '10px',
+              letterSpacing: '0.2em', textTransform: 'uppercase',
+              color: isExpanded ? 'var(--accent)' : 'rgba(255,255,255,0.25)',
+              transition: 'color 280ms ease', flexShrink: 0,
+            }}>{s.n}</span>
+            <h3 className="font-heading" style={{
+              fontSize: 'clamp(18px, 4.5vw, 22px)',
+              fontWeight: 500, letterSpacing: '-0.02em',
+              color: 'var(--dark-text)', lineHeight: 1.1, margin: 0,
+            }}>{s.title}</h3>
+          </div>
+          <span style={{
+            fontFamily: 'var(--font-mono), monospace', fontSize: '20px', lineHeight: 1,
+            color: isExpanded ? 'var(--accent)' : 'rgba(255,255,255,0.3)',
+            transform: isExpanded ? 'rotate(45deg)' : 'none',
+            transition: 'color 280ms ease, transform 280ms cubic-bezier(0.22,1,0.36,1)',
+            flexShrink: 0,
+          }}>+</span>
+        </div>
+
+        {/* Expandable body — grid-template-rows transition */}
+        <div style={{
+          display: 'grid',
+          gridTemplateRows: isExpanded ? '1fr' : '0fr',
+          transition: 'grid-template-rows 350ms cubic-bezier(0.22,1,0.36,1)',
+        }}>
+          <div style={{ overflow: 'hidden' }}>
+            <div style={{ padding: '0 20px 28px' }}>
+              <div style={{ height: '100px', marginBottom: '16px' }}>
+                <Art hov={true} />
+              </div>
+              <p className="font-body" style={{
+                fontSize: '14px', lineHeight: 1.78,
+                color: 'rgba(220,225,248,0.62)', margin: 0,
+              }}>{s.body}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ── Desktop (unchanged) ─── */
   return (
     <motion.div
       ref={scRef}
@@ -1098,7 +1182,6 @@ function ServiceCard({ s, index }: { s: typeof WEB_SERVICES[0]; index: number })
           margin: 0,
         }}>{s.body}</p>
 
-        {/* "Explore →" fades up on hover */}
         <motion.span
           animate={{ opacity: hov ? 1 : 0, y: hov ? 0 : 6 }}
           transition={{ duration: 0.32, ease: [0.25, 1, 0.5, 1] as [number,number,number,number], delay: hov ? 0.07 : 0 }}
@@ -1113,7 +1196,6 @@ function ServiceCard({ s, index }: { s: typeof WEB_SERVICES[0]; index: number })
         </motion.span>
       </div>
 
-      {/* Bottom accent line draws on hover */}
       <motion.div
         animate={{ scaleX: hov ? 1 : 0, opacity: hov ? 1 : 0 }}
         initial={{ scaleX: 0, opacity: 0 }}
@@ -1135,6 +1217,14 @@ function ServiceCard({ s, index }: { s: typeof WEB_SERVICES[0]; index: number })
 function WebServicesGrid() {
   const gridHdrRef = useRef<HTMLDivElement>(null);
   const gridHdrInView = useInView(gridHdrRef, { once: false, amount: 0.4 });
+  const [isMobile, setIsMobile] = useState(false);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener('resize', check, { passive: true });
+    return () => window.removeEventListener('resize', check);
+  }, []);
   return (
     <section
       id="web-services"
@@ -1191,21 +1281,26 @@ function WebServicesGrid() {
           }}
         >
           {WEB_SERVICES.map((s, i) => (
-            <ServiceCard key={s.n} s={s} index={i} />
+            <ServiceCard
+              key={s.n} s={s} index={i}
+              isMobile={isMobile}
+              isExpanded={expandedIndex === i}
+              onToggle={() => setExpandedIndex(prev => prev === i ? null : i)}
+            />
           ))}
         </div>
       </div>
 
       <style>{`
         @media (max-width: 900px) {
-          .web-svc-grid {
-            grid-template-columns: 1fr 1fr !important;
-          }
+          .web-svc-grid { grid-template-columns: 1fr 1fr !important; }
+        }
+        @media (max-width: 768px) {
+          #web-services { padding: 48px 20px !important; }
+          .web-svc-grid { grid-template-columns: 1fr !important; gap: 0 !important; }
         }
         @media (max-width: 560px) {
-          .web-svc-grid {
-            grid-template-columns: 1fr !important;
-          }
+          .web-svc-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </section>

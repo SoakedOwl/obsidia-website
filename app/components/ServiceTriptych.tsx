@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 /* ── Panel 1: Automation — animated node graph ──────────────── */
-function AutomationPanel({ visible }: { visible: boolean }) {
+function AutomationPanel({ visible, mobile }: { visible: boolean; mobile?: boolean }) {
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
@@ -29,8 +29,8 @@ function AutomationPanel({ visible }: { visible: boolean }) {
   ];
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', padding: '20px' }}>
-      <svg viewBox="0 0 280 160" style={{ width: '100%', flex: 1 }} aria-hidden>
+    <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', padding: mobile ? '8px 6px' : '20px' }}>
+      <svg viewBox={mobile ? '30 22 220 112' : '0 0 280 160'} style={{ width: '100%', flex: 1 }} aria-hidden>
         <defs>
           <marker id="arr-a" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
             <path d="M0 0 L5 2.5 L0 5Z" fill="var(--accent)" opacity="0.7" />
@@ -93,7 +93,7 @@ function AutomationPanel({ visible }: { visible: boolean }) {
 }
 
 /* ── Panel 2: Websites — browser wireframe with cursor ─────── */
-function WebsitePanel({ visible }: { visible: boolean }) {
+function WebsitePanel({ visible, mobile }: { visible: boolean; mobile?: boolean }) {
   const [cursorOn, setCursorOn] = useState(true);
   const [lineIdx, setLineIdx] = useState(0);
 
@@ -114,7 +114,7 @@ function WebsitePanel({ visible }: { visible: boolean }) {
   ];
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', padding: '20px' }}>
+    <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', padding: mobile ? '8px 6px' : '20px' }}>
       <svg viewBox="0 0 280 160" style={{ width: '100%', flex: 1 }} aria-hidden>
         {/* Browser chrome */}
         <rect x="20" y="8" width="240" height="148" rx="3" fill="#0D0D0D" stroke="#2A2A28" strokeWidth="0.8" />
@@ -245,16 +245,21 @@ function AppPanel({ visible }: { visible: boolean }) {
 export default function ServiceTriptych() {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 600);
     return () => clearTimeout(t);
   }, []);
 
-  const panels = [
-    { key: 'automation', Panel: AutomationPanel },
-    { key: 'websites',   Panel: WebsitePanel   },
-    { key: 'apps',       Panel: AppPanel       },
+  useEffect(() => {
+    setIsMobile(window.innerWidth <= 768);
+  }, []);
+
+  const panelItems = [
+    { key: 'automation', content: (vis: boolean) => <AutomationPanel visible={vis} mobile={isMobile} /> },
+    { key: 'websites',   content: (vis: boolean) => <WebsitePanel visible={vis} mobile={isMobile} /> },
+    { key: 'apps',       content: (vis: boolean) => <AppPanel visible={vis} /> },
   ];
 
   return (
@@ -290,7 +295,7 @@ export default function ServiceTriptych() {
       </div>
 
       {/* Three panels — transparent so the shared dot grid shows through */}
-      {panels.map(({ key, Panel }, i) => (
+      {panelItems.map(({ key, content }, i) => (
         <div
           key={key}
           style={{
@@ -302,7 +307,7 @@ export default function ServiceTriptych() {
             transition: `opacity 800ms ease ${i * 140 + 300}ms, transform 800ms cubic-bezier(0.22,1,0.36,1) ${i * 140 + 300}ms`,
           }}
         >
-          <Panel visible={visible} />
+          {content(visible)}
         </div>
       ))}
     </div>

@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useRef, useEffect } from 'react';
+import { motion, useInView } from 'framer-motion';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -75,15 +75,27 @@ function PillarVisual({ index, hovered }: { index: number; hovered: boolean }) {
 
 function StandardCard({ standard, index }: { standard: Standard; index: number }) {
   const [hovered, setHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(cardRef, { once: false, amount: 0.99 });
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth <= 768);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) setHovered(inView);
+  }, [isMobile, inView]);
 
   return (
     <motion.div
+      ref={cardRef}
       initial={{ opacity: 0, scale: 0.91 }}
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: false, amount: 0.28 }}
       transition={{ duration: 0.68, ease: EASE, delay: 0.28 + index * 0.12 }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onMouseEnter={() => { if (!isMobile) setHovered(true); }}
+      onMouseLeave={() => { if (!isMobile) setHovered(false); }}
       style={{
         padding: '40px 36px',
         background: hovered ? 'rgba(61,82,230,0.1)' : 'rgba(61,82,230,0.05)',

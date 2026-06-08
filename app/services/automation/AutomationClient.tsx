@@ -30,9 +30,17 @@ const FADE_UP = {
 function AutomationHero() {
   const [wordIdx, setWordIdx] = useState(0);
   const cycleWords = ['approval chains.', 'manual reports.', 'data entry.', 'repetitive ops.'];
+  const heroContentRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const id = setInterval(() => setWordIdx(i => (i + 1) % CYCLE_COUNT), 2400);
     return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    if (window.innerWidth <= 768 && heroContentRef.current) {
+      heroContentRef.current.style.paddingTop = '120px';
+    }
   }, []);
 
   return (
@@ -46,7 +54,7 @@ function AutomationHero() {
       <div aria-hidden style={{ position: 'absolute', top: '92px', left: 0, right: 0, bottom: 0, width: '55%', backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
       <div aria-hidden style={{ position: 'absolute', top: '20%', left: '-120px', width: '700px', height: '700px', background: 'radial-gradient(circle, rgba(61,82,230,0.09) 0%, transparent 60%)', pointerEvents: 'none', zIndex: 0 }} />
 
-      <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '80px 48px 80px 32px', maxWidth: '680px' }}>
+      <div ref={heroContentRef} className="auto-hero-content" style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '80px 48px 80px 32px', maxWidth: '680px' }}>
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE }} style={{ marginBottom: '28px' }}>
           <div className="section-label" style={{ color: 'var(--accent)' }}>Workflow Automation</div>
         </motion.div>
@@ -89,12 +97,37 @@ function AutomationHero() {
 
       </div>
 
-      <motion.div initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.4 }} style={{ position: 'relative', height: '100%', minHeight: '500px' }}>
+      <motion.div className="auto-hero-visual" initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.4 }} style={{ position: 'relative', height: '100%', minHeight: '500px' }}>
         <WorkflowGraph />
       </motion.div>
 
       <style>{`
         @media (max-width: 1024px) { .auto-hero-grid { grid-template-columns: 1fr !important; min-height: auto !important; } .auto-hero-grid > div:last-child { display: none !important; } }
+        @media (max-width: 768px) {
+          #auto-hero {
+            padding-top: 80px !important;
+            min-height: 100dvh !important;
+          }
+          .auto-hero-content {
+            padding-left: 20px !important;
+            padding-right: 20px !important;
+            padding-bottom: 12px !important;
+            max-width: 100% !important;
+            justify-content: flex-start !important;
+          }
+          .auto-hero-visual {
+            min-height: 240px !important;
+            height: 240px !important;
+            margin: 0 !important;
+          }
+        }
+        @media (max-width: 600px) {
+          .auto-hero-content {
+            padding-left: 20px !important;
+            padding-right: 20px !important;
+            padding-bottom: 12px !important;
+          }
+        }
       `}</style>
     </section>
   );
@@ -355,6 +388,7 @@ function AutomationServicesSection() {
     <section
       id="auto-services"
       data-section-label="What We Automate"
+      className="auto-services-section"
       style={{
         backgroundColor: '#F8F7F2',
         padding: '40px 32px',
@@ -427,7 +461,8 @@ function AutomationServicesSection() {
         .service-row-inner { padding-left: 20px !important; }
         @media (max-width: 600px) {
           .service-metric { display: none !important; }
-          .service-row-inner { grid-template-columns: 48px 1fr !important; }
+          .service-row-inner { grid-template-columns: 48px 1fr !important; gap: 0 16px !important; }
+          .auto-services-section { min-height: auto !important; padding: 0 20px !important; }
         }
       `}</style>
     </section>
@@ -512,7 +547,7 @@ function AutoProcessTimeline() {
   const visible = useInView(ref, { once: false, amount: 0.06 });
   return (
     <section ref={ref as React.RefObject<HTMLElement>} id="auto-process" data-section-label="How We Work" style={{ backgroundColor: '#111111', borderTop: '1px solid #1E1E1C' }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 32px 64px', borderBottom: '1px solid #1E1E1C' }}>
+      <div className="auto-proc-section" style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 32px 64px', borderBottom: '1px solid #1E1E1C' }}>
         <div className="auto-proc-header" style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '40px', alignItems: 'flex-end', opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(16px)', transition: 'opacity 600ms ease, transform 600ms ease' }}>
           <div>
             <div style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '9px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '20px' }}>
@@ -533,7 +568,10 @@ function AutoProcessTimeline() {
           <AutoPhaseRow key={i} phase={phase} index={i} visible={visible} isLast={i === AUTO_PHASES.length - 1} />
         ))}
       </div>
-      <style>{`@media (max-width: 640px) { .auto-proc-header { grid-template-columns: 1fr !important; } }`}</style>
+      <style>{`
+        @media (max-width: 640px) { .auto-proc-header { grid-template-columns: 1fr !important; } }
+        @media (max-width: 600px) { .auto-proc-section { padding: 48px 20px 40px !important; } }
+      `}</style>
     </section>
   );
 }
@@ -703,6 +741,7 @@ function PainCards() {
       id="auto-pain"
       data-section-label="The Cost of Manual Work"
       data-nav-theme="dark"
+      className="auto-pain-section"
       style={{
         backgroundColor: 'var(--dark-bg)',
         minHeight: '100dvh',
@@ -1030,8 +1069,9 @@ function PainCards() {
 
       <style>{`
         @media (max-width: 768px) {
-          .pain-fan { display: none !important; }
-          .pain-stack { display: flex !important; }
+          .pain-fan   { display: none !important; }
+          .pain-stack { display: flex !important; width: 100% !important; max-width: 100% !important; }
+          .auto-pain-section { min-height: auto !important; padding: 64px 20px !important; }
         }
       `}</style>
     </section>
@@ -1066,7 +1106,12 @@ const DELIVERABLES = [
   },
 ];
 
-function DeliverableCard({ item, index }: { item: typeof DELIVERABLES[0]; index: number }) {
+function DeliverableCard({
+  item, index, forceActive = false, mobile = false,
+}: {
+  item: typeof DELIVERABLES[0]; index: number;
+  forceActive?: boolean; mobile?: boolean;
+}) {
   const cardRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(-300);
   const mouseY = useMotionValue(-300);
@@ -1086,6 +1131,7 @@ function DeliverableCard({ item, index }: { item: typeof DELIVERABLES[0]; index:
   }, [mouseX, mouseY]);
 
   const inView = useInView(cardRef, { once: false, amount: 0.2 });
+  const animateState = forceActive ? 'hovered' : (mobile ? 'visible' : (inView ? 'visible' : 'hidden'));
 
   return (
     <motion.div
@@ -1093,7 +1139,7 @@ function DeliverableCard({ item, index }: { item: typeof DELIVERABLES[0]; index:
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       whileHover="hovered"
-      animate={inView ? 'visible' : 'hidden'}
+      animate={animateState}
       variants={{
         hidden: { opacity: 0 },
         visible: {
@@ -1109,8 +1155,8 @@ function DeliverableCard({ item, index }: { item: typeof DELIVERABLES[0]; index:
         backgroundColor: 'var(--dark-bg)',
         width: '100%',
         height: '100%',
-        borderRight: index % 2 === 0 ? '1px solid var(--dark-border)' : 'none',
-        borderBottom: index < 2 ? '1px solid var(--dark-border)' : 'none',
+        borderRight: !mobile && index % 2 === 0 ? '1px solid var(--dark-border)' : 'none',
+        borderBottom: !mobile && index < 2 ? '1px solid var(--dark-border)' : 'none',
       }}
     >
       {/* Background image — contained within card, fades on hover */}
@@ -1223,6 +1269,94 @@ function DeliverableCard({ item, index }: { item: typeof DELIVERABLES[0]; index:
 function HandoffDeliverables() {
   const hdHdrRef = useRef<HTMLDivElement>(null);
   const hdHdrInView = useInView(hdHdrRef, { once: false, amount: 0.5 });
+  const [isMobile, setIsMobile] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener('resize', check, { passive: true });
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobile) return;
+    const handleScroll = () => {
+      if (!wrapperRef.current) return;
+      const rect = wrapperRef.current.getBoundingClientRect();
+      const sectionTop = rect.top + window.scrollY;
+      const sectionHeight = wrapperRef.current.offsetHeight;
+      const windowHeight = window.innerHeight;
+      const raw = (window.scrollY - sectionTop) / (sectionHeight - windowHeight);
+      setScrollProgress(Math.max(0, Math.min(1, raw)));
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isMobile]);
+
+  const activeIdx = Math.min(3, Math.floor(scrollProgress * 4));
+
+  /* ── Mobile: horizontal scroll hijack ─── */
+  if (isMobile) {
+    return (
+      <div
+        ref={wrapperRef}
+        id="auto-deliverables"
+        data-section-label="The Deliverables"
+        data-nav-theme="dark"
+        style={{ height: '400vh', position: 'relative' }}
+      >
+        <div style={{
+          position: 'sticky', top: 0,
+          height: '100dvh', overflow: 'hidden',
+          backgroundColor: 'var(--dark-bg)',
+          borderTop: '1px solid var(--dark-border)',
+        }}>
+          {/* Horizontal track */}
+          <div
+            style={{
+              display: 'flex',
+              width: '400vw',
+              height: '100%',
+              transform: `translateX(-${scrollProgress * 300}vw)`,
+              transition: 'transform 0.1s linear',
+              willChange: 'transform',
+            }}
+          >
+            {DELIVERABLES.map((d, i) => (
+              <div
+                key={d.number}
+                style={{ width: '100vw', height: '100dvh', flexShrink: 0, position: 'relative' }}
+              >
+                <DeliverableCard item={d} index={i} forceActive={i === activeIdx} mobile />
+              </div>
+            ))}
+          </div>
+
+          {/* Progress pill indicators */}
+          <div style={{
+            position: 'absolute', bottom: '28px', left: '50%',
+            transform: 'translateX(-50%)',
+            display: 'flex', gap: '5px', zIndex: 10,
+            pointerEvents: 'none',
+          }}>
+            {DELIVERABLES.map((_, i) => (
+              <div key={i} style={{
+                height: '3px', borderRadius: '2px',
+                width: i === activeIdx ? '20px' : '6px',
+                backgroundColor: i === activeIdx ? 'var(--accent)' : 'rgba(255,255,255,0.22)',
+                transition: 'width 280ms ease, background-color 280ms ease',
+              }} />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ── Desktop: 2×2 grid (unchanged) ─── */
   return (
     <section
       id="auto-deliverables"
@@ -1244,7 +1378,7 @@ function HandoffDeliverables() {
         paddingTop: 52, paddingBottom: 52,
       }}>
 
-        {/* Header — compact, headline left, subtext right */}
+        {/* Header */}
         <motion.div
           ref={hdHdrRef}
           animate={{ opacity: hdHdrInView ? 1 : 0 }}
@@ -1280,7 +1414,7 @@ function HandoffDeliverables() {
           </div>
         </motion.div>
 
-        {/* 2×2 grid — hairline gaps via bg color bleed-through */}
+        {/* 2×2 grid */}
         <div
           className="deliv-grid"
           style={{
@@ -1297,15 +1431,6 @@ function HandoffDeliverables() {
         </div>
 
       </div>
-
-      <style>{`
-        @media (max-width: 768px) {
-          .deliv-grid {
-            grid-template-columns: 1fr !important;
-            grid-template-rows: repeat(4, auto) !important;
-          }
-        }
-      `}</style>
     </section>
   );
 }

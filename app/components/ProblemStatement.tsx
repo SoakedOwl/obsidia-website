@@ -205,17 +205,27 @@ function FindingCard({
   meta: SMeta;
 }) {
   const [barsOn, setBarsOn] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const inView = useInView(cardRef, { once: false, amount: 0.25 });
+  const barsInView = useInView(cardRef, { once: false, amount: 0.5 });
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth <= 768);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) setBarsOn(barsInView);
+  }, [isMobile, barsInView]);
 
   return (
     <motion.div
       ref={cardRef}
       animate={{ opacity: inView ? 1 : 0 }}
       transition={{ duration: 0.72, ease: EASE, delay: 0.22 + index * 0.13 }}
-      className={`finding-card card-${meta.cssClass}`}
-      onMouseEnter={() => setBarsOn(true)}
-      onMouseLeave={() => setBarsOn(false)}
+      className={`finding-card card-${meta.cssClass}${barsOn ? ' card-active' : ''}`}
+      onMouseEnter={() => { if (!isMobile) setBarsOn(true); }}
+      onMouseLeave={() => { if (!isMobile) setBarsOn(false); }}
     >
       {/* Top row: severity + code | segment bars */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
@@ -290,6 +300,7 @@ export default function ProblemStatement() {
     <section
       id="home-problem"
       data-section-label="Findings"
+      className="prob-section"
       style={{ backgroundColor: '#FFFFFF', padding: '96px 32px 112px', position: 'relative', overflow: 'hidden' }}
     >
       {/* Ambient glows */}
@@ -405,6 +416,11 @@ export default function ProblemStatement() {
         @media (max-width: 900px) {
           .findings-grid { grid-template-columns: 1fr; gap: 16px; }
         }
+        @media (max-width: 600px) {
+          .prob-section { padding: 56px 20px 72px !important; }
+          .findings-grid { gap: 12px !important; }
+          .finding-card { padding: 24px 20px 20px !important; }
+        }
 
         /* Card base */
         .finding-card {
@@ -460,6 +476,37 @@ export default function ProblemStatement() {
         .card-systemic:hover .sev-label   { color: #C8201A; }
         .card-systemic:hover .sev-divider { background: rgba(200,32,26,0.11); }
         .card-systemic:hover .viz-border  { border-color: rgba(200,32,26,0.11); }
+
+        /* card-active — mirrors :hover, driven by React state (mobile scroll) */
+        .card-high.card-active {
+          border-top-color: #D4A00A;
+          border-right-color: rgba(212,160,10,0.26);
+          border-bottom-color: rgba(212,160,10,0.26);
+          border-left-color: rgba(212,160,10,0.26);
+        }
+        .card-high.card-active .sev-label   { color: #D4A00A; }
+        .card-high.card-active .sev-divider { background: rgba(212,160,10,0.11); }
+        .card-high.card-active .viz-border  { border-color: rgba(212,160,10,0.11); }
+
+        .card-critical.card-active {
+          border-top-color: #D0611A;
+          border-right-color: rgba(208,97,26,0.26);
+          border-bottom-color: rgba(208,97,26,0.26);
+          border-left-color: rgba(208,97,26,0.26);
+        }
+        .card-critical.card-active .sev-label   { color: #D0611A; }
+        .card-critical.card-active .sev-divider { background: rgba(208,97,26,0.11); }
+        .card-critical.card-active .viz-border  { border-color: rgba(208,97,26,0.11); }
+
+        .card-systemic.card-active {
+          border-top-color: #C8201A;
+          border-right-color: rgba(200,32,26,0.26);
+          border-bottom-color: rgba(200,32,26,0.26);
+          border-left-color: rgba(200,32,26,0.26);
+        }
+        .card-systemic.card-active .sev-label   { color: #C8201A; }
+        .card-systemic.card-active .sev-divider { background: rgba(200,32,26,0.11); }
+        .card-systemic.card-active .viz-border  { border-color: rgba(200,32,26,0.11); }
 
         @media (prefers-reduced-motion: reduce) {
           .finding-card, .sev-label, .sev-divider, .viz-border {

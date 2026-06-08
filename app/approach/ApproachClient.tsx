@@ -40,6 +40,7 @@ function PrincipleRow({ principle, index, scrollDir, total }: {
   scrollDir: 'down' | 'up'; total: number;
 }) {
   const rowRef = useRef<HTMLDivElement>(null);
+  const [mobileActive, setMobileActive] = useState(false);
   const mouseX = useMotionValue(-200);
   const mouseY = useMotionValue(-200);
   const spotX = useTransform(mouseX, v => v - 200);
@@ -62,6 +63,8 @@ function PrincipleRow({ principle, index, scrollDir, total }: {
       ref={rowRef as React.RefObject<HTMLDivElement>}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      onClick={() => setMobileActive(a => !a)}
+      animate={mobileActive ? 'hovered' : undefined}
       custom={{ index, scrollDir, total }}
       variants={{
         hidden: { opacity: 0, y: 28 },
@@ -210,15 +213,28 @@ function PrincipleRow({ principle, index, scrollDir, total }: {
 /* ── Phase image — Framer Motion entry + grayscale-to-color hover ── */
 function PhaseImage({ phase, from }: { phase: Phase; from: 'left' | 'right' }) {
   const [hov, setHov] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const imgRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(imgRef, { once: false, amount: 0.5 });
   const initX = from === 'right' ? 40 : -40;
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth <= 768);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) setHov(inView);
+  }, [isMobile, inView]);
+
   return (
     <motion.div
+      ref={imgRef}
       initial={{ opacity: 0, x: initX }}
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: false, amount: 0.15 }}
       transition={{ duration: 0.9, ease: EASE }}
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
+      onMouseEnter={() => { if (!isMobile) setHov(true); }}
+      onMouseLeave={() => { if (!isMobile) setHov(false); }}
       style={{ position: 'relative', aspectRatio: '4 / 3', overflow: 'hidden' }}
     >
       <img
@@ -350,6 +366,12 @@ export default function ApproachClient() {
   const processHdrInView = useInView(processHdrRef, { once: false, amount: 0.5 });
   const ctaHdrRef = useRef<HTMLDivElement>(null);
   const ctaHdrInView = useInView(ctaHdrRef, { once: false, amount: 0.4 });
+  const heroContentRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (window.innerWidth <= 768 && heroContentRef.current) {
+      heroContentRef.current.style.paddingTop = '60px';
+    }
+  }, []);
 
   const PHASES: Phase[] = [
     { number: '01', name: 'Audit',   id: 'phase-audit',   descriptor: 'Map every manual step before we design anything.',         deliverables: ['Process map', 'ROI ranking', 'Automation scope'],             body: 'We find where your time actually goes, rank the manual tasks bleeding the most hours, and prioritize those first.',                                                                              image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80' },
@@ -370,7 +392,7 @@ export default function ApproachClient() {
   }, []);
 
   return (
-    <>
+    <div className="approach-page-wrapper">
       {/* ════════════════════════════════════════════════
           S1 — HERO
       ════════════════════════════════════════════════ */}
@@ -378,6 +400,7 @@ export default function ApproachClient() {
         id="approach-hero"
         data-section-label="Overview"
         data-nav-theme="dark"
+        className="approach-hero-section"
         style={{
           backgroundColor: 'var(--dark-bg)',
           minHeight: '100dvh',
@@ -419,7 +442,7 @@ export default function ApproachClient() {
         </div>
 
         {/* Outlined "04" watermark */}
-        <div aria-hidden style={{
+        <div aria-hidden className="approach-watermark" style={{
           position: 'absolute', top: '50%', right: '-3%',
           transform: 'translateY(-50%)',
           fontFamily: 'var(--font-heading), Georgia, serif',
@@ -433,7 +456,7 @@ export default function ApproachClient() {
         </div>
 
         {/* Cobalt ambient glow */}
-        <div aria-hidden style={{
+        <div aria-hidden className="approach-glow" style={{
           position: 'absolute', top: '15%', left: '-8%',
           width: '900px', height: '900px',
           background: 'radial-gradient(circle, rgba(61,82,230,0.09) 0%, transparent 60%)',
@@ -441,7 +464,7 @@ export default function ApproachClient() {
         }} />
 
         {/* Main content */}
-        <div style={{
+        <div ref={heroContentRef} className="approach-hero-content" style={{
           flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center',
           position: 'relative', zIndex: 2,
           maxWidth: '1200px', width: '100%', margin: '0 auto',
@@ -527,7 +550,7 @@ export default function ApproachClient() {
                 <a
                   key={phase.id}
                   href={`#${phase.id}`}
-                  className="phase-tracker-item"
+                  className={`phase-tracker-item phase-tracker-item-${i}`}
                   style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     padding: '20px 0',
@@ -600,6 +623,7 @@ export default function ApproachClient() {
             }}
           >
             <div
+              className="phase-section-grid"
               style={{
                 maxWidth: '1200px', margin: '0 auto',
                 padding: '0 32px',
@@ -609,14 +633,14 @@ export default function ApproachClient() {
               }}
             >
               {/* Left column */}
-              <div style={{ padding: '88px 48px 88px 0', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <div className={isReversed ? 'phase-img-col' : 'phase-text-col'} style={{ padding: '88px 48px 88px 0', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 {isReversed
                   ? <PhaseImage phase={phase} from="left" />
                   : <PhaseText phase={phase} from="left" />}
               </div>
 
               {/* Timeline column (center) */}
-              <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', paddingTop: 88, flexShrink: 0 }}>
+              <div className="phase-timeline-col" style={{ position: 'relative', display: 'flex', justifyContent: 'center', paddingTop: 88, flexShrink: 0 }}>
                 {/* Vertical guide line */}
                 <div aria-hidden style={{
                   position: 'absolute', top: 0, bottom: 0,
@@ -629,7 +653,7 @@ export default function ApproachClient() {
               </div>
 
               {/* Right column */}
-              <div style={{ padding: '88px 0 88px 48px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <div className={isReversed ? 'phase-text-col' : 'phase-img-col'} style={{ padding: '88px 0 88px 48px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 {isReversed
                   ? <PhaseText phase={phase} from="right" />
                   : <PhaseImage phase={phase} from="right" />}
@@ -883,7 +907,7 @@ export default function ApproachClient() {
         </div>
       </section>
 
-      {/* ── Styles ──────────────────────────────────────── */}
+      {/* ── Styles ─────────────────────────────────────────── */}
       <style>{`
         /* Phase tracker hover */
         .phase-tracker-item:hover .phase-name { color: rgba(220,225,245,0.72) !important; }
@@ -963,10 +987,59 @@ export default function ApproachClient() {
           .phase-content-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
           .phase-content-grid > *:nth-child(2) { order: 2 !important; }
         }
+        @media (max-width: 768px) {
+          /* Issue 1: contain all FM initial-x overflows within the page wrapper */
+          .approach-page-wrapper { overflow-x: hidden; }
+          /* Clip hero overflow on both axes */
+          #approach-hero {
+            overflow-x: clip !important;
+            overflow-y: visible !important;
+            min-height: auto !important;
+          }
+          .approach-watermark { display: none; }
+          .approach-glow { max-width: 100vw; overflow: hidden; }
+
+          /* Hero content: ref controls paddingTop, CSS only sets flex direction */
+          .approach-hero-content { justify-content: flex-start !important; }
+
+          .principle-row-inner { grid-template-columns: 48px 1fr !important; gap: 16px 24px !important; }
+          .principle-row-inner > *:last-child { display: none !important; }
+          /* Phase sections: single column */
+          .phase-section-grid { grid-template-columns: 1fr !important; padding: 0 20px !important; }
+          .phase-timeline-col { display: none !important; }
+          /* Issue 4: text first, then image */
+          .phase-text-col { order: -1 !important; padding: 28px 0 20px !important; }
+          .phase-img-col  { order:  1 !important; padding: 0 0 48px !important; }
+          /* Principles: cursor shows tap target */
+          .principle-row-inner { cursor: pointer; }
+
+          /* Phase tracker 2x2 — borders and sizing */
+          .phase-tracker-item { padding: 18px 8px !important; }
+          .phase-name { font-size: 13px !important; text-align: center !important; }
+          /* item 2 (BUILD) is bottom-left — remove desktop borderLeft */
+          .phase-tracker-item-2 { border-left: none !important; }
+          /* column divider: right edge of left column */
+          .phase-tracker-item-0,
+          .phase-tracker-item-2 { border-right: 1px solid rgba(255,255,255,0.15) !important; }
+          /* row divider: bottom edge of top row */
+          .phase-tracker-item-0,
+          .phase-tracker-item-1 { border-bottom: 1px solid rgba(255,255,255,0.15) !important; }
+          /* lighten the surviving left-column border (item 1 and 3) */
+          .phase-tracker-item-1,
+          .phase-tracker-item-3 { border-left-color: rgba(255,255,255,0.15) !important; }
+        }
         @media (max-width: 640px) {
-          .phase-tracker { grid-template-columns: repeat(2, 1fr) !important; }
+          .phase-tracker { grid-template-columns: repeat(2, 1fr) !important; padding: 0 20px !important; }
+          .phase-tracker-item { padding: 18px 8px !important; }
+          .phase-name { font-size: 13px !important; text-align: center !important; }
+        }
+        @media (max-width: 600px) {
+          .approach-hero-section { padding: 0 20px 60px !important; }
+        }
+        @media (max-width: 480px) {
+          .principle-row-inner { grid-template-columns: 1fr !important; }
         }
       `}</style>
-    </>
+    </div>
   );
 }

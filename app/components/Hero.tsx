@@ -62,6 +62,7 @@ export default function Hero() {
       {/* ── Left panel — dot grid ─────────────────────────── */}
      <div
   aria-hidden
+  className="hero-dot-grid"
   style={{
     position: 'absolute',
     top: '92px',
@@ -93,6 +94,7 @@ export default function Hero() {
 
       {/* ── Left column — content ────────────────────────── */}
       <div
+        className="hero-content"
         style={{
           position: 'relative',
           zIndex: 1,
@@ -105,7 +107,7 @@ export default function Hero() {
       >
         {/* Animated headline */}
         <h1
-          className="font-heading"
+          className="font-heading hero-h1"
           style={{
             fontSize: 'clamp(48px, 5.5vw, 88px)',
             fontWeight: 500,
@@ -167,7 +169,7 @@ export default function Hero() {
           custom={0.85}
           initial="hidden"
           animate="visible"
-          className="font-body"
+          className="font-body hero-subheadline"
           style={{
             fontSize: 'clamp(15px, 1.4vw, 18px)',
             lineHeight: 1.8,
@@ -185,6 +187,7 @@ export default function Hero() {
           custom={1.05}
           initial="hidden"
           animate="visible"
+          className="hero-ctas"
           style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap', marginBottom: '32px' }}
         >
           <MagneticButton strength={0.22}>
@@ -202,6 +205,7 @@ export default function Hero() {
 
       {/* ── Right column — ServiceTriptych ───────────────── */}
       <motion.div
+        className="hero-visual"
         initial={{ opacity: 0, x: 24 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.4 }}
@@ -253,8 +257,35 @@ export default function Hero() {
             grid-template-columns: 1fr !important;
             min-height: 100vh !important;
           }
-          .hero-grid > div:last-child {
+          .hero-grid > .hero-visual {
             display: none !important;
+          }
+        }
+        @media (max-width: 768px) {
+          #home-hero { padding-top: 68px !important; }
+          .hero-dot-grid { width: 100% !important; }
+          .hero-grid {
+            display: flex !important;
+            flex-direction: column !important;
+            min-height: auto !important;
+          }
+          .hero-content {
+            padding: 16px 20px 16px 20px !important;
+            max-width: 100% !important;
+            justify-content: flex-start !important;
+          }
+          .hero-subheadline { margin-bottom: 20px !important; }
+          .hero-ctas { margin-bottom: 12px !important; }
+          .hero-grid > .hero-visual {
+            display: block !important;
+            position: relative !important;
+            height: 380px !important;
+            width: 100%;
+          }
+          .hero-h1 {
+            font-size: 36px !important;
+            letter-spacing: -0.02em !important;
+            line-height: 1.08 !important;
           }
         }
       `}</style>
