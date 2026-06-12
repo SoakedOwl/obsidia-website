@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useState, useCallback } from 'react';
-import { motion, useMotionValue, useTransform, useInView } from 'framer-motion';
+import { motion, useMotionValue, useTransform, useInView, useScroll, MotionValue } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 
@@ -41,6 +41,9 @@ function PrincipleRow({ principle, index, scrollDir, total }: {
 }) {
   const rowRef = useRef<HTMLDivElement>(null);
   const [mobileActive, setMobileActive] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => { setIsMobile(window.innerWidth <= 768); }, []);
+  const inView = useInView(rowRef, { once: false, amount: 0.5 });
   const mouseX = useMotionValue(-200);
   const mouseY = useMotionValue(-200);
   const spotX = useTransform(mouseX, v => v - 200);
@@ -64,7 +67,7 @@ function PrincipleRow({ principle, index, scrollDir, total }: {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onClick={() => setMobileActive(a => !a)}
-      animate={mobileActive ? 'hovered' : undefined}
+      animate={mobileActive ? 'hovered' : (inView ? 'visible' : 'hidden')}
       custom={{ index, scrollDir, total }}
       variants={{
         hidden: { opacity: 0, y: 28 },
@@ -78,10 +81,8 @@ function PrincipleRow({ principle, index, scrollDir, total }: {
         hovered: { opacity: 1, y: 0 },
       }}
       initial="hidden"
-      whileInView="visible"
       whileHover="hovered"
-      viewport={{ once: false, amount: 0.25 }}
-      style={{ position: 'relative', overflow: 'hidden', cursor: 'default' }}
+      style={{ position: 'relative', overflow: 'hidden', cursor: 'default', marginBottom: '20px' }}
     >
       {/* Static divider */}
       <div style={{
@@ -105,11 +106,11 @@ function PrincipleRow({ principle, index, scrollDir, total }: {
         }}
       />
 
-      {/* Background image — fades in on hover */}
+      {/* Background image — fades in on scroll, stays visible on hover */}
       <motion.div
         variants={{
           hidden: { opacity: 0 },
-          visible: { opacity: 0 },
+          visible: { opacity: 1 },
           hovered: { opacity: 1 },
         }}
         transition={{ duration: 0.55 }}
@@ -211,27 +212,60 @@ function PrincipleRow({ principle, index, scrollDir, total }: {
 }
 
 /* ── Phase image — Framer Motion entry + grayscale-to-color hover ── */
-function PhaseImage({ phase, from }: { phase: Phase; from: 'left' | 'right' }) {
+function PhaseImage({ phase, from, scrollProgress }: { phase: Phase; from: 'left' | 'right'; scrollProgress: MotionValue<number> }) {
   const [hov, setHov] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const imgRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(imgRef, { once: false, amount: 0.5 });
+  const inView = useInView(imgRef, { once: true, margin: '-30% 0px -30% 0px' });
   const initX = from === 'right' ? 40 : -40;
 
   useEffect(() => {
     setIsMobile(window.innerWidth <= 768);
   }, []);
 
-  useEffect(() => {
-    if (isMobile) setHov(inView);
-  }, [isMobile, inView]);
+useEffect(() => {
+  if (!isMobile || !inView) return;
+  const t = setTimeout(() => setHov(true), 600);
+  return () => clearTimeout(t);
+}, [isMobile, inView]);
+
+const [imgInView, setImgInView] = useState(false);
+const [isMobileImg, setIsMobileImg] = useState(false);
+useEffect(() => { setIsMobileImg(window.innerWidth <= 768); }, []);
+useEffect(() => {
+  const t = setTimeout(() => {
+    const v = scrollProgress.get();
+    if (v >= 0.35) setImgInView(true);
+  }, 50);
+  return () => clearTimeout(t);
+}, []);
+useEffect(() => {
+  return scrollProgress.onChange((v) => {
+    setImgInView(prev => {
+      if (!prev && v >= 0.35) return true;
+      if (prev && !isMobileImg && v <= 0.34) return false;
+      return prev;
+    });
+  });
+}, [scrollProgress, isMobileImg]);
+const [filterActive, setFilterActive] = useState(false);
+useEffect(() => {
+  return scrollProgress.onChange((v) => {
+    setFilterActive(prev => {
+      if (!prev && !isMobileImg && v >= 0.55) return true;
+      if (prev && v <= 0.40) return false;
+      return prev;
+    });
+  });
+}, [scrollProgress, isMobileImg]);
+
+const effectiveHov = hov || filterActive;
 
   return (
     <motion.div
       ref={imgRef}
+      animate={imgInView ? { opacity: 1, x: 0 } : { opacity: 0, x: initX }}
       initial={{ opacity: 0, x: initX }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: false, amount: 0.15 }}
       transition={{ duration: 0.9, ease: EASE }}
       onMouseEnter={() => { if (!isMobile) setHov(true); }}
       onMouseLeave={() => { if (!isMobile) setHov(false); }}
@@ -246,17 +280,17 @@ function PhaseImage({ phase, from }: { phase: Phase; from: 'left' | 'right' }) {
           width: '100%', height: '100%',
           objectFit: 'cover', objectPosition: 'center',
           display: 'block',
-          filter: hov
+          filter: effectiveHov
             ? 'grayscale(0%) brightness(0.95) contrast(1.04)'
             : 'grayscale(55%) brightness(0.7)',
-          transform: hov ? 'scale(1.04)' : 'scale(1.0)',
+          transform: effectiveHov ? 'scale(1.04)' : 'scale(1.0)',
           transition: 'filter 1s cubic-bezier(0.22,1,0.36,1), transform 1.2s cubic-bezier(0.22,1,0.36,1)',
         }}
       />
       {/* Accent frame traces the border on hover */}
       <div style={{
         position: 'absolute', inset: 0,
-        boxShadow: hov
+        boxShadow: effectiveHov
           ? 'inset 0 0 0 1px rgba(61,82,230,0.55)'
           : 'inset 0 0 0 0px rgba(61,82,230,0)',
         transition: 'box-shadow 600ms ease',
@@ -268,8 +302,8 @@ function PhaseImage({ phase, from }: { phase: Phase; from: 'left' | 'right' }) {
         padding: '48px 20px 18px',
         background: 'linear-gradient(to top, rgba(0,0,0,0.52) 0%, transparent 100%)',
         display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end',
-        opacity: hov ? 1 : 0,
-        transform: hov ? 'translateY(0)' : 'translateY(10px)',
+        opacity: effectiveHov ? 1 : 0,
+        transform: effectiveHov ? 'translateY(0)' : 'translateY(10px)',
         transition: 'opacity 450ms ease, transform 500ms cubic-bezier(0.22,1,0.36,1)',
         pointerEvents: 'none', zIndex: 2,
       }}>
@@ -281,17 +315,35 @@ function PhaseImage({ phase, from }: { phase: Phase; from: 'left' | 'right' }) {
 }
 
 /* ── Phase text — Framer Motion entry, staggered children ── */
-function PhaseText({ phase, from }: { phase: Phase; from: 'left' | 'right' }) {
+function PhaseText({ phase, from, scrollProgress }: { phase: Phase; from: 'left' | 'right'; scrollProgress: MotionValue<number> }) {
   const initX = from === 'left' ? -52 : 52;
+const [textInView, setTextInView] = useState(false);
+const [isMobile, setIsMobile] = useState(false);
+useEffect(() => { setIsMobile(window.innerWidth <= 768); }, []);
+useEffect(() => {
+  const t = setTimeout(() => {
+    const v = scrollProgress.get();
+    if (v >= 0.35) setTextInView(true);
+  }, 50);
+  return () => clearTimeout(t);
+}, []);
+useEffect(() => {
+  return scrollProgress.onChange((v) => {
+    setTextInView(prev => {
+      if (!prev && v >= 0.35) return true;
+      if (prev && !isMobile && v <= 0.34) return false;
+      return prev;
+    });
+  });
+}, [scrollProgress, isMobile]);
   const itemV = {
     hidden: { opacity: 0, x: initX },
     visible: { opacity: 1, x: 0, transition: { duration: 0.78, ease: EASE } },
   };
   return (
     <motion.div
+      animate={textInView ? 'visible' : 'hidden'}
       initial="hidden"
-      whileInView="visible"
-      viewport={{ once: false, amount: 0.15 }}
       variants={{
         hidden: {},
         visible: { transition: { staggerChildren: 0.1, delayChildren: 0.05 } },
@@ -330,17 +382,24 @@ function PhaseText({ phase, from }: { phase: Phase; from: 'left' | 'right' }) {
 }
 
 /* ── Phase timeline node — rotating diamond with counter-rotating number ── */
-function PhaseNode({ number }: { number: string }) {
+function PhaseNode({ number, scrollProgress }: { number: string; scrollProgress: MotionValue<number> }) {
+  const [active, setActive] = useState(false);
+  useEffect(() => {
+    return scrollProgress.on('change', (v) => {
+      setActive(prev => {
+        if (!prev && v >= 0.3) return true;
+        if (prev && v <= 0.05) return false;
+        return prev;
+      });
+    });
+  }, [scrollProgress]);
   return (
     <div style={{ position: 'relative', zIndex: 2, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      {/* Static outer glow ring */}
       <div aria-hidden style={{ position: 'absolute', width: 58, height: 58, transform: 'rotate(45deg)', border: '1px solid rgba(61,82,230,0.1)', pointerEvents: 'none' }} />
-      {/* Diamond — rotates into place, number stays upright */}
       <motion.div
+        animate={active ? { scale: 1, opacity: 1, rotate: 45 } : { scale: 0, opacity: 0, rotate: 0 }}
         initial={{ scale: 0, opacity: 0, rotate: 0 }}
-        whileInView={{ scale: 1, opacity: 1, rotate: 45 }}
-        viewport={{ once: false, amount: 0.6 }}
-        transition={{ type: 'spring', stiffness: 190, damping: 15, delay: 0.12 }}
+        transition={{ type: 'spring', stiffness: 280, damping: 22, delay: 0.08 }}
         style={{
           width: 34, height: 34,
           backgroundColor: 'var(--bg)',
@@ -358,6 +417,54 @@ function PhaseNode({ number }: { number: string }) {
   );
 }
 
+/* ── Phase section wrapper — owns section-level inView ───── */
+function PhaseSection({ phase, i }: { phase: Phase; i: number }) {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+  target: sectionRef,
+  offset: ['start end', 'start -200px'],
+});
+  const isReversed = i % 2 === 1;
+  return (
+    <section
+      id={phase.id}
+      style={{ backgroundColor: 'var(--bg)', borderTop: '1px solid var(--border)', position: 'relative' }}
+    >
+      <div
+        ref={sectionRef}
+        className="phase-section-grid"
+        style={{
+          maxWidth: '1200px', margin: '0 auto',
+          padding: '0 32px',
+          display: 'grid',
+          gridTemplateColumns: '1fr 72px 1fr',
+          alignItems: 'stretch',
+        }}
+      >
+        {/* Left column */}
+        <div className={isReversed ? 'phase-img-col' : 'phase-text-col'} style={{ padding: '88px 48px 88px 0', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          {isReversed
+            ? <PhaseImage phase={phase} from="left" scrollProgress={scrollYProgress} />
+            : <PhaseText phase={phase} from="left" scrollProgress={scrollYProgress} />
+          }
+        </div>
+        {/* Timeline column */}
+        <div className="phase-timeline-col" style={{ position: 'relative', display: 'flex', justifyContent: 'center', paddingTop: 88, flexShrink: 0 }}>
+          <div aria-hidden style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', transform: 'translateX(-50%)', width: 1, background: 'linear-gradient(to bottom, rgba(61,82,230,0.45) 0%, rgba(61,82,230,0.06) 100%)', zIndex: 0 }} />
+          <PhaseNode number={phase.number} scrollProgress={scrollYProgress} />
+        </div>
+        {/* Right column */}
+        <div className={isReversed ? 'phase-text-col' : 'phase-img-col'} style={{ padding: '88px 0 88px 48px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          {isReversed
+            ? <PhaseText phase={phase} from="right" scrollProgress={scrollYProgress} />
+            : <PhaseImage phase={phase} from="right" scrollProgress={scrollYProgress} />
+          }
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ── Page ─────────────────────────────────────────────────── */
 export default function ApproachClient() {
   const [lineDrawn, setLineDrawn] = useState(false);
@@ -369,7 +476,7 @@ export default function ApproachClient() {
   const heroContentRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (window.innerWidth <= 768 && heroContentRef.current) {
-      heroContentRef.current.style.paddingTop = '60px';
+      heroContentRef.current.style.paddingTop = '120px';
     }
   }, []);
 
@@ -468,7 +575,7 @@ export default function ApproachClient() {
           flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center',
           position: 'relative', zIndex: 2,
           maxWidth: '1200px', width: '100%', margin: '0 auto',
-          padding: '120px 32px 60px',
+          padding: '125px 32px 60px',
         }}>
           <motion.div
             initial={{ opacity: 0, y: 12 }}
@@ -487,7 +594,7 @@ export default function ApproachClient() {
           </motion.div>
 
           <motion.h1
-            className="font-heading"
+            className="font-heading approach-hero-h1"
             initial={{ opacity: 0, y: 36 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease: EASE, delay: 0.2 }}
@@ -498,10 +605,10 @@ export default function ApproachClient() {
               marginBottom: 44, maxWidth: '820px',
             }}
           >
-            Built around
-            <br />
-            the process,
-            <br />
+          Built around
+          <br className="approach-desktop-break" />
+          the process,
+          <br />
             <em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>not the tool.</em>
           </motion.h1>
 
@@ -610,58 +717,9 @@ export default function ApproachClient() {
       {/* ════════════════════════════════════════════════
           S2–S5 — PHASE SECTIONS (alternating + timeline)
       ════════════════════════════════════════════════ */}
-      {PHASES.map((phase, i) => {
-        const isReversed = i % 2 === 1;
-        return (
-          <section
-            key={phase.id}
-            id={phase.id}
-            style={{
-              backgroundColor: 'var(--bg)',
-              borderTop: '1px solid var(--border)',
-              position: 'relative',
-            }}
-          >
-            <div
-              className="phase-section-grid"
-              style={{
-                maxWidth: '1200px', margin: '0 auto',
-                padding: '0 32px',
-                display: 'grid',
-                gridTemplateColumns: '1fr 72px 1fr',
-                alignItems: 'stretch',
-              }}
-            >
-              {/* Left column */}
-              <div className={isReversed ? 'phase-img-col' : 'phase-text-col'} style={{ padding: '88px 48px 88px 0', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                {isReversed
-                  ? <PhaseImage phase={phase} from="left" />
-                  : <PhaseText phase={phase} from="left" />}
-              </div>
-
-              {/* Timeline column (center) */}
-              <div className="phase-timeline-col" style={{ position: 'relative', display: 'flex', justifyContent: 'center', paddingTop: 88, flexShrink: 0 }}>
-                {/* Vertical guide line */}
-                <div aria-hidden style={{
-                  position: 'absolute', top: 0, bottom: 0,
-                  left: '50%', transform: 'translateX(-50%)',
-                  width: 1,
-                  background: 'linear-gradient(to bottom, rgba(61,82,230,0.45) 0%, rgba(61,82,230,0.06) 100%)',
-                  zIndex: 0,
-                }} />
-                <PhaseNode number={phase.number} />
-              </div>
-
-              {/* Right column */}
-              <div className={isReversed ? 'phase-text-col' : 'phase-img-col'} style={{ padding: '88px 0 88px 48px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                {isReversed
-                  ? <PhaseText phase={phase} from="right" />
-                  : <PhaseImage phase={phase} from="right" />}
-              </div>
-            </div>
-          </section>
-        );
-      })}
+      {PHASES.map((phase, i) => (
+        <PhaseSection key={phase.id} phase={phase} i={i} />
+      ))}
 
       {/* ════════════════════════════════════════════════
           S6 — PRINCIPLES
@@ -673,7 +731,7 @@ export default function ApproachClient() {
         style={{
           backgroundColor: 'var(--dark-bg)',
           borderTop: '1px solid var(--dark-border)',
-          padding: '96px 32px 48px',
+          padding: '120px 32px 48px',
         }}
       >
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
@@ -909,6 +967,8 @@ export default function ApproachClient() {
 
       {/* ── Styles ─────────────────────────────────────────── */}
       <style>{`
+        .approach-line1 { display: block; }
+        .approach-line2 { display: block; }
         /* Phase tracker hover */
         .phase-tracker-item:hover .phase-name { color: rgba(220,225,245,0.72) !important; }
         .phase-tracker-item:hover .phase-num  { color: var(--accent) !important; opacity: 1 !important; }
@@ -987,9 +1047,14 @@ export default function ApproachClient() {
           .phase-content-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
           .phase-content-grid > *:nth-child(2) { order: 2 !important; }
         }
+        .approach-desktop-break { display: block; }
         @media (max-width: 768px) {
+          .approach-desktop-break { display: none; }
           /* Issue 1: contain all FM initial-x overflows within the page wrapper */
           .approach-page-wrapper { overflow-x: hidden; }
+          .approach-hero-h1 br:first-of-type { display: none; }
+          .approach-line1 { display: inline; }
+          .approach-line2 { display: inline; }
           /* Clip hero overflow on both axes */
           #approach-hero {
             overflow-x: clip !important;
@@ -1014,8 +1079,10 @@ export default function ApproachClient() {
           .principle-row-inner { cursor: pointer; }
 
           /* Phase tracker 2x2 — borders and sizing */
+          .phase-tracker { border: 1px solid var(--accent) !important; width: calc(100% - 40px) !important; margin: 0 auto !important; padding: 0 !important; }
+          div:has(> .phase-tracker) { border-top: none !important; }
           .phase-tracker-item { padding: 18px 8px !important; }
-          .phase-name { font-size: 13px !important; text-align: center !important; }
+          .phase-name { font-size: 13px !important; text-align: center !important; color: #ffffff !important; }
           /* item 2 (BUILD) is bottom-left — remove desktop borderLeft */
           .phase-tracker-item-2 { border-left: none !important; }
           /* column divider: right edge of left column */
@@ -1029,12 +1096,12 @@ export default function ApproachClient() {
           .phase-tracker-item-3 { border-left-color: rgba(255,255,255,0.15) !important; }
         }
         @media (max-width: 640px) {
-          .phase-tracker { grid-template-columns: repeat(2, 1fr) !important; padding: 0 20px !important; }
+          .phase-tracker { grid-template-columns: repeat(2, 1fr) !important; padding: 0 !important; }
           .phase-tracker-item { padding: 18px 8px !important; }
           .phase-name { font-size: 13px !important; text-align: center !important; }
         }
         @media (max-width: 600px) {
-          .approach-hero-section { padding: 0 20px 60px !important; }
+          .approach-hero-section { padding: 10px 20px 60px !important; }
         }
         @media (max-width: 480px) {
           .principle-row-inner { grid-template-columns: 1fr !important; }

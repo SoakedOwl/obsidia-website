@@ -246,7 +246,7 @@ function WebsitesHero() {
 
   return (
     <section data-nav-theme="dark" id="web-hero" data-section-label="Overview" style={{ position: 'relative', minHeight: '100vh', display: 'grid', gridTemplateColumns: '55% 45%', alignItems: 'stretch', overflow: 'hidden', backgroundColor: 'var(--dark-bg)', paddingTop: '92px' }} className="web-hero-grid">
-      <div aria-hidden style={{ position: 'absolute', top: '92px', left: 0, right: 0, bottom: 0, width: '55%', backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
+      <div aria-hidden style={{ position: 'absolute', top: '92px', left: 0, right: 0, bottom: 0, width: '55%', backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.10) 1px, transparent 1px)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
       <div aria-hidden style={{ position: 'absolute', bottom: '-80px', left: '-60px', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(61,82,230,0.09) 0%, transparent 60%)', pointerEvents: 'none', zIndex: 0 }} />
 
       <div className="web-hero-content" style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '80px 48px 80px 32px', maxWidth: '680px' }}>
@@ -255,8 +255,8 @@ function WebsitesHero() {
         </motion.div>
         <h1 className="font-heading" style={{ fontSize: 'clamp(44px, 5.5vw, 82px)', fontWeight: 500, lineHeight: 1.0, letterSpacing: '-0.03em', color: 'var(--dark-text)', marginBottom: '28px' }}>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.15 }}>
-            <span style={{ display: 'block', marginBottom: '0.04em' }}>Your website</span>
-            <span style={{ display: 'block', marginBottom: '0.04em' }}>should actually</span>
+            <span className="web-hero-line" style={{ marginBottom: '0.04em' }}>Your website </span>
+            <span className="web-hero-line" style={{ marginBottom: '0.04em' }}>should actually</span>
             <AnimatePresence mode="wait">
               <motion.span key={wordIdx} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -14 }} transition={{ duration: 0.3, ease: EASE }} style={{ display: 'block', color: 'var(--accent)', fontStyle: 'italic' }}>
                 {CYCLE[wordIdx]}
@@ -264,7 +264,7 @@ function WebsitesHero() {
             </AnimatePresence>
           </motion.div>
         </h1>
-        <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, ease: EASE, delay: 0.85 }} className="font-body" style={{ fontSize: 'clamp(15px, 1.4vw, 17px)', lineHeight: 1.8, color: 'var(--dark-muted)', maxWidth: '460px', marginBottom: '44px' }}>
+        <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, ease: EASE, delay: 0.85 }} className="font-body web-hero-para" style={{ fontSize: 'clamp(15px, 1.4vw, 17px)', lineHeight: 1.8, color: 'var(--dark-muted)', maxWidth: '460px', marginBottom: '44px' }}>
           A slow, confusing, or outdated website costs you leads every day, and most businesses don&rsquo;t notice until a competitor takes them. We build websites that earn their keep.
         </motion.p>
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, ease: EASE, delay: 1.05 }} style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap', marginBottom: '32px' }}>
@@ -288,8 +288,11 @@ function WebsitesHero() {
       </motion.div>
 
       <style>{`
+        .web-hero-line { display: block; }
         @media (max-width: 1024px) { .web-hero-grid { grid-template-columns: 1fr !important; min-height: auto !important; } .web-hero-grid > div:last-child { display: none !important; } }
-        @media (max-width: 600px) { .web-hero-content { padding: 72px 20px 48px 20px !important; } }
+        @media (max-width: 768px) { .web-hero-line { display: inline; } }
+        @media (max-width: 600px) { .web-hero-content { padding: 22px 20px 48px 20px !important; } }
+        @media (max-width: 600px) { .web-hero-para { margin-top: 32px !important; } }
       `}</style>
     </section>
   );
@@ -581,11 +584,12 @@ const PROB_WIDGETS = [BarComparisonWidget, ScoreDialWidget, MorphingLayoutWidget
 
 /* ── Problem item row — generous, instrument-framed widgets ─── */
 function ProblemItem({
-  item, index, isMobile,
+  item, index, isMobile, forceActive,
 }: {
-  item: typeof WEB_PROBLEMS[0]; index: number; isMobile?: boolean;
+  item: typeof WEB_PROBLEMS[0]; index: number; isMobile?: boolean; forceActive?: boolean;
 }) {
   const [hovered, setHovered] = useState(false);
+  const active = hovered || (forceActive ?? false);
   const Widget = PROB_WIDGETS[index];
   const isLast = index === WEB_PROBLEMS.length - 1;
 
@@ -600,7 +604,7 @@ function ProblemItem({
       className="web-prob-item"
       style={{
         display: 'grid',
-        gridTemplateColumns: isMobile ? '100px 1fr' : '160px 1fr',
+        gridTemplateColumns: isMobile ? '130px 1fr' : '160px 1fr',
         gap: isMobile ? '12px' : '22px',
         alignItems: 'center',
         paddingBottom: isLast ? 0 : '14px',
@@ -610,7 +614,7 @@ function ProblemItem({
       }}
     >
       {/* Number + widget column */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '8px', width: isMobile ? '100px' : '120px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '8px', width: isMobile ? '130px' : '120px' }}>
         <span style={{
           fontFamily: 'var(--font-mono), monospace',
           fontSize: '11px', fontWeight: 600,
@@ -618,8 +622,8 @@ function ProblemItem({
         }}>
           {item.n}
         </span>
-        <InstrumentCell active={hovered} small={isMobile}>
-          <Widget active={hovered} small={isMobile} />
+        <InstrumentCell active={active} small={isMobile}>
+          <Widget active={active} small={isMobile} />
         </InstrumentCell>
       </div>
 
@@ -628,16 +632,16 @@ function ProblemItem({
         {/* Title: shifts + cobalt underline draws on hover */}
         <div style={{ position: 'relative', marginBottom: '14px', display: 'inline-block' }}>
           <h3 className="font-heading" style={{
-            fontSize: isMobile ? '14px' : 'clamp(15px, 1.5vw, 21px)',
+            fontSize: isMobile ? '18px' : 'clamp(15px, 1.5vw, 26px)',
             fontWeight: 500, letterSpacing: '-0.025em',
             color: 'var(--text)', lineHeight: 1.1,
-            transform: hovered ? 'translateX(6px)' : 'translateX(0)',
+            transform: active  ? 'translateX(6px)' : 'translateX(0)',
             transition: 'transform 400ms cubic-bezier(0.22,1,0.36,1)',
           }}>
             {item.title}
           </h3>
           <motion.div
-            animate={{ scaleX: hovered ? 1 : 0, opacity: hovered ? 1 : 0 }}
+            animate={{ scaleX: active  ? 1 : 0, opacity: hovered ? 1 : 0 }}
             initial={{ scaleX: 0, opacity: 0 }}
             transition={{
               scaleX: { duration: hovered ? 0.46 : 0.32, ease: hovered ? EASE_OUT : EASE_IN },
@@ -652,7 +656,7 @@ function ProblemItem({
           />
         </div>
         <p className="font-body" style={{
-          fontSize: isMobile ? '12px' : '13px', lineHeight: 1.55,
+          fontSize: isMobile ? '12px' : '15px', lineHeight: 1.55,
           color: 'var(--text-secondary)', margin: 0, maxWidth: '54ch',
         }}>
           {item.body}
@@ -841,6 +845,62 @@ function LiveDiagnosticCard(_: { visible: boolean }) {
   );
 }
 
+/* ── Mobile-only site vitals card ────────────────────────── */
+function MobileVitalsCard() {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(cardRef, { once: false, amount: 0.3 });
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => setTick(t => (t >= 20 ? 0 : t + 1)), 1400);
+    return () => clearInterval(id);
+  }, []);
+
+  const p = tick / 20;
+  const vitals = [
+    { label: 'BOUNCE RATE', val: `${(44 + (78 - 44) * p).toFixed(0)}%`, bar: 28 + 62 * p, col: '#EF4444' },
+    { label: 'CONVERSION',  val: `${(3.4 - (3.4 - 0.8) * p).toFixed(1)}%`, bar: 72 - 60 * p, col: '#EF4444' },
+    { label: 'LOAD TIME',   val: `${(1.3 + (4.2 - 1.3) * p).toFixed(1)}s`, bar: 16 + 74 * p, col: '#F59E0B' },
+  ];
+
+  return (
+    <motion.div
+      ref={cardRef}
+      className="web-mobile-vitals"
+      animate={{ opacity: inView ? 1 : 0 }}
+      transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
+      style={{
+        background: '#06080F',
+        border: '1px solid rgba(61,82,230,0.18)',
+        borderRadius: '12px',
+        padding: '12px 25px 10px',
+        fontFamily: 'var(--font-mono), monospace',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      <div aria-hidden style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle, rgba(120,130,200,0.04) 1px, transparent 1px)', backgroundSize: '20px 20px', pointerEvents: 'none' }} />
+      <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+        <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22C55E', boxShadow: '0 0 6px rgba(34,197,94,0.7)', flexShrink: 0 }} />
+        <span style={{ fontSize: '9px', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(34,197,94,0.75)' }}>LIVE SITE VITALS</span>
+      </div>
+      <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap: '13px' }}>
+        {vitals.map(v => (
+          <div key={v.label}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
+              <span style={{ fontSize: '8.5px', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255, 255, 255, 0.52)' }}>{v.label}</span>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: v.col, textShadow: `0 0 10px ${v.col}55` }}>{v.val}</span>
+            </div>
+            <div style={{ height: '3px', background: 'rgba(255,255,255,0.06)', borderRadius: '2px', overflow: 'hidden' }}>
+              <div style={{ height: '100%', width: `${v.bar}%`, background: `linear-gradient(90deg, ${v.col}66, ${v.col})`, borderRadius: '2px', boxShadow: `0 0 6px ${v.col}88`, transition: 'width 1.4s cubic-bezier(0.22,1,0.36,1)' }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
 /* ── Two-column problem section ───────────────────────────── */
 function WebStickyProblem() {
   const ref = useRef<HTMLElement>(null);
@@ -851,7 +911,32 @@ function WebStickyProblem() {
   const headlineInView = useInView(headlineRef, { once: false, amount: 0.45 });
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => { setIsMobile(window.innerWidth <= 768); }, []);
+  const [autoActive, setAutoActive] = useState(-1);
+  const problemsRef = useRef<HTMLDivElement>(null);
+  const problemsInView = useInView(problemsRef, { once: false, amount: 0.3 });
 
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+useEffect(() => {
+  if (!isMobile || !problemsInView) {
+    setAutoActive(-1);
+    return;
+  }
+  setAutoActive(0);
+  let current = 0;
+  intervalRef.current = setInterval(() => {
+    current += 1;
+    if (current >= WEB_PROBLEMS.length) {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      setTimeout(() => setAutoActive(-1), 100);
+    } else {
+      setAutoActive(current);
+    }
+  }, 2000);
+  return () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+  };
+}, [isMobile, problemsInView]);
   return (
     <section
       ref={ref as React.RefObject<HTMLElement>}
@@ -911,25 +996,24 @@ function WebStickyProblem() {
               fontWeight: 500, letterSpacing: '-0.042em',
               color: 'var(--text)', lineHeight: 0.96,
             }}>
-              The site is live.
-              <br />
-              <em style={{ fontStyle: 'italic', color: 'var(--accent)' }}>
-                The leads are not.
-              </em>
+              The site is live. <em style={{ fontStyle: 'italic', color: 'var(--accent)' }}>The leads are not.</em>
             </h2>
           </motion.div>
 
           {/* Problem items */}
           <motion.div
+            ref={problemsRef}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: false, amount: 0.25 }}
             variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.18, delayChildren: 0.12 } } }}
           >
             {WEB_PROBLEMS.map((p, i) => (
-              <ProblemItem key={i} item={p} index={i} isMobile={isMobile} />
+              <ProblemItem key={i} item={p} index={i} isMobile={isMobile} forceActive={isMobile && autoActive === i} />
             ))}
           </motion.div>
+
+          <MobileVitalsCard />
         </div>
 
         {/* ── Right — Live Diagnostic card, full height ── */}
@@ -951,21 +1035,23 @@ function WebStickyProblem() {
           .web-sticky-right { display: none !important; }
           #web-problem { height: auto !important; overflow: visible !important; }
           .web-prob-outer { height: auto !important; }
+          .web-mobile-vitals { display: block !important; margin-top: 40px; }
         }
+        .web-mobile-vitals { display: none; }
         @media (max-width: 640px) {
-          .web-prob-outer { padding: 48px 20px !important; }
+          .web-prob-outer { padding: 48px 15px 30px !important; }
           .web-prob-item {
-            grid-template-columns: 80px 1fr !important;
+            grid-template-columns: 130px 1fr !important;
             gap: 12px !important;
             align-items: center !important;
-          }
-          .web-prob-item > div:first-child { width: 80px !important; }
-          .web-instr-cell { height: auto !important; padding: 6px 8px !important; min-height: 0 !important; }
-          .web-bar-comp { height: 32px !important; }
-          .web-score-dial-wrap { width: 38px !important; height: 38px !important; }
-          .web-score-dial-wrap svg { width: 100% !important; height: 100% !important; }
-          .web-morph-widget { height: 40px !important; }
         }
+          .web-prob-item > div:first-child { width: 130px !important; }
+          .web-instr-cell { height: auto !important; padding: 8px 2px !important; min-height: 0 !important; }
+          .web-bar-comp { height: 48px !important; }
+          .web-score-dial-wrap { width: 52px !important; height: 52px !important; }
+          .web-score-dial-wrap svg { width: 100% !important; height: 100% !important; }
+          .web-morph-widget { height: 75px !important; }
+}
       `}</style>
     </section>
   );
@@ -973,10 +1059,10 @@ function WebStickyProblem() {
 
 /* ── Services grid with wireframe card backgrounds ────────── */
 const WEB_SERVICES = [
-  { n: '01', tag: 'Conversion', title: 'Landing Pages', body: 'Fast, focused pages with one job: get visitors to act.' },
-  { n: '02', tag: 'Corporate',  title: 'Corporate & Brand Sites', body: 'Ranks where it should, handles real traffic, and moves visitors to the right place.' },
-  { n: '03', tag: 'Commerce',   title: 'E-Commerce', body: 'Built around how buyers actually behave, with a backend your team can manage.' },
-  { n: '04', tag: 'Applications', title: 'Web Applications', body: 'Browser-based tools built entirely around your workflow, not a generic template.' },
+  { n: '01', tag: 'Conversion',   title: 'Landing Pages',          body: 'Fast, focused pages with one job: get visitors to act.',                                                      image: '/landing-page.jpg'   },
+  { n: '02', tag: 'Corporate',    title: 'Corporate & Brand Sites', body: 'Ranks where it should, handles real traffic, and moves visitors to the right place.',                         image: '/corporate-site.jpg' },
+  { n: '03', tag: 'Commerce',     title: 'E-Commerce',              body: 'Built around how buyers actually behave, with a backend your team can manage.',                               image: '/ecommerce-site.jpg'  },
+  { n: '04', tag: 'Applications', title: 'Web Applications',        body: 'Browser-based tools built entirely around your workflow, not a generic template.',                            image: '/webapp-site.jpg'    },
 ];
 
 /* ── Services: equal-width four-card horizontal grid ────────── */
@@ -1058,7 +1144,6 @@ function ServiceCard({
   isMobile?: boolean; isExpanded?: boolean; onToggle?: () => void;
 }) {
   const [hov, setHov] = useState(false);
-  const Art = CARD_ARTS[index];
   const scRef = useRef<HTMLDivElement>(null);
   const scInView = useInView(scRef, { once: false, amount: 0.2 });
 
@@ -1069,6 +1154,8 @@ function ServiceCard({
         ref={scRef}
         style={{
           borderBottom: '1px solid rgba(255,255,255,0.08)',
+          marginBottom: '16px',
+           overflowAnchor: 'none',
         }}
       >
         {/* Collapsed header — always visible */}
@@ -1076,7 +1163,7 @@ function ServiceCard({
           onClick={onToggle}
           style={{
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            padding: '18px 20px', cursor: 'pointer',
+            padding: '18px 20px 0 20px', cursor: 'pointer',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
@@ -1108,9 +1195,17 @@ function ServiceCard({
           transition: 'grid-template-rows 350ms cubic-bezier(0.22,1,0.36,1)',
         }}>
           <div style={{ overflow: 'hidden' }}>
-            <div style={{ padding: '0 20px 28px' }}>
-              <div style={{ height: '100px', marginBottom: '16px' }}>
-                <Art hov={true} />
+            <div style={{ padding: '12px 20px 28px' }}>
+              <div style={{
+                height: '230px', marginBottom: '16px',
+                borderRadius: '6px', overflow: 'hidden',
+              }}>
+                <div style={{
+                  width: '100%', height: '100%',
+                  backgroundImage: `url(${s.image})`,
+                  backgroundSize: 'cover', backgroundPosition: 'center',
+                  filter: 'brightness(0.9) saturate(0.8)',
+                }} />
               </div>
               <p className="font-body" style={{
                 fontSize: '14px', lineHeight: 1.78,
@@ -1140,21 +1235,30 @@ function ServiceCard({
         border: `1px solid ${hov ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.07)'}`,
         transition: 'background-color 320ms cubic-bezier(0.25,1,0.5,1), border-color 320ms cubic-bezier(0.25,1,0.5,1)',
         cursor: 'default',
-        minHeight: '420px',
+        minHeight: '370px',
       }}
     >
+      {/* Background photo */}
+      <div aria-hidden style={{
+        position: 'absolute', inset: 0, zIndex: 0,
+        backgroundImage: `url(${s.image})`,
+        backgroundSize: 'cover', backgroundPosition: 'center',
+        filter: 'brightness(0.29) saturate(0.35) blur(2px)',
+        pointerEvents: 'none',
+      }} />
+
       {/* Top: number + tag */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px', position: 'relative', zIndex: 1 }}>
         <span style={{
           fontFamily: 'var(--font-mono), monospace', fontSize: '10px',
           letterSpacing: '0.2em', textTransform: 'uppercase',
-          color: hov ? 'var(--accent)' : 'rgba(255,255,255,0.22)',
+          color: hov ? 'var(--accent)' : 'rgb(255, 255, 255)',
           transition: 'color 280ms cubic-bezier(0.25,1,0.5,1)',
         }}>{s.n}</span>
         <span style={{
           fontFamily: 'var(--font-mono), monospace', fontSize: '8px',
           letterSpacing: '0.14em', textTransform: 'uppercase',
-          color: 'rgba(220,225,248,0.28)',
+          color: 'rgba(220, 225, 248, 0.77)',
         }}>{s.tag}</span>
       </div>
 
@@ -1166,34 +1270,13 @@ function ServiceCard({
         margin: 0, position: 'relative', zIndex: 1,
       }}>{s.title}</h3>
 
-      {/* Art — flex middle, open breathing room */}
-      <div style={{
-        flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: '28px 0 20px', position: 'relative', zIndex: 1,
-      }}>
-        <Art hov={hov} />
-      </div>
-
       {/* Bottom: body text + hover reveal */}
-      <div style={{ position: 'relative', zIndex: 1 }}>
+      <div style={{ position: 'relative', zIndex: 1, marginTop: 'auto' }}>
         <p className="font-body" style={{
           fontSize: '13px', lineHeight: 1.78,
-          color: 'rgba(220,225,248,0.48)',
+          color: 'rgba(220, 225, 248, 0.78)',
           margin: 0,
         }}>{s.body}</p>
-
-        <motion.span
-          animate={{ opacity: hov ? 1 : 0, y: hov ? 0 : 6 }}
-          transition={{ duration: 0.32, ease: [0.25, 1, 0.5, 1] as [number,number,number,number], delay: hov ? 0.07 : 0 }}
-          style={{
-            display: 'block', marginTop: '14px',
-            fontFamily: 'var(--font-mono), monospace', fontSize: '9px',
-            letterSpacing: '0.18em', textTransform: 'uppercase',
-            color: 'rgba(61,82,230,0.72)',
-          }}
-        >
-          Explore →
-        </motion.span>
       </div>
 
       <motion.div
@@ -1205,7 +1288,7 @@ function ServiceCard({
         }}
         style={{
           position: 'absolute', bottom: 0, left: 0,
-          width: '100%', height: '1px',
+          width: '100%', height: '5px',
           backgroundColor: 'rgba(61,82,230,0.4)',
           transformOrigin: 'left center', pointerEvents: 'none',
         }}
@@ -1235,6 +1318,7 @@ function WebServicesGrid() {
         backgroundSize: '28px 28px',
         padding: '80px 32px 96px',
         position: 'relative', overflow: 'hidden',
+        overflowAnchor: 'none',
       }}
     >
       {/* Ambient glow */}
@@ -1252,7 +1336,7 @@ function WebServicesGrid() {
           ref={gridHdrRef}
           animate={{ opacity: gridHdrInView ? 1 : 0 }}
           transition={{ duration: 0.72, ease: [0.25, 1, 0.5, 1] as [number,number,number,number] }}
-          style={{ marginBottom: '52px' }}
+          style={{ marginBottom: '42px', paddingTop: '64px' }}
         >
           <div style={{
             fontFamily: 'var(--font-body), sans-serif', fontSize: '9px',
@@ -1262,7 +1346,7 @@ function WebServicesGrid() {
           }}>What We Design</div>
 
           <h2 className="font-heading" style={{
-            fontSize: 'clamp(48px, 7vw, 88px)',
+            fontSize: 'clamp(36px, 5vw, 64px)',
             fontWeight: 500, letterSpacing: '-0.044em',
             color: 'var(--dark-text)', lineHeight: 0.94,
           }}>
@@ -1278,6 +1362,7 @@ function WebServicesGrid() {
             display: 'grid',
             gridTemplateColumns: 'repeat(4, 1fr)',
             gap: '10px',
+            overflowAnchor: 'none',
           }}
         >
           {WEB_SERVICES.map((s, i) => (
@@ -1302,6 +1387,7 @@ function WebServicesGrid() {
         @media (max-width: 560px) {
           .web-svc-grid { grid-template-columns: 1fr !important; }
         }
+        html { overflow-anchor: none; }
       `}</style>
     </section>
   );

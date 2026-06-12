@@ -8,17 +8,17 @@ function AutomationPanel({ visible, mobile }: { visible: boolean; mobile?: boole
 
   useEffect(() => {
     if (!visible) return;
-    const id = setInterval(() => setTick(t => t + 1), 1600);
+    const id = setInterval(() => setTick(t => t + 1), 3000);
     return () => clearInterval(id);
   }, [visible]);
 
-  const activeEdge = tick % 3;
+  const activeGroup = tick % 2;
 
   const nodes = [
-    { id: 0, cx: 48,  cy: 80,  label: 'Trigger' },
-    { id: 1, cx: 140, cy: 40,  label: 'Filter'  },
-    { id: 2, cx: 140, cy: 120, label: 'Route'   },
-    { id: 3, cx: 232, cy: 80,  label: 'Action'  },
+    { id: 0, cx: 50,  cy: 80,  label: 'Trigger' },
+    { id: 1, cx: 140, cy: -30,  label: 'Filter'  },
+    { id: 2, cx: 140, cy: 195, label: 'Route'   },
+    { id: 3, cx: 230, cy: 80,  label: 'Action'  },
   ];
 
   const edges = [
@@ -30,7 +30,7 @@ function AutomationPanel({ visible, mobile }: { visible: boolean; mobile?: boole
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', padding: mobile ? '8px 6px' : '20px' }}>
-      <svg viewBox={mobile ? '30 22 220 112' : '0 0 280 160'} style={{ width: '100%', flex: 1 }} aria-hidden>
+      <svg viewBox={mobile ? '30 22 220 112' : '30 12 220 112  '} style={{ width: '100%', flex: 1 }} aria-hidden>
         <defs>
           <marker id="arr-a" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
             <path d="M0 0 L5 2.5 L0 5Z" fill="var(--accent)" opacity="0.7" />
@@ -45,16 +45,16 @@ function AutomationPanel({ visible, mobile }: { visible: boolean; mobile?: boole
           const from = nodes[e.from];
           const to   = nodes[e.to];
           const mid  = { x: (from.cx + to.cx) / 2, y: (from.cy + to.cy) / 2 };
-          const d    = `M ${from.cx + 14},${from.cy} Q ${mid.x},${mid.y} ${to.cx - 14},${to.cy}`;
-          const isActive = i === activeEdge;
+          const d    = `M ${from.cx + 20},${from.cy} Q ${mid.x},${mid.y} ${to.cx - 20},${to.cy}`;
+          const isActive = (activeGroup === 0 && (i === 0 || i === 1)) || (activeGroup === 1 && (i === 2 || i === 3));
           return (
             <g key={e.id}>
               <path d={d} fill="none" stroke={isActive ? 'var(--accent)' : '#2A2A28'}
                 strokeWidth={isActive ? 1.2 : 0.8} opacity={isActive ? 0.8 : 0.5}
                 markerEnd={isActive ? 'url(#arr-a)' : 'url(#arr-p)'} />
               {isActive && (
-                <circle r="2.5" fill="var(--accent)" opacity="0.9">
-                  <animateMotion dur="1.4s" repeatCount="indefinite">
+                <circle key={`dot-${e.id}-${activeGroup}`} r="2.5" fill="var(--accent)" opacity="0.9">
+                  <animateMotion dur="2s" repeatCount="indefinite">
                     <mpath href={`#${e.id}-path`} />
                   </animateMotion>
                 </circle>
@@ -66,16 +66,17 @@ function AutomationPanel({ visible, mobile }: { visible: boolean; mobile?: boole
 
         {/* Nodes */}
         {nodes.map((n, i) => {
-          const isActive = edges[activeEdge]?.from === i || edges[activeEdge]?.to === i;
+          const activeEdges = activeGroup === 0 ? [0, 1] : [2, 3];
+          const isActive = activeEdges.some(ei => edges[ei]?.from === i || edges[ei]?.to === i);
           return (
             <g key={n.id}>
-              <rect x={n.cx - 14} y={n.cy - 12} width={28} height={24} rx={2}
+              <rect x={n.cx - 18} y={n.cy - 14} width={36} height={28} rx={2}
                 fill={isActive ? '#0D1020' : '#111318'}
                 stroke={isActive ? 'var(--accent)' : '#2A2A28'}
                 strokeWidth={0.8} />
-              {isActive && <rect x={n.cx - 14} y={n.cy - 12} width={2.5} height={24} rx={1} fill="var(--accent)" />}
+              {isActive && <rect x={n.cx - 18} y={n.cy - 14} width={2.5} height={28} rx={1} fill="var(--accent)" />}
               <text x={n.cx} y={n.cy + 1} textAnchor="middle" dominantBaseline="middle"
-                fontFamily="var(--font-body), sans-serif" fontSize="6.5" fill={isActive ? '#F0EFE9' : '#5A5A58'}>
+                fontFamily="var(--font-body), sans-serif" fontSize="9" fill={isActive ? '#F0EFE9' : '#5A5A58'}>
                 {n.label}
               </text>
             </g>
@@ -83,8 +84,8 @@ function AutomationPanel({ visible, mobile }: { visible: boolean; mobile?: boole
         })}
 
         {/* Status */}
-        <text x="140" y="152" textAnchor="middle" fontFamily="var(--font-body), sans-serif"
-          fontSize="6.5" fill="#2A2A28" letterSpacing="0.12em">
+        <text x="140" y="86" textAnchor="middle" fontFamily="var(--font-body), sans-serif"
+          fontSize="6.5" fill="#ffffffd6" letterSpacing="0.12em">
           RUNNING · 4 ACTIVE ROUTES
         </text>
       </svg>
@@ -114,10 +115,10 @@ function WebsitePanel({ visible, mobile }: { visible: boolean; mobile?: boolean 
   ];
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', padding: mobile ? '8px 6px' : '20px' }}>
-      <svg viewBox="0 0 280 160" style={{ width: '100%', flex: 1 }} aria-hidden>
+    <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', padding: mobile ? '8px 6px' : '22px 4px' }}>
+      <svg viewBox="15 0 250 180" style={{ width: '100%', flex: 1 }} aria-hidden>
         {/* Browser chrome */}
-        <rect x="20" y="8" width="240" height="148" rx="3" fill="#0D0D0D" stroke="#2A2A28" strokeWidth="0.8" />
+        <rect x="20" y="8" width="240" height="178" rx="3" fill="#0D0D0D" stroke="#2A2A28" strokeWidth="0.8" />
         {/* Title bar */}
         <rect x="20" y="8" width="240" height="22" rx="3" fill="#1A1A18" stroke="#2A2A28" strokeWidth="0.8" />
         <rect x="20" y="22" width="240" height="8" fill="#1A1A18" />
@@ -128,8 +129,8 @@ function WebsitePanel({ visible, mobile }: { visible: boolean; mobile?: boolean 
         {/* URL bar */}
         <rect x="72" y="13" width="120" height="12" rx="2" fill="#111111" stroke="#2A2A28" strokeWidth="0.6" />
         <text x="132" y="21" textAnchor="middle" dominantBaseline="middle"
-          fontFamily="var(--font-body), sans-serif" fontSize="5.5" fill="#3A3A38" letterSpacing="0.04em">
-          obsidia.co
+          fontFamily="var(--font-body), sans-serif" fontSize="8" fill="#ffffff" letterSpacing="0.04em">
+          obsidia.space
         </text>
 
         {/* Nav bar skeleton */}
@@ -156,7 +157,7 @@ function WebsitePanel({ visible, mobile }: { visible: boolean; mobile?: boolean 
           style={{ transition: 'opacity 100ms' }} />
 
         <text x="140" y="152" textAnchor="middle" fontFamily="var(--font-body), sans-serif"
-          fontSize="6.5" fill="#2A2A28" letterSpacing="0.12em">
+          fontSize="6.5" fill="#ffffffcb" letterSpacing="0.12em">
           LOADING · 98 LIGHTHOUSE
         </text>
       </svg>
@@ -182,9 +183,9 @@ function AppPanel({ visible }: { visible: boolean }) {
   ];
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', padding: '20px' }}>
+    <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', padding: '20px 4px' }}>
       {/* viewBox zoomed in on the phone: same animation, larger apparent size */}
-      <svg viewBox="70 0 140 160" style={{ width: '100%', flex: 1 }} aria-hidden>
+      <svg viewBox="68 -5 145 155" style={{ width: '100%', flex: 1 }} aria-hidden>
         {/* Phone outline */}
         <rect x="80" y="4" width="120" height="152" rx="10" fill="#0D0D0D" stroke="#2A2A28" strokeWidth="0.8" />
         {/* Notch */}
@@ -195,8 +196,8 @@ function AppPanel({ visible }: { visible: boolean }) {
 
         {/* App status bar */}
         <rect x="80" y="16" width="120" height="12" fill="#0D0D0D" />
-        <text x="92" y="24" fontFamily="var(--font-mono), monospace" fontSize="5.5" fill="#3A3A38">9:41</text>
-        <rect x="172" y="19" width="20" height="5" rx="1" fill="#1A1A18" stroke="#2A2A28" strokeWidth="0.5" />
+        <text x="92" y="24" fontFamily="var(--font-mono), monospace" fontSize="5.5" fill="#ffffff">10:10</text>
+        <rect x="172" y="19" width="20" height="5" rx="1" fill="#ffffff" stroke="#ffffff" strokeWidth="0.5" />
         <rect x="172" y="19" width="12" height="5" rx="1" fill="#2A2A28" />
 
         {/* App nav bar */}
@@ -219,9 +220,9 @@ function AppPanel({ visible }: { visible: boolean }) {
               <rect x="88" y={y + 6} width="10" height="10" rx="2"
                 fill={isActive ? '#0D1020' : '#111318'}
                 stroke={isActive ? 'var(--accent)' : '#2A2A28'} strokeWidth="0.6" />
-              <text x="94" y={y + 13} textAnchor="middle" dominantBaseline="middle"
+              <text x="93" y={y + 11.5} textAnchor="middle" dominantBaseline="middle"
                 fontFamily="var(--font-mono), monospace" fontSize="5.5"
-                fill={isActive ? 'var(--accent)' : '#5A5A58'}>
+                fill={isActive ? 'var(--accent)' : '#ffffffb8'}>
                 {r.icon}
               </text>
               <text x="104" y={y + 9} dominantBaseline="middle"

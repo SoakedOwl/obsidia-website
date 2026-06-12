@@ -473,67 +473,69 @@ function ServiceImage({
       viewport={{ once: false, amount: 0.3 }}
       transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.18 }}
       style={{
-        position: 'relative', aspectRatio: '4 / 3', overflow: 'hidden',
+        position: 'relative', aspectRatio: '4 / 3', overflow: 'visible',
+        backgroundColor: '#06080F',
       }}
     >
-      <Image
-        src={service.image}
-        alt={`${service.title} — Obsidia`}
-        fill
-        sizes="(max-width: 900px) 100vw, 50vw"
-        style={{
-          objectFit: 'cover',
-          objectPosition: service.imgPosition ?? 'center center',
-          filter: inView
-            ? 'grayscale(0%) brightness(0.78) contrast(1.06)'
-            : 'grayscale(75%) brightness(0.5)',
-          transform: inView ? 'scale(1.05)' : 'scale(1.0)',
-          transition: 'filter 1.1s cubic-bezier(0.22,1,0.36,1), transform 1.3s cubic-bezier(0.22,1,0.36,1)',
-          transitionDelay: inView ? '600ms' : '0ms',
-        }}
-      />
-
-<div style={{
-  position: 'absolute', bottom: 0, left: 0, right: 0,
-  padding: '52px 20px 20px',
-  background: 'linear-gradient(to top, rgba(6,8,15,0.88) 0%, transparent 100%)',
-  display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end',
-  opacity: inView ? 1 : 0,
-  transform: inView ? 'translateY(0)' : 'translateY(12px)',
-  transition: 'opacity 400ms ease, transform 480ms cubic-bezier(0.22,1,0.36,1)',
-  pointerEvents: 'none', zIndex: 2,
-}}>
-  <span style={{
-    fontFamily: 'var(--font-mono), monospace', fontSize: '9px',
-    letterSpacing: '0.12em', color: 'rgba(255,255,255,0.3)',
-  }}>
-    {service.number} / 03
-  </span>
-</div>
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
+        <Image
+          src={service.image}
+          alt={`${service.title} — Obsidia`}
+          fill
+          sizes="(max-width: 900px) 100vw, 50vw"
+          style={{
+            objectFit: 'cover',
+            objectPosition: service.imgPosition ?? 'center center',
+            filter: inView
+              ? 'grayscale(0%) brightness(0.78) contrast(1.06)'
+              : 'grayscale(75%) brightness(0.5)',
+            transform: inView ? 'scale(1.05)' : 'scale(1.0)',
+            transition: 'filter 1.1s cubic-bezier(0.22,1,0.36,1), transform 1.3s cubic-bezier(0.22,1,0.36,1)',
+            transitionDelay: '900ms',
+          }}
+        />
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0,
+          padding: '52px 20px 20px',
+          background: 'linear-gradient(to top, rgba(6,8,15,0.88) 0%, transparent 100%)',
+          display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end',
+          opacity: inView ? 1 : 0,
+          transform: inView ? 'translateY(0)' : 'translateY(12px)',
+          transition: 'opacity 400ms ease, transform 480ms cubic-bezier(0.22,1,0.36,1)',
+          pointerEvents: 'none', zIndex: 2,
+        }}>
+          <span style={{
+            fontFamily: 'var(--font-mono), monospace', fontSize: '9px',
+            letterSpacing: '0.12em', color: 'rgba(255,255,255,0.3)',
+          }}>
+            {service.number} / 03
+          </span>
+        </div>
+      </div>
 
       {[
-        { top: 0,    left: 0,    borderTop: '2px solid', borderLeft: '2px solid' },
-        { top: 0,    right: 0,   borderTop: '2px solid', borderRight: '2px solid' },
-        { bottom: 0, left: 0,    borderBottom: '2px solid', borderLeft: '2px solid' },
-        { bottom: 0, right: 0,   borderBottom: '2px solid', borderRight: '2px solid' },
+        { top: 0,    left: 0,    borderTop: '4px solid', borderLeft: '4px solid' },
+        { top: 0,    right: 0,   borderTop: '4px solid', borderRight: '4px solid' },
+        { bottom: 0, left: 0,    borderBottom: '4px solid', borderLeft: '4px solid' },
+        { bottom: 0, right: 0,   borderBottom: '4px solid', borderRight: '4px solid' },
       ].map((s, i) => (
         <div
           key={i}
           style={{
             position: 'absolute',
-            width: '18px', height: '18px',
+            width: '22px', height: '22px',
             ...s,
-            borderColor: 'rgba(61,82,230,0.8)',
+            borderColor: 'rgba(61,82,230,1)',
             opacity: inView ? 1 : 0,
             transform: inView ? 'scale(1)' : 'scale(0.6)',
-            transition: `opacity 280ms ease ${600 + i * 50}ms, transform 320ms cubic-bezier(0.22,1,0.36,1) ${600 + i * 50}ms`,            pointerEvents: 'none', zIndex: 3,
+            transition: `opacity 280ms ease ${900 + i * 80}ms, transform 320ms cubic-bezier(0.22,1,0.36,1) ${900 + i * 80}ms`,
+            pointerEvents: 'none', zIndex: 4,
           }}
         />
       ))}
     </motion.div>
   );
 }
-
 /* ── Service section ──────────────────────────────────────── */
 function ServiceSection({
   service,
@@ -547,11 +549,11 @@ function ServiceSection({
   return (
     <section
       id={`service-${service.number}`}
-      data-nav-theme="dark"
+      data-nav-theme="light"
       data-section-label={service.title}
       style={{
-        backgroundColor: 'var(--dark-bg)',
-        borderTop: '1px solid var(--dark-border)',
+        backgroundColor: 'var(--bg)',
+        borderTop: '1px solid var(--border)',
         position: 'relative',
         overflow: 'hidden',
       }}
@@ -591,11 +593,13 @@ function ServiceSection({
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: false, amount: 0.3 }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          style={{ order: isReversed ? 1 : 0 }}
+          className="svc-content-col"
+          style={{ order: isReversed ? 1 : 0, display: 'flex', flexDirection: 'column' }}
         >
           {/* Service label */}
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: '12px',
+            marginTop: '52px',
             marginBottom: '24px',
           }}>
             <span style={{
@@ -612,15 +616,15 @@ function ServiceSection({
           <h2 className="font-heading" style={{
             fontSize: 'clamp(56px, 6.5vw, 100px)',
             fontWeight: 500, letterSpacing: '-0.035em',
-            color: '#F0EFF8', lineHeight: 0.98, marginBottom: '22px',
+            color: 'var(--text)', lineHeight: 0.98, marginBottom: '22px',
           }}>
             {service.title}
           </h2>
 
           {/* Summary */}
-          <div style={{
-            background: 'rgba(255,255,255,0.03)',
-            border: '1px solid rgba(255,255,255,0.07)',
+          <div className="svc-summary" style={{
+            background: 'rgba(61,82,230,0.04)',
+            border: '1px solid var(--border)',
             borderRadius: '12px',
             padding: '20px 24px',
             marginBottom: '36px',
@@ -628,34 +632,38 @@ function ServiceSection({
           }}>
             <p className="font-body" style={{
               fontSize: 'clamp(14px, 1.15vw, 16px)',
-              lineHeight: 1.88, color: 'rgba(220,225,245,0.85)',
+              lineHeight: 1.88, color: 'var(--text-secondary)',
               margin: 0,
             }}>
               {service.summary}
             </p>
           </div>
 
-          {/* CTA */}
+          {/* CTA — desktop only */}
           <Link
+            className="svc-cta-link svc-cta-desktop"
             href={service.href}
             style={{
-              display: 'inline-flex', alignItems: 'center', gap: '10px',
+              display: 'flex', alignItems: 'center', gap: '10px',
+              maxWidth: '440px', width: '100%', justifyContent: 'center',
               fontFamily: 'var(--font-body), sans-serif',
               fontSize: '11px', fontWeight: 600,
               letterSpacing: '0.12em', textTransform: 'uppercase',
-              color: 'var(--dark-text)', textDecoration: 'none',
-              border: '1px solid var(--dark-border)', padding: '14px 28px',
+              color: 'var(--accent)', textDecoration: 'none',
+              border: '1px solid #0D0D0D', padding: '14px 28px',
               transition: 'border-color 200ms ease, color 200ms ease',
             }}
             onMouseEnter={e => {
               const el = e.currentTarget as HTMLElement;
               el.style.borderColor = 'var(--accent)';
               el.style.color = 'var(--accent)';
+              el.style.borderWidth = '2px';
             }}
             onMouseLeave={e => {
               const el = e.currentTarget as HTMLElement;
-              el.style.borderColor = 'var(--dark-border)';
-              el.style.color = 'var(--dark-text)';
+              el.style.borderColor = '#0D0D0D';
+              el.style.color = 'var(--accent)';
+              el.style.borderWidth = '2px';
             }}
           >
             Explore {service.title} <ArrowRight size={12} />
@@ -663,29 +671,68 @@ function ServiceSection({
         </motion.div>
 
         {/* Image column */}
-        <div style={{ order: isReversed ? 0 : 1 }}>
+        <div className="svc-img-col" style={{ order: isReversed ? 0 : 1, margin: '0' }}>
           <ServiceImage
             service={service}
             fromRight={!isReversed}
           />
         </div>
+
+        {/* CTA — mobile only, direct grid child so it renders after image */}
+        <Link
+          className="svc-cta-link svc-cta-mobile"
+          href={service.href}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: '10px',
+            fontFamily: 'var(--font-body), sans-serif',
+            fontSize: '11px', fontWeight: 600,
+            letterSpacing: '0.12em', textTransform: 'uppercase',
+            color: 'var(--accent)', textDecoration: 'none',
+            border: '1px solid #0D0D0D', padding: '14px 28px',
+            transition: 'border-color 200ms ease, color 200ms ease',
+          }}
+          onMouseEnter={e => {
+            const el = e.currentTarget as HTMLElement;
+            el.style.borderColor = 'var(--accent)';
+            el.style.color = 'var(--accent)';
+            el.style.borderWidth = '2px';
+          }}
+          onMouseLeave={e => {
+            const el = e.currentTarget as HTMLElement;
+            el.style.borderColor = '#0D0D0D';
+            el.style.color = 'var(--accent)';
+            el.style.borderWidth = '2px';
+          }}
+        >
+          Explore {service.title} <ArrowRight size={12} />
+        </Link>
       </div>
 
       <style>{`
-        @media (max-width: 900px) {
-          .svc-section-grid {
-            grid-template-columns: 1fr !important;
-            gap: 40px !important;
-          }
-          .svc-section-grid > div { order: 0 !important; }
-        }
-        @media (max-width: 768px) {
-          .svc-section-grid { padding: 52px 24px !important; gap: 32px !important; }
-        }
-        @media (max-width: 600px) {
-          .svc-section-grid { padding: 44px 20px !important; gap: 28px !important; }
-        }
-      `}</style>
+  .svc-cta-mobile { display: none; }
+  @media (min-width: 769px) {
+    .svc-section-grid { grid-template-columns: 1fr 1fr !important; }
+    .svc-cta-desktop { display: inline-flex !important; }
+    .svc-cta-mobile { display: none !important; }
+  }
+  @media (max-width: 768px) {
+    .svc-section-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+    .svc-content-col { order: 0 !important; }
+    .svc-section-grid { grid-template-columns: 1fr !important; gap: 0 !important; }
+    .svc-content-col { padding-bottom: 24px !important; }
+    .svc-img-col { padding: 24px 0 !important; }
+    .svc-summary { margin-bottom: 0 !important; }
+    .svc-cta-desktop { display: none !important; }
+    .svc-cta-mobile { display: inline-flex !important; order: 2 !important; grid-column: 1 / -1; padding-top: 24px; }
+    .svc-section-grid { padding: 52px 24px !important; gap: 32px !important; }
+    .svc-cta-link { align-self: stretch; justify-content: center; }
+    .svc-content-col { align-items: flex-start !important; text-align: left !important; }
+    
+  }
+  @media (max-width: 600px) {
+    .svc-section-grid { padding: 44px 20px !important; gap: 28px !important; }
+  }
+`}</style>
     </section>
   );
 }

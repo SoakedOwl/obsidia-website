@@ -136,6 +136,12 @@ export default function TrustBar() {
       }}>
         And many more. Obsidia connects with any tool that has an API.
       </p>
+      <style>{`
+        @media (max-width: 768px) {
+          #trust-bar { padding: 48px 0 !important; }
+          #trust-bar > div:first-of-type { margin-bottom: 32px !important; }
+        }
+      `}</style>
     </section>
   );
 }

@@ -141,7 +141,7 @@ function AppsHero() {
 
   return (
     <section data-nav-theme="dark" id="apps-hero" data-section-label="Overview" style={{ position: 'relative', minHeight: '100vh', display: 'grid', gridTemplateColumns: '55% 45%', alignItems: 'stretch', overflow: 'hidden', backgroundColor: 'var(--dark-bg)', paddingTop: '92px' }} className="apps-hero-grid">
-      <div aria-hidden style={{ position: 'absolute', top: '92px', left: 0, right: 0, bottom: 0, width: '55%', backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
+      <div aria-hidden style={{ position: 'absolute', top: '92px', left: 0, right: 0, bottom: 0, width: '55%', backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.10) 1px, transparent 1px)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
       <div aria-hidden style={{ position: 'absolute', top: '10%', right: '40%', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(61,82,230,0.08) 0%, transparent 60%)', pointerEvents: 'none', zIndex: 0 }} />
       <div className="apps-hero-content" style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '80px 48px 80px 32px', maxWidth: '680px' }}>
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE }} style={{ marginBottom: '28px' }}>
@@ -181,7 +181,7 @@ function AppsHero() {
       </motion.div>
       <style>{`
         @media (max-width: 1024px) { .apps-hero-grid { grid-template-columns: 1fr !important; min-height: auto !important; } .apps-hero-grid > div:last-child { display: none !important; } }
-        @media (max-width: 600px) { .apps-hero-content { padding: 72px 20px 48px 20px !important; } }
+        @media (max-width: 600px) { .apps-hero-content { padding: 22px 20px 48px 20px !important; } }
       `}</style>
     </section>
   );
@@ -217,21 +217,22 @@ const PROBLEMS = [
   },
 ];
 
-function ProblemCard({ p, i, isHov, forceHov, onMouseEnter, onMouseLeave }: {
-  p: typeof PROBLEMS[0]; i: number; isHov: boolean; forceHov?: boolean;
+function ProblemCard({ p, i, isHov, forceHov, isMobile, onMouseEnter, onMouseLeave }: {
+  p: typeof PROBLEMS[0]; i: number; isHov: boolean; forceHov?: boolean; isMobile?: boolean;
   onMouseEnter: () => void; onMouseLeave: () => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const glareRef = useRef<GlareHoverHandle>(null);
   const inView = useInView(ref, { once: false, amount: 0.25 });
   const effectiveHov = isHov || (forceHov ?? false);
+  console.log('isMobile:', isMobile, 'i:', i);
+  const cardStyles = [
+  { borderTop: effectiveHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderLeft: effectiveHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderBottom: '5px solid transparent', borderRight: '5px solid transparent' },
+  { borderTop: effectiveHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderRight: effectiveHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderBottom: '5px solid transparent', borderLeft: '5px solid transparent' },
+  { borderBottom: effectiveHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderLeft: effectiveHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderTop: '5px solid transparent', borderRight: '5px solid transparent' },
+  { borderBottom: effectiveHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderRight: effectiveHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderTop: '5px solid transparent', borderLeft: '5px solid transparent' },
+];
 
-  const cardStyles: React.CSSProperties[] = [
-    { borderTop: effectiveHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderLeft: effectiveHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderBottom: '5px solid transparent', borderRight: '5px solid transparent' },
-    { borderTop: effectiveHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderRight: effectiveHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderBottom: '5px solid transparent', borderLeft: '5px solid transparent' },
-    { borderBottom: effectiveHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderLeft: effectiveHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderTop: '5px solid transparent', borderRight: '5px solid transparent' },
-    { borderBottom: effectiveHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderRight: effectiveHov ? '5px solid rgba(61,82,230,0.65)' : '5px solid transparent', borderTop: '5px solid transparent', borderLeft: '5px solid transparent' },
-  ];
 
   return (
     <motion.div
@@ -243,10 +244,10 @@ function ProblemCard({ p, i, isHov, forceHov, onMouseEnter, onMouseLeave }: {
       style={{
         position: 'relative',
         backgroundColor: '#0D1020',
-        overflow: 'visible',
-        transition: 'background-color 300ms ease, box-shadow 280ms ease',
+        overflow: isMobile ? 'hidden' : 'visible',
+        ...(isMobile ? { border: `2px solid ${effectiveHov ? 'rgba(61,82,230,0.65)' : 'rgba(61,82,230,0.35)'}` } : cardStyles[i]),
+        transition: 'background-color 300ms ease, box-shadow 280ms ease, border-color 280ms ease',
         cursor: 'default',
-        ...cardStyles[i],
       }}
     >
       <GlareHover
@@ -310,7 +311,7 @@ function ProblemCard({ p, i, isHov, forceHov, onMouseEnter, onMouseLeave }: {
         </p>
       </GlareHover>
 
-      {(i === 2 || i === 3) && (
+      {!isMobile && (i === 2 || i === 3) && (
         <div style={{
           position: 'absolute', bottom: 0, left: 0, right: 0, height: '2px',
           backgroundColor: 'var(--accent)',
@@ -342,7 +343,7 @@ function AppsProblemStatement() {
     if (!isMobile) return;
     if (forceHovTimer.current) clearTimeout(forceHovTimer.current);
     setForceHovIdx(null);
-    forceHovTimer.current = setTimeout(() => setForceHovIdx(activeCardIdx), 1500);
+    forceHovTimer.current = setTimeout(() => setForceHovIdx(activeCardIdx), 400);
     return () => { if (forceHovTimer.current) clearTimeout(forceHovTimer.current); };
   }, [activeCardIdx, isMobile]);
 
@@ -351,7 +352,8 @@ function AppsProblemStatement() {
     const el = scrollContainerRef.current;
     const maxScroll = el.scrollWidth - el.clientWidth;
     if (maxScroll <= 0) return;
-    const idx = Math.round((el.scrollLeft / maxScroll) * (PROBLEMS.length - 1));
+    const cardWidth = el.scrollWidth / PROBLEMS.length;
+    const idx = Math.round(el.scrollLeft / cardWidth);
     setActiveCardIdx(Math.min(Math.max(idx, 0), PROBLEMS.length - 1));
   };
 
@@ -385,8 +387,8 @@ function AppsProblemStatement() {
             gap: '12px',
             overflowX: 'auto',
             scrollSnapType: 'x mandatory',
-            paddingLeft: '20px',
-            paddingRight: '20px',
+            paddingLeft: 'calc(7.5vw)',
+            paddingRight: 'calc(7.5vw)',
             paddingBottom: '8px',
             WebkitOverflowScrolling: 'touch' as React.CSSProperties['WebkitOverflowScrolling'],
             position: 'relative',
@@ -397,19 +399,21 @@ function AppsProblemStatement() {
             <div
               key={i}
               style={{
-                flexShrink: 0,
-                width: '85vw',
-                scrollSnapAlign: 'center',
-                transform: `scale(${i === activeCardIdx ? 1.02 : 0.95})`,
-                transition: 'transform 350ms cubic-bezier(0.22,1,0.36,1)',
+                 flexShrink: 0,
+                 width: '85vw',
+                 scrollSnapAlign: 'center',
+                 transform: `scale(${i === activeCardIdx ? 1.02 : 0.95})`,
+                 transition: 'transform 350ms cubic-bezier(0.22,1,0.36,1)',
+                 padding: '4px 0',
               }}
             >
               <ProblemCard
-                p={p} i={i}
-                isHov={hoveredIdx === i}
-                forceHov={forceHovIdx === i}
-                onMouseEnter={() => setHoveredIdx(i)}
-                onMouseLeave={() => setHoveredIdx(null)}
+                  p={p} i={i}
+                  isHov={hoveredIdx === i}
+                  forceHov={forceHovIdx === i}
+                  isMobile={true}
+                  onMouseEnter={() => setHoveredIdx(i)}
+                  onMouseLeave={() => setHoveredIdx(null)}
               />
             </div>
           ))}
@@ -818,6 +822,34 @@ function AppServicesGrid() {
   const mouseX = useMotionValue(0);
   const svcHdrRef = useRef<HTMLDivElement>(null);
   const svcHdrInView = useInView(svcHdrRef, { once: false, amount: 0.35 });
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const [phoneShouldShow, setPhoneShouldShow] = useState(false);
+  const [cardsInView, setCardsInView] = useState(false);
+  const phoneInViewRef = useRef(false);
+  const cardsInViewRef = useRef(false);
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver((entries) => {
+      const ratio = entries[0].intersectionRatio;
+      if (!phoneInViewRef.current && ratio >= 0.22) {
+        phoneInViewRef.current = true;
+        setPhoneShouldShow(true);
+      } else if (phoneInViewRef.current && ratio < 0.05) {
+        phoneInViewRef.current = false;
+        setPhoneShouldShow(false);
+      }
+      if (!cardsInViewRef.current && ratio >= 0.38) {
+        cardsInViewRef.current = true;
+        setCardsInView(true);
+      } else if (cardsInViewRef.current && ratio < 0.07) {
+        cardsInViewRef.current = false;
+        setCardsInView(false);
+      }
+    }, { threshold: [0.05, 0.07, 0.22, 0.38] });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (isHovered) return;
@@ -845,16 +877,17 @@ function AppServicesGrid() {
 
   return (
     <section
-      id="apps-services"
-      data-nav-theme="dark"
-      data-section-label="What We Build"
-      style={{
-        backgroundColor: 'var(--dark-bg)',
-        padding: '28px 32px 36px',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
+  ref={sectionRef}
+  id="apps-services"
+  data-nav-theme="dark"
+  data-section-label="What We Build"
+  style={{
+    backgroundColor: 'var(--dark-bg)',
+    padding: '28px 32px 36px',
+    position: 'relative',
+    overflow: 'hidden',
+  }}
+>
       {/* Background grid */}
       <div aria-hidden style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
       {/* Ambient glow */}
@@ -883,13 +916,9 @@ function AppServicesGrid() {
           {/* Phone mockup */}
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', perspective: '900px' }}>
             <motion.div
+              animate={{ rotateX: phoneShouldShow ? 0 : 85, opacity: phoneShouldShow ? 1 : 0 }}
               initial={{ rotateX: 85, opacity: 0 }}
-              whileInView={{ rotateX: 0, opacity: 1 }}
-              viewport={{ once: false, amount: 0.35 }}
-              transition={{
-                rotateX: { duration: 1.1, ease: [0.22, 1, 0.36, 1] },
-                opacity: { duration: 0.38, ease: 'easeOut' },
-              }}
+              transition={{ rotateX: { duration: 1.1, ease: [0.22, 1, 0.36, 1] }, opacity: { duration: 0.38, ease: 'easeOut' } }}
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
               style={{ transformStyle: 'preserve-3d' }}
@@ -908,7 +937,15 @@ function AppServicesGrid() {
           </div>
 
           {/* Service list */}
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <motion.div
+            animate={cardsInView ? 'visible' : 'hidden'}
+            initial="hidden"
+            variants={{
+              hidden: {},
+              visible: { transition: { staggerChildren: 0.1, delayChildren: 0.15 } },
+            }}
+            style={{ display: 'flex', flexDirection: 'column' }}
+          >
             {APP_SERVICES.map((s, i) => {
               const isActive = i === activeIdx;
               return (
@@ -917,10 +954,10 @@ function AppServicesGrid() {
                   onMouseEnter={() => { setActiveIdx(i); setIsHovered(true); }}
                   onMouseLeave={() => setIsHovered(false)}
                   onClick={() => setActiveIdx(i)}
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: false, amount: 0.3 }}
-                  transition={{ duration: 0.58, ease: EASE, delay: i * 0.10 + 0.15 }}
+                  variants={{
+                    hidden: { opacity: 0, x: 20, transition: { duration: 0.25, ease: 'easeIn' } },
+                    visible: { opacity: 1, x: 0, transition: { duration: 0.58, ease: EASE } },
+                  }}
                   style={{
                     padding: '18px 0',
                     borderBottom: i < APP_SERVICES.length - 1 ? '1px solid rgba(255,255,255,0.07)' : 'none',
@@ -1049,7 +1086,7 @@ function AppServicesGrid() {
                 </Link>
               </MagneticButton>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
 

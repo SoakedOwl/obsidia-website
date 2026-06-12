@@ -33,8 +33,8 @@ const CYCLE_COUNT = 4;
 export default function Hero() {
   const [wordIdx, setWordIdx] = useState(0);
 
-  const line1Words = 'We build what'.split(' ');
-  const line2Words = 'your business needs.'.split(' ');
+  const line1Words = 'We build what your'.split(' ');
+  const line2Words = 'business needs'.split(' ');
   const cycleWords = ['Faster.', 'Smarter.', 'Cleaner.', 'Automated.'];
 
   useEffect(() => {
@@ -133,7 +133,7 @@ export default function Hero() {
             </span>
 
             {/* Line 2 */}
-            <span style={{ display: 'flex', alignItems: 'baseline', gap: '0.22em', marginBottom: '0.08em' }}>
+            <span className="hero-line2" style={{ display: 'flex', alignItems: 'baseline', gap: '0.22em', marginBottom: '0.08em' }}>
               {line2Words.map((word, i) => (
                 <motion.span key={i} variants={WORD} style={{ display: 'inline-block' }}>
                   {word}
@@ -142,7 +142,7 @@ export default function Hero() {
             </span>
 
             {/* Line 3 — cycling italic accent word */}
-            <motion.span variants={WORD} style={{ display: 'block', minWidth: '2ch' }} aria-live="polite" aria-atomic="true">
+            <motion.span variants={WORD} className="hero-line3" style={{ display: 'block', minWidth: '2ch', marginLeft: '0.22em' }} aria-live="polite" aria-atomic="true">
               <AnimatePresence mode="wait">
                 <motion.span
                   key={wordIdx}
@@ -154,6 +154,7 @@ export default function Hero() {
                     display: 'inline-block',
                     color: 'var(--accent)',
                     fontStyle: 'italic',
+                    fontWeight: 1000 
                   }}
                 >
                   {cycleWords[wordIdx]}
@@ -263,30 +264,33 @@ export default function Hero() {
         }
         @media (max-width: 768px) {
           #home-hero { padding-top: 68px !important; }
-          .hero-dot-grid { width: 100% !important; }
+          .hero-dot-grid { width: 100% !important; top: 0 !important; }
           .hero-grid {
             display: flex !important;
             flex-direction: column !important;
-            min-height: auto !important;
+            min-height: 100dvh !important;
           }
           .hero-content {
-            padding: 16px 20px 16px 20px !important;
+            padding: 60px 20px 16px 20px !important;
             max-width: 100% !important;
             justify-content: flex-start !important;
           }
-          .hero-subheadline { margin-bottom: 20px !important; }
-          .hero-ctas { margin-bottom: 12px !important; }
+          .hero-subheadline { margin-bottom: 20px !important;margin-top: 16px !important; }
+          .hero-ctas { margin-bottom: 12px !important; margin-top: 12px !important; }
           .hero-grid > .hero-visual {
             display: block !important;
             position: relative !important;
-            height: 380px !important;
+            height: 280px !important;
             width: 100%;
+            margin-top: 60px !important;
           }
           .hero-h1 {
             font-size: 36px !important;
             letter-spacing: -0.02em !important;
             line-height: 1.08 !important;
           }
+            .hero-line2 { display: inline-flex !important; margin-bottom: 0 !important; }
+          .hero-line3 { display: inline !important; }
         }
       `}</style>
     </section>

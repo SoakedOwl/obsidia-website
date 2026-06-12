@@ -472,13 +472,17 @@ function MobileMenu({
                       }}
                     />
                   </button>
-                  <div style={{
-                    display: 'grid',
-                    gridTemplateRows: servicesOpen ? '1fr' : '0fr',
-                    transition: 'grid-template-rows 380ms cubic-bezier(0.22,1,0.36,1)',
-                    borderBottom: servicesOpen ? '1px solid #1A1A18' : 'none',
-                  }}>
-                  <div style={{ overflow: 'hidden', minHeight: 0 }}>
+                  <motion.div
+                    animate={{ height: servicesOpen ? 'auto' : 0 }}
+                    initial={false}
+                    transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+                    style={{
+                      overflow: 'hidden',
+                      borderBottom: servicesOpen ? '1px solid #1A1A18' : 'none',
+                    }}
+                  >
+                  <div>
+                  <div>
                     <Link
                       href="/services"
                       onClick={(e) => { if (pathname === '/services') { e.preventDefault(); onClose(); scrollToTop(); } }}
@@ -567,6 +571,7 @@ function MobileMenu({
                     })}
                   </div>
                   </div>
+                </motion.div>
                 </div>
               );
             }

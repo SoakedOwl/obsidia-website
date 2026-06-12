@@ -207,7 +207,6 @@ function FindingCard({
   const [barsOn, setBarsOn] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(cardRef, { once: false, amount: 0.25 });
   const barsInView = useInView(cardRef, { once: false, amount: 0.5 });
 
   useEffect(() => {
@@ -221,7 +220,9 @@ function FindingCard({
   return (
     <motion.div
       ref={cardRef}
-      animate={{ opacity: inView ? 1 : 0 }}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, amount: 0.22 }}
       transition={{ duration: 0.72, ease: EASE, delay: 0.22 + index * 0.13 }}
       className={`finding-card card-${meta.cssClass}${barsOn ? ' card-active' : ''}`}
       onMouseEnter={() => { if (!isMobile) setBarsOn(true); }}
@@ -288,8 +289,6 @@ function FindingCard({
    Section
 ────────────────────────────────────────────── */
 export default function ProblemStatement() {
-  const headerRef = useRef<HTMLDivElement>(null);
-  const headerInView = useInView(headerRef, { once: false, amount: 0.5 });
   const FINDINGS = [
     { code: 'D-01', statement: 'Your website exists. It does not work for you.',            note: 'A site that does not convert visitors into leads is a cost with a logo on it.' },
     { code: 'D-02', statement: 'Your team is doing work that should not require a human.',  note: 'Every hour spent on approvals and data entry is an hour your business is not growing.' },
@@ -334,8 +333,9 @@ export default function ProblemStatement() {
 
         {/* Header */}
         <motion.div
-          ref={headerRef}
-          animate={{ opacity: headerInView ? 1 : 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.62, ease: EASE, delay: 0.3 }}
           style={{ marginBottom: '64px' }}
         >
@@ -388,7 +388,7 @@ export default function ProblemStatement() {
           <motion.div
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
-            viewport={{ once: false, amount: 0.5 }}
+            viewport={{ once: true, amount: 0.5 }}
             transition={{ duration: 1.1, ease: EASE, delay: 0.45 }}
             style={{
               height: '1px',
@@ -417,7 +417,7 @@ export default function ProblemStatement() {
           .findings-grid { grid-template-columns: 1fr; gap: 16px; }
         }
         @media (max-width: 600px) {
-          .prob-section { padding: 56px 20px 72px !important; }
+          .prob-section { padding: 50px 20px 72px !important; }
           .findings-grid { gap: 12px !important; }
           .finding-card { padding: 24px 20px 20px !important; }
         }

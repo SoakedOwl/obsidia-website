@@ -51,7 +51,7 @@ function AutomationHero() {
       style={{ position: 'relative', minHeight: '100vh', display: 'grid', gridTemplateColumns: '55% 45%', alignItems: 'stretch', overflow: 'hidden', backgroundColor: 'var(--dark-bg)', paddingTop: '92px' }}
       className="auto-hero-grid"
     >
-      <div aria-hidden style={{ position: 'absolute', top: '92px', left: 0, right: 0, bottom: 0, width: '55%', backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
+      <div aria-hidden style={{ position: 'absolute', top: '92px', left: 0, right: 0, bottom: 0, width: '55%', backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
       <div aria-hidden style={{ position: 'absolute', top: '20%', left: '-120px', width: '700px', height: '700px', background: 'radial-gradient(circle, rgba(61,82,230,0.09) 0%, transparent 60%)', pointerEvents: 'none', zIndex: 0 }} />
 
       <div ref={heroContentRef} className="auto-hero-content" style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '80px 48px 80px 32px', maxWidth: '680px' }}>
@@ -105,7 +105,7 @@ function AutomationHero() {
         @media (max-width: 1024px) { .auto-hero-grid { grid-template-columns: 1fr !important; min-height: auto !important; } .auto-hero-grid > div:last-child { display: none !important; } }
         @media (max-width: 768px) {
           #auto-hero {
-            padding-top: 80px !important;
+            padding-top: 10px !important;
             min-height: 100dvh !important;
           }
           .auto-hero-content {
@@ -220,6 +220,18 @@ function ServiceRow({
     v.currentTime = 0;
   }, [mouseX]);
 
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    if (isActive) {
+      v.currentTime = 0;
+      v.play().catch(() => {});
+    } else {
+      v.pause();
+      v.currentTime = 0;
+    }
+  }, [isActive]);
+
   return (
     <motion.div
       ref={rowRef as React.RefObject<HTMLDivElement>}
@@ -272,9 +284,10 @@ function ServiceRow({
         {/* Title + tag */}
         <div>
           
-          <h3 className="font-heading" style={{
-            fontSize: 'clamp(20px, 2vw, 40px)', fontWeight: 500,
+          <h3 className="font-heading service-row-title" style={{
+            fontSize: 'clamp(14px, 2vw, 40px)', fontWeight: 500,
             letterSpacing: '-0.02em', lineHeight: 1.15,
+            wordBreak: 'break-word',
             color: isActive ? 'var(--accent)' : '#0D0D0D',
             transition: 'color 250ms ease',
           }}>
@@ -331,14 +344,6 @@ function ServicePreviewPanel({ items, activeIdx }: { items: typeof AUTO_SERVICES
           }}
         >
           <div style={{ position: 'relative', zIndex: 1 }}>
-            <span style={{
-              fontFamily: 'var(--font-mono), monospace', fontSize: '10px', fontWeight: 600,
-              letterSpacing: '0.18em', textTransform: 'uppercase',
-              color: 'var(--accent)', opacity: 0.8, display: 'block', marginBottom: '20px',
-            }}>
-              {item.n}
-            </span>
-
             <h3 className="font-heading" style={{
               fontSize: 'clamp(26px, 2.6vw, 36px)', fontWeight: 500,
               letterSpacing: '-0.025em', lineHeight: 1.1,
@@ -357,19 +362,21 @@ function ServicePreviewPanel({ items, activeIdx }: { items: typeof AUTO_SERVICES
               {item.body}
             </p>
 
-            <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: '10px',
-              backgroundColor: 'rgba(61,82,230,0.1)',
-              border: '1px solid rgba(61,82,230,0.25)',
-              padding: '10px 16px',
-            }}>
-              <div style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: 'var(--accent)', boxShadow: '0 0 8px rgba(61,82,230,0.7)', flexShrink: 0 }} />
-              <span style={{
-                fontFamily: 'var(--font-body), sans-serif', fontSize: '12px',
-                color: 'rgba(61,82,230,0.85)', letterSpacing: '0.02em',
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <div style={{
+                display: 'inline-flex', alignItems: 'center', gap: '10px',
+                backgroundColor: 'rgba(61,82,230,0.1)',
+                border: '1px solid rgba(61,82,230,0.25)',
+                padding: '10px 16px',
               }}>
-                {item.outcome}
-              </span>
+                <div style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: 'var(--accent)', boxShadow: '0 0 8px rgba(61,82,230,0.7)', flexShrink: 0 }} />
+                <span style={{
+                  fontFamily: 'var(--font-body), sans-serif', fontSize: '12px',
+                  color: 'rgba(61,82,230,0.85)', letterSpacing: '0.02em',
+                }}>
+                  {item.outcome}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -381,6 +388,10 @@ function ServicePreviewPanel({ items, activeIdx }: { items: typeof AUTO_SERVICES
 
 function AutomationServicesSection() {
   const [activeIdx, setActiveIdx] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setActiveIdx(i => (i + 1) % AUTO_SERVICES.length), 2500);
+    return () => clearInterval(id);
+  }, []);
   const headerRef = useRef<HTMLDivElement>(null);
   const headerInView = useInView(headerRef, { once: false, amount: 0.3 });
 
@@ -391,7 +402,7 @@ function AutomationServicesSection() {
       className="auto-services-section"
       style={{
         backgroundColor: '#F8F7F2',
-        padding: '40px 32px',
+        padding: '110px 32px 24px',
         minHeight: '100dvh',
         display: 'flex',
         flexDirection: 'column',
@@ -455,15 +466,18 @@ function AutomationServicesSection() {
       <style>{`
         .services-preview { display: flex; flex-direction: column; }
         @media (max-width: 1024px) {
-          .services-split { grid-template-columns: 1fr !important; }
-          .services-preview { display: none !important; }
+          .services-split { grid-template-columns: 1fr !important; gap: 24px !important; }
+          .services-preview { display: flex !important; min-height: 420px !important; width: 100% !important; }
         }
         .service-row-inner { padding-left: 20px !important; }
         @media (max-width: 600px) {
-          .service-metric { display: none !important; }
-          .service-row-inner { grid-template-columns: 48px 1fr !important; gap: 0 16px !important; }
-          .auto-services-section { min-height: auto !important; padding: 0 20px !important; }
-        }
+          .service-row-inner { grid-template-columns: 40px 1fr 64px !important; gap: 0 8px !important; padding-left: 12px !important; }
+          .auto-services-section { min-height: auto !important; padding: 80px 20px 48px !important; }
+          .service-row-title { font-size: 16px !important; }   
+        @media (max-width: 1024px) {
+          .services-preview .service-preview-inner { padding: 32px 28px !important; }
+}    
+          }
       `}</style>
     </section>
   );
@@ -707,6 +721,193 @@ const PAIN_CARDS: {
   },
 ];
 
+/* ── Mobile PainCards — spread/stack + flip ───────────────── */
+function MobilePainCards() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isSpread, setIsSpread] = useState(false);
+  const [flipped, setFlipped] = useState([false, false, false]);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    let timer: ReturnType<typeof setTimeout>;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => setIsSpread(entry.isIntersecting), 200);
+      },
+      { threshold: 0.4 }
+    );
+    observer.observe(el);
+    return () => { observer.disconnect(); clearTimeout(timer); };
+  }, []);
+
+  const CARD_H = 210;
+  const GAP = 10;
+  const CONTAINER_H = 3 * CARD_H + 2 * GAP; // 650px
+  const CENTER_Y = (CONTAINER_H - CARD_H) / 2; // 220px — center baseline
+
+  const spreadY  = [0, CARD_H + GAP, 2 * (CARD_H + GAP)];
+  const stackY   = [CENTER_Y + 10, CENTER_Y, CENTER_Y + 10];
+  const stackRot = [-6, 0, 6];
+
+  const toggleFlip = (i: number) => {
+    setFlipped(prev => prev.map((f, idx) => idx === i ? !f : f));
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      className="pain-stack"
+      style={{
+        display: 'none',
+        position: 'relative',
+        width: '100%',
+        height: `${CONTAINER_H}px`,
+        flexShrink: 0,
+      }}
+    >
+      {PAIN_CARDS.map(({ pos, Icon, title, front, back }, i) => (
+        <motion.div
+          key={pos}
+          animate={{
+            y: isSpread ? spreadY[i] : stackY[i],
+            rotate: isSpread ? 0 : stackRot[i],
+            zIndex: isSpread ? 1 : (i === 1 ? 3 : i === 2 ? 2 : 1),
+          }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          style={{
+            position: 'absolute',
+            left: 0, right: 0, top: 0,
+            height: CARD_H,
+            transformStyle: 'preserve-3d',
+          }}
+        >
+          <motion.div
+            animate={{ rotateY: flipped[i] ? 180 : 0 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            style={{
+              position: 'relative',
+              width: '100%',
+              height: '100%',
+              transformStyle: 'preserve-3d',
+            }}
+          >
+            {/* Front face */}
+            <div style={{
+              position: 'absolute', inset: 0,
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden',
+              backgroundColor: '#111423',
+              border: '1px solid rgba(255,255,255,0.07)',
+              borderRadius: '16px',
+              padding: '18px 22px 14px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center',
+            }}>
+              <div style={{ marginBottom: '8px', transform: 'scale(0.8)', transformOrigin: 'center' }}>
+                <Icon />
+              </div>
+              <h3 className="font-heading" style={{
+                fontSize: '18px', fontWeight: 500,
+                letterSpacing: '-0.02em', lineHeight: 1.1,
+                color: '#FFFFFF', marginBottom: '6px',
+              }}>
+                {title}
+              </h3>
+              <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <p style={{
+                  fontFamily: 'var(--font-body), sans-serif',
+                  fontSize: '11.5px', lineHeight: 1.6,
+                  color: 'rgba(220,225,248,0.62)',
+                  margin: 0,
+                }}>
+                  {front}
+                </p>
+              </div>
+              <button
+                onClick={() => toggleFlip(i)}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '5px',
+                  border: '1px solid rgba(61,82,230,0.4)',
+                  backgroundColor: 'rgba(61,82,230,0.14)',
+                  borderRadius: '50px',
+                  padding: '5px 13px',
+                  color: 'rgba(220,225,248,0.85)',
+                  fontSize: '9.5px',
+                  fontFamily: 'var(--font-body), sans-serif',
+                  fontWeight: 500,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  marginTop: 'auto',
+                  flexShrink: 0,
+                }}
+              >
+                Read more
+              </button>
+            </div>
+
+            {/* Back face */}
+            <div style={{
+              position: 'absolute', inset: 0,
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden',
+              transform: 'rotateY(180deg)',
+              backgroundColor: '#111423',
+              border: '1px solid rgba(255,255,255,0.07)',
+              borderRadius: '16px',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center',
+            }}>
+              <div style={{ width: '100%', height: '2px', backgroundColor: 'var(--accent)', flexShrink: 0 }} />
+              <div style={{
+                flex: 1, display: 'flex', flexDirection: 'column',
+                justifyContent: 'center', alignItems: 'center',
+                padding: '14px 22px',
+              }}>
+                <p style={{
+                  fontFamily: 'var(--font-body), sans-serif',
+                  fontSize: '12.5px', lineHeight: 1.78,
+                  color: 'rgba(220,225,248,0.72)',
+                  marginBottom: '10px',
+                }}>
+                  {back}
+                </p>
+                <button
+                  onClick={() => toggleFlip(i)}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '5px',
+                    border: '1px solid rgba(255,255,255,0.12)',
+                    backgroundColor: 'transparent',
+                    borderRadius: '50px',
+                    padding: '5px 13px',
+                    color: 'rgba(220,225,248,0.5)',
+                    fontSize: '9.5px',
+                    fontFamily: 'var(--font-body), sans-serif',
+                    fontWeight: 500,
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    cursor: 'pointer',
+                    flexShrink: 0,
+                  }}
+                >
+                  Back
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
 function PainCards() {
   const [hover, setHover]     = useState<HoverCard>('none');
   const [flipped, setFlipped] = useState<HoverCard>('none');
@@ -768,6 +969,7 @@ function PainCards() {
           ref={headlineRef}
           animate={{ opacity: headlineInView ? 1 : 0 }}
           transition={{ duration: 0.7, ease: EASE }}
+          className="pain-headline"
           style={{ textAlign: 'center', marginBottom: '52px' }}
         >
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', marginBottom: '32px' }}>
@@ -1015,63 +1217,25 @@ function PainCards() {
           })}
         </motion.div>
 
-        {/* ── Mobile fallback: stacked cards ── */}
-        <div
-          className="pain-stack"
-          style={{
-            display: 'none',
-            flexDirection: 'column',
-            gap: '16px',
-            maxWidth: '420px',
-            margin: '0 auto',
-          }}
-        >
-          {PAIN_CARDS.map(({ pos, Icon, title, back }) => (
-            <div
-              key={pos}
-              style={{
-                backgroundColor: '#111423',
-                border: '1px solid rgba(255,255,255,0.07)',
-                borderRadius: '16px',
-                overflow: 'hidden',
-              }}
-            >
-              <div style={{ width: '100%', height: '2px', backgroundColor: 'var(--accent)' }} />
-              <div style={{ padding: '28px 26px 30px', textAlign: 'center' }}>
-                <div style={{ marginBottom: '18px', display: 'flex', justifyContent: 'center' }}>
-                  <Icon />
-                </div>
-                <h3 style={{
-                  fontFamily: 'var(--font-body), sans-serif',
-                  fontSize: '22px',
-                  fontWeight: 700,
-                  letterSpacing: '-0.02em',
-                  lineHeight: 1.1,
-                  color: '#FFFFFF',
-                  marginBottom: '14px',
-                }}>
-                  {title}
-                </h3>
-                <p style={{
-                  fontFamily: 'var(--font-body), sans-serif',
-                  fontSize: '13px',
-                  lineHeight: 1.8,
-                  color: 'rgba(220,225,248,0.72)',
-                }}>
-                  {back}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* ── Mobile: animated stack + flip cards ── */}
+        <MobilePainCards />
 
       </div>
 
       <style>{`
         @media (max-width: 768px) {
           .pain-fan   { display: none !important; }
-          .pain-stack { display: flex !important; width: 100% !important; max-width: 100% !important; }
-          .auto-pain-section { min-height: auto !important; padding: 64px 20px !important; }
+          .pain-stack { display: block !important; width: 100% !important; }
+          .pain-headline { margin-bottom: 20px !important; }
+          .auto-pain-section {
+            height: 100dvh !important;
+            min-height: 0 !important;
+            padding: 0 20px !important;
+            overflow: hidden !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+          }
         }
       `}</style>
     </section>
@@ -1082,26 +1246,26 @@ function PainCards() {
 const DELIVERABLES = [
   {
     number: '01',
-    title: 'Process Map.',
-    body: 'A full technical layout of your operations — every trigger, every handoff, every destination. Not a summary. The exact blueprint of how your business runs.',
+    title: 'Process Map',
+    body: 'Every trigger, every handoff, every destination. The exact blueprint of how your business runs.',
     image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1600&q=80',
   },
   {
     number: '02',
-    title: 'Documented Workflows.',
-    body: 'Step-by-step documentation written for the person who will run it, not the person who built it. No technical jargon. No assumptions.',
+    title: 'Documented Workflows',
+    body: 'Written for the person who will run it. No jargon. No assumptions.',
     image: 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?auto=format&fit=crop&w=1600&q=80',
   },
   {
     number: '03',
-    title: 'Team Walkthrough.',
-    body: 'A live session with the people who will use the system daily. Questions answered, edge cases covered, your team confident before we close the engagement.',
+    title: 'Team Walkthrough',
+    body: 'A live walkthrough with your team. Questions answered, edge cases covered.',
     image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1600&q=80',
   },
   {
     number: '04',
-    title: 'Everything Yours.',
-    body: 'Every credential, every integration, every file. Nothing hosted on our infrastructure. Nothing that stops working if you stop working with us.',
+    title: 'Everything Yours',
+    body: 'Every credential, every file. Nothing stops working if you stop working with us.',
     image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1600&q=80',
   },
 ];
@@ -1130,7 +1294,7 @@ function DeliverableCard({
     mouseY.set(-300);
   }, [mouseX, mouseY]);
 
-  const inView = useInView(cardRef, { once: false, amount: 0.2 });
+  const inView = useInView(cardRef, { once: true, amount: 0.2 });
   const animateState = forceActive ? 'hovered' : (mobile ? 'visible' : (inView ? 'visible' : 'hidden'));
 
   return (
@@ -1159,23 +1323,38 @@ function DeliverableCard({
         borderBottom: !mobile && index < 2 ? '1px solid var(--dark-border)' : 'none',
       }}
     >
-      {/* Background image — contained within card, fades on hover */}
-      <motion.div
-        variants={{
-          hidden: { opacity: 0 },
-          visible: { opacity: 0 },
-          hovered: { opacity: 1 },
-        }}
-        transition={{ duration: 0.5 }}
-        style={{
-          position: 'absolute', inset: 0,
-          backgroundImage: `url(${item.image})`,
-          backgroundSize: 'cover', backgroundPosition: 'center',
-          filter: 'grayscale(60%) brightness(0.22)',
-          pointerEvents: 'none',
-          zIndex: 0,
-        }}
-      />
+      {/* Background image */}
+      {mobile ? (
+        <motion.div
+          animate={{ opacity: forceActive ? 1 : 0 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          style={{
+            position: 'absolute', inset: 0,
+            backgroundImage: `url(${item.image})`,
+            backgroundSize: 'cover', backgroundPosition: 'center',
+            filter: 'grayscale(0%) brightness(0.45) contrast(1.30)',
+            pointerEvents: 'none',
+            zIndex: 0,
+          }}
+        />
+      ) : (
+        <motion.div
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { opacity: 0 },
+            hovered: { opacity: 1 },
+          }}
+          transition={{ duration: 0.5 }}
+          style={{
+            position: 'absolute', inset: 0,
+            backgroundImage: `url(${item.image})`,
+            backgroundSize: 'cover', backgroundPosition: 'center',
+            filter: 'grayscale(60%) brightness(0.22)',
+            pointerEvents: 'none',
+            zIndex: 0,
+          }}
+        />
+      )}
 
       {/* Top accent line — scales in from left on hover */}
       <motion.div
@@ -1214,13 +1393,13 @@ function DeliverableCard({
         <motion.div
           variants={{
             hidden: { color: 'rgba(255,255,255,0.04)' },
-            visible: { color: 'rgba(255,255,255,0.05)' },
+            visible: { color: mobile ? 'rgba(255,255,255,0.28)' : 'rgba(255,255,255,0.05)' },
             hovered: { color: 'rgba(61,82,230,0.58)' },
           }}
           transition={{ duration: 0.28 }}
           style={{
             fontFamily: 'var(--font-mono), monospace',
-            fontSize: 'clamp(52px, 5.5vw, 68px)',
+            fontSize: mobile ? '48px' : 'clamp(52px, 5.5vw, 68px)',
             fontWeight: 300, letterSpacing: '-0.04em', lineHeight: 1,
             userSelect: 'none', flexShrink: 0,
             marginBottom: 'auto',
@@ -1235,12 +1414,12 @@ function DeliverableCard({
             className="font-heading"
             variants={{
               hidden: { color: 'rgba(220,225,248,0.72)' },
-              visible: { color: 'rgba(220,225,248,0.72)' },
+              visible: { color: mobile ? '#FFFFFF' : 'rgba(220,225,248,0.72)' },
               hovered: { color: '#ffffff' },
             }}
             transition={{ duration: 0.22 }}
             style={{
-              fontSize: 'clamp(20px, 2vw, 28px)',
+              fontSize: mobile ? '22px' : 'clamp(20px, 2vw, 28px)',
               fontWeight: 500, letterSpacing: '-0.025em', lineHeight: 1.1,
               marginBottom: 12,
             }}
@@ -1252,11 +1431,11 @@ function DeliverableCard({
             className="font-body"
             variants={{
               hidden: { color: 'rgba(220,225,248,0.62)' },
-              visible: { color: 'rgba(220,225,248,0.62)' },
-              hovered: { color: 'rgba(220,225,248,0.9)' },
+              visible: { color: mobile ? 'rgba(220,225,248,0.62)' : 'rgba(220,225,248,0.62)' },
+              hovered: { color: mobile ? 'rgba(220,225,248,0.62)' : 'rgba(220,225,248,0.9)' },
             }}
             transition={{ duration: 0.22 }}
-            style={{ fontSize: 13, lineHeight: 1.82 }}
+            style={{ fontSize: mobile ? 14 : 13, lineHeight: mobile ? 1.8 : 1.82 }}
           >
             {item.body}
           </motion.p>
@@ -1267,8 +1446,6 @@ function DeliverableCard({
 }
 
 function HandoffDeliverables() {
-  const hdHdrRef = useRef<HTMLDivElement>(null);
-  const hdHdrInView = useInView(hdHdrRef, { once: false, amount: 0.5 });
   const [isMobile, setIsMobile] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -1296,7 +1473,11 @@ function HandoffDeliverables() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isMobile]);
 
-  const activeIdx = Math.min(3, Math.floor(scrollProgress * 4));
+  const activeIdx = scrollProgress <= 0 ? -1
+    : scrollProgress >= 0.75 ? 3
+    : scrollProgress >= 0.50 ? 2
+    : scrollProgress >= 0.25 ? 1
+    : 0;
 
   /* ── Mobile: horizontal scroll hijack ─── */
   if (isMobile) {
@@ -1313,8 +1494,41 @@ function HandoffDeliverables() {
           height: '100dvh', overflow: 'hidden',
           backgroundColor: 'var(--dark-bg)',
           borderTop: '1px solid var(--dark-border)',
+          display: 'flex', flexDirection: 'column',
+          paddingTop: '72px',
+          boxSizing: 'border-box',
         }}>
+          {/* Mobile section header */}
+          <div style={{
+            flexShrink: 0,
+            padding: '20px 20px 12px',
+            borderBottom: '1px solid var(--dark-border)',
+          }}>
+            <p style={{
+              fontFamily: 'var(--font-mono), monospace',
+              fontSize: '10px',
+              fontWeight: 500,
+              letterSpacing: '0.22em',
+              textTransform: 'uppercase',
+              color: 'var(--accent)',
+              marginBottom: '8px',
+            }}>
+              The Deliverables
+            </p>
+            <h2 className="font-heading" style={{
+              fontSize: '28px',
+              fontWeight: 500,
+              letterSpacing: '-0.03em',
+              lineHeight: 1.05,
+              color: 'var(--dark-text)',
+              margin: 0,
+            }}>
+              Built to run without us.
+            </h2>
+          </div>
+
           {/* Horizontal track */}
+          <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
           <div
             style={{
               display: 'flex',
@@ -1328,7 +1542,7 @@ function HandoffDeliverables() {
             {DELIVERABLES.map((d, i) => (
               <div
                 key={d.number}
-                style={{ width: '100vw', height: '100dvh', flexShrink: 0, position: 'relative' }}
+                style={{ width: '100vw', height: 'calc(100dvh - 140px)', flexShrink: 0, position: 'relative' }}
               >
                 <DeliverableCard item={d} index={i} forceActive={i === activeIdx} mobile />
               </div>
@@ -1351,6 +1565,7 @@ function HandoffDeliverables() {
               }} />
             ))}
           </div>
+          </div>{/* end track wrapper */}
         </div>
       </div>
     );
@@ -1380,8 +1595,9 @@ function HandoffDeliverables() {
 
         {/* Header */}
         <motion.div
-          ref={hdHdrRef}
-          animate={{ opacity: hdHdrInView ? 1 : 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.65, ease: EASE }}
           style={{ marginBottom: 32, flexShrink: 0 }}
         >

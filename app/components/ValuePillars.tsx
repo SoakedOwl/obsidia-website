@@ -92,7 +92,7 @@ function StandardCard({ standard, index }: { standard: Standard; index: number }
       ref={cardRef}
       initial={{ opacity: 0, scale: 0.91 }}
       whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: false, amount: 0.28 }}
+      viewport={{ once: true, amount: 0.28 }}
       transition={{ duration: 0.68, ease: EASE, delay: 0.28 + index * 0.12 }}
       onMouseEnter={() => { if (!isMobile) setHovered(true); }}
       onMouseLeave={() => { if (!isMobile) setHovered(false); }}
@@ -160,6 +160,11 @@ export default function ValuePillars() {
     { n: '02', title: 'Weeks, not quarters.',       body: 'Urgency is a design constraint, not a risk. Delivery is planned before build begins.' },
     { n: '03', title: 'Built to hand off.',         body: 'When the engagement ends, your team runs it. Full documentation and a walkthrough on every project, without exception.' },
   ];
+ 
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    setIsMobile(window.innerWidth <= 768);
+  }, []);
 
   return (
     <section
@@ -217,9 +222,9 @@ export default function ValuePillars() {
         <motion.div
           initial={{ opacity: 0, x: -36 }}
           whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: false, amount: 0.5 }}
+          viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.7, ease: EASE, delay: 0.28 }}
-          style={{ marginBottom: '40px' }}
+          style={{ marginBottom: '40px', position: 'relative' }}
         >
           <h2 className="font-heading" style={{
             fontSize: 'clamp(52px, 7vw, 96px)',
@@ -241,6 +246,18 @@ export default function ValuePillars() {
             <span style={{ color: '#0D1147' }}>Obsidia</span>
             {' '}
             <span style={{ color: 'var(--accent)' }}>Standards</span>
+            <img
+              src="logos/obsidia_web_black_logo.png"
+              alt="Obsidia"
+              style={{
+                position: 'absolute',
+                top: isMobile ? 2.5 : -10,
+                right: isMobile ? 0 : -100,
+                width: isMobile ? '90px' : '200px',
+                height: isMobile ? '90px' : '200px',
+                opacity: 1,
+              }}
+            />
           </p>
         </motion.div>
 
@@ -248,7 +265,7 @@ export default function ValuePillars() {
         <motion.div
           initial={{ scaleX: 0 }}
           whileInView={{ scaleX: 1 }}
-          viewport={{ once: false, amount: 0.5 }}
+          viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.9, ease: EASE, delay: 0.44 }}
           style={{ height: '1px', background: 'rgba(61,82,230,0.22)', marginBottom: '32px', transformOrigin: 'left center' }}
         />
