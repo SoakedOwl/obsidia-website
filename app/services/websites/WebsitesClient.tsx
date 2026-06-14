@@ -36,7 +36,7 @@ function SiteHeroSection() {
     <div style={{ width: '100%', height: '100%', backgroundColor: '#0B0D1A', display: 'grid', gridTemplateColumns: '1fr 0.8fr', padding: '18px 16px', gap: '12px', alignItems: 'center', position: 'relative', overflow: 'hidden' }}>
       <div aria-hidden style={{ position: 'absolute', top: '-10%', right: '5%', width: '180px', height: '160px', background: 'radial-gradient(circle, rgba(61,82,230,0.11) 0%, transparent 65%)', pointerEvents: 'none' }} />
       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', position: 'relative' }}>
-        <div style={{ fontSize: '5.5px', fontFamily: 'var(--font-mono), monospace', letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(61,82,230,0.65)' }}>Digital Solutions</div>
+        <div style={{ fontSize: '7.5px', fontFamily: 'var(--font-mono), monospace', letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(61,82,230,0.65)' }}>Digital Solutions</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5px', margin: '2px 0' }}>
           <div style={{ height: '11px', width: '92%', backgroundColor: 'rgba(220,225,248,0.80)', borderRadius: '1.5px' }} />
           <div style={{ height: '11px', width: '78%', backgroundColor: 'rgba(220,225,248,0.80)', borderRadius: '1.5px' }} />
@@ -86,7 +86,7 @@ function SiteFeaturesSection() {
     <div style={{ width: '100%', height: '100%', backgroundColor: '#0E1120', borderTop: '1px solid rgba(61,82,230,0.07)', padding: '10px 16px 8px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
         <div style={{ width: '14px', height: '1px', backgroundColor: 'rgba(61,82,230,0.45)' }} />
-        <span style={{ fontSize: '5px', fontFamily: 'var(--font-mono), monospace', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(61,82,230,0.55)' }}>What We Build</span>
+        <span style={{ fontSize: '7px', fontFamily: 'var(--font-mono), monospace', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(61,82,230,0.55)' }}>What We Build</span>
       </div>
       <div style={{ height: '8px', width: '48%', backgroundColor: 'rgba(220,225,248,0.68)', borderRadius: '1.5px', flexShrink: 0 }} />
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '5px', flex: 1, minHeight: 0 }}>
@@ -146,6 +146,8 @@ function SiteFooterSection() {
 function BrowserBuildVisual() {
   const [phase, setPhase] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
 
   useEffect(() => { const t = setTimeout(() => setMounted(true), 400); return () => clearTimeout(t); }, []);
   useEffect(() => {
@@ -153,6 +155,18 @@ function BrowserBuildVisual() {
     const id = setInterval(() => setPhase(p => (p + 1) % 5), 1200);
     return () => clearInterval(id);
   }, [mounted]);
+  useEffect(() => {
+    const DESIGN_H = 500;
+    const update = () => {
+      if (!containerRef.current) return;
+      const h = containerRef.current.offsetHeight;
+      setScale(h > 0 ? Math.min(1, h / DESIGN_H) : 1);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    if (containerRef.current) ro.observe(containerRef.current);
+    return () => ro.disconnect();
+  }, []);
 
   const SECTIONS = [
     { id: 'nav',      flex: 0.85 },
@@ -162,17 +176,19 @@ function BrowserBuildVisual() {
     { id: 'footer',   flex: 0.75 },
   ] as const;
 
+  const invScale = scale > 0 ? 1 / scale : 1;
   return (
-    <div style={{ position: 'absolute', inset: 0, backgroundColor: '#0D0F1A', overflow: 'hidden' }}>
+    <div ref={containerRef} style={{ position: 'absolute', inset: 0, backgroundColor: '#0D0F1A', overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', top: 0, left: 0, width: `${invScale * 100}%`, height: `${invScale * 100}%`, transformOrigin: 'top left', transform: `scale(${scale})` }}>
       {/* Gradient panel separator — left edge */}
       <div aria-hidden style={{ position: 'absolute', top: 0, bottom: 0, left: 0, width: '1px', background: 'linear-gradient(180deg, rgba(61,82,230,0.0) 0%, rgba(61,82,230,0.5) 40%, rgba(123,79,212,0.4) 70%, rgba(61,82,230,0.0) 100%)', zIndex: 2 }} />
       {/* Cobalt ambient glow */}
       <div aria-hidden style={{ position: 'absolute', top: '10%', right: '-10%', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(61,82,230,0.10) 0%, transparent 65%)', pointerEvents: 'none' }} />
       <div aria-hidden style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle, rgba(61,82,230,0.06) 1px, transparent 1px)', backgroundSize: '24px 24px', pointerEvents: 'none' }} />
-      <div aria-hidden style={{ position: 'absolute', top: '20px', left: '24px', fontFamily: 'var(--font-body), sans-serif', fontSize: '9px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(220,225,248,0.32)', zIndex: 1 }}>Website Preview</div>
+      <div aria-hidden style={{ position: 'absolute', top: '20px', left: '24px', fontFamily: 'var(--font-body), sans-serif', fontSize: '9px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgb(255, 255, 255)', zIndex: 1 }}>Website Preview</div>
       <div style={{ position: 'absolute', top: '22px', right: '24px', display: 'flex', alignItems: 'center', gap: '6px', zIndex: 1 }}>
         <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#22C55E', animation: 'statPulse 2s ease-in-out infinite' }} />
-        <span style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '9px', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(220,225,248,0.32)' }}>Building</span>
+        <span style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '9px', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgb(255, 255, 255)' }}>Building</span>
       </div>
 
       {/* Browser window */}
@@ -183,7 +199,7 @@ function BrowserBuildVisual() {
           <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#2A2A38' }} />
           <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#2A2A38' }} />
           <div style={{ flex: 1, marginLeft: '12px', height: '14px', backgroundColor: '#1A1A18', borderRadius: '2px', display: 'flex', alignItems: 'center', paddingLeft: '8px' }}>
-            <span style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '7px', color: 'rgba(255,255,255,0.2)', letterSpacing: '0.04em' }}>yourbrand.com</span>
+            <span style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '7px', color: 'rgba(255,255,255,0.2)', letterSpacing: '0.04em' }}>obsidia.space</span>
           </div>
         </div>
 
@@ -228,8 +244,9 @@ function BrowserBuildVisual() {
       </div>
 
       {/* Progress counter — kept from original */}
-      <div style={{ position: 'absolute', bottom: '8px', left: '50%', transform: 'translateX(-50%)', fontFamily: 'var(--font-mono), monospace', fontSize: '8px', color: 'rgba(61,82,230,0.45)', letterSpacing: '0.12em', opacity: mounted ? 1 : 0, transition: 'opacity 600ms ease 400ms' }}>
-        {Math.min(phase + 1, 5)}/5 SECTIONS · {Math.min((phase + 1) * 20, 100)}% BUILT
+      <div style={{ position: 'absolute', bottom: '8px', left: '50%', transform: 'translateX(-50%)', fontFamily: 'var(--font-mono), monospace', fontSize: '8px', color: 'rgb(255, 255, 255)', letterSpacing: '0.12em', opacity: mounted ? 1 : 0, transition: 'opacity 600ms ease 400ms' }}>
+        {Math.min(phase + 1, 5)}/5 SECTIONS · {Math.min((phase + 1) * 20, 100)}% COMPLETE
+      </div>
       </div>
     </div>
   );
@@ -283,16 +300,40 @@ function WebsitesHero() {
         </motion.div>
       </div>
 
-      <motion.div initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.4 }} style={{ position: 'relative', height: '100%', minHeight: '500px' }}>
+      <motion.div className="web-hero-visual" initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.4 }} style={{ position: 'relative', height: '680px', minHeight: 'unset', alignSelf: 'flex-start' }}>
         <BrowserBuildVisual />
       </motion.div>
 
       <style>{`
         .web-hero-line { display: block; }
         @media (max-width: 1024px) { .web-hero-grid { grid-template-columns: 1fr !important; min-height: auto !important; } .web-hero-grid > div:last-child { display: none !important; } }
-        @media (max-width: 768px) { .web-hero-line { display: inline; } }
-        @media (max-width: 600px) { .web-hero-content { padding: 22px 20px 48px 20px !important; } }
-        @media (max-width: 600px) { .web-hero-para { margin-top: 32px !important; } }
+        @media (max-width: 768px) {
+          .web-hero-line { display: inline; }
+          #web-hero {
+            padding-top: 10px !important;
+            height: 100dvh !important;
+            min-height: 0 !important;
+            grid-template-columns: 1fr !important;
+            grid-template-rows: auto minmax(0, 1fr) !important;
+            overflow: hidden !important;
+          }
+          .web-hero-content {
+            padding-top: 80px !important;
+            padding-left: 20px !important;
+            padding-right: 20px !important;
+            padding-bottom: 12px !important;
+            max-width: 100% !important;
+            justify-content: flex-start !important;
+          }
+          .web-hero-content > div:last-child { margin-bottom: 0 !important; }
+          #web-hero .web-hero-visual {
+            height: auto !important;
+            min-height: 0 !important;
+            align-self: stretch !important;
+          }
+        }
+        @media (max-width: 600px) { .web-hero-content { padding-bottom: 48px !important; } }
+        @media (max-width: 600px) { .web-hero-para { margin-top: 15px !important; } }
       `}</style>
     </section>
   );

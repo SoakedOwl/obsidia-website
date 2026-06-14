@@ -966,6 +966,12 @@ export default function Navigation() {
   useEffect(() => {
     setMenuOpen(false);
     setDropOpen(false);
+    // Scroll to top on every route change — guards against mobile browsers that preserve scroll
+    requestAnimationFrame(() => {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    });
   }, [pathname]);
 
   useEffect(() => {

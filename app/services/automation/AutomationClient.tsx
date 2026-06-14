@@ -39,7 +39,7 @@ function AutomationHero() {
 
   useEffect(() => {
     if (window.innerWidth <= 768 && heroContentRef.current) {
-      heroContentRef.current.style.paddingTop = '120px';
+      heroContentRef.current.style.paddingTop = '80px';
     }
   }, []);
 
@@ -98,15 +98,19 @@ function AutomationHero() {
       </div>
 
       <motion.div className="auto-hero-visual" initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.4 }} style={{ position: 'relative', height: '100%', minHeight: '500px' }}>
-        <WorkflowGraph />
-      </motion.div>
+  <WorkflowGraph />
+</motion.div>
 
       <style>{`
         @media (max-width: 1024px) { .auto-hero-grid { grid-template-columns: 1fr !important; min-height: auto !important; } .auto-hero-grid > div:last-child { display: none !important; } }
         @media (max-width: 768px) {
           #auto-hero {
             padding-top: 10px !important;
-            min-height: 100dvh !important;
+            height: 100dvh !important;
+            min-height: 0 !important;
+            grid-template-columns: 1fr !important;
+            grid-template-rows: auto auto !important;
+            overflow: hidden !important;
           }
           .auto-hero-content {
             padding-left: 20px !important;
@@ -115,17 +119,12 @@ function AutomationHero() {
             max-width: 100% !important;
             justify-content: flex-start !important;
           }
-          .auto-hero-visual {
-            min-height: 240px !important;
-            height: 240px !important;
-            margin: 0 !important;
-          }
-        }
-        @media (max-width: 600px) {
-          .auto-hero-content {
-            padding-left: 20px !important;
-            padding-right: 20px !important;
-            padding-bottom: 12px !important;
+          #auto-hero .auto-hero-visual {
+            height: auto !important;
+            min-height: 0 !important;
+            width: 100% !important;
+            aspect-ratio: 640 / 385 !important;
+            align-self: start !important;
           }
         }
       `}</style>
@@ -388,10 +387,12 @@ function ServicePreviewPanel({ items, activeIdx }: { items: typeof AUTO_SERVICES
 
 function AutomationServicesSection() {
   const [activeIdx, setActiveIdx] = useState(0);
+  const [cycleDelay, setCycleDelay] = useState(2500);
+  useEffect(() => { if (window.innerWidth <= 768) setCycleDelay(5000); }, []);
   useEffect(() => {
-    const id = setInterval(() => setActiveIdx(i => (i + 1) % AUTO_SERVICES.length), 2500);
+    const id = setInterval(() => setActiveIdx(i => (i + 1) % AUTO_SERVICES.length), cycleDelay);
     return () => clearInterval(id);
-  }, []);
+  }, [cycleDelay]);
   const headerRef = useRef<HTMLDivElement>(null);
   const headerInView = useInView(headerRef, { once: false, amount: 0.3 });
 
@@ -726,6 +727,17 @@ function MobilePainCards() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isSpread, setIsSpread] = useState(false);
   const [flipped, setFlipped] = useState([false, false, false]);
+  const [sectionH, setSectionH] = useState(667);
+
+  useEffect(() => {
+    const section = containerRef.current?.closest<HTMLElement>('.auto-pain-section');
+    if (!section) return;
+    const update = () => setSectionH(section.clientHeight);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(section);
+    return () => ro.disconnect();
+  }, []);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -742,14 +754,27 @@ function MobilePainCards() {
     return () => { observer.disconnect(); clearTimeout(timer); };
   }, []);
 
-  const CARD_H = 210;
+  // Reserve 220px = top-pad(20) + eyebrow(46) + h2(93) + headline-mb(20) + bottom-pad(20) + 2×gap(20) - rounds up for safety.
+  const CARD_H = Math.min(210, Math.max(80, Math.floor((sectionH - 220) / 3)));
   const GAP = 10;
-  const CONTAINER_H = 3 * CARD_H + 2 * GAP; // 650px
-  const CENTER_Y = (CONTAINER_H - CARD_H) / 2; // 220px — center baseline
+  const CONTAINER_H = 3 * CARD_H + 2 * GAP;
+  const CENTER_Y = (CONTAINER_H - CARD_H) / 2;
+  const sc = CARD_H / 210; // 0.62..1.0; scales padding and type proportionally
 
   const spreadY  = [0, CARD_H + GAP, 2 * (CARD_H + GAP)];
   const stackY   = [CENTER_Y + 10, CENTER_Y, CENTER_Y + 10];
   const stackRot = [-6, 0, 6];
+
+  const padT       = Math.round(14 + 4 * sc);
+  const padB       = Math.round(10 + 4 * sc);
+  const padH       = Math.round(18 + 4 * sc);
+  const iconSc     = 0.65 + 0.15 * sc;
+  const iconMb     = Math.round(5 + 3 * sc);
+  const titlePx    = Math.round(14 + 4 * sc);
+  const titleMb    = Math.round(4 + 2 * sc);
+  const bodyPx     = Math.round(10 + 1.5 * sc);
+  const backBodyPx = Math.round(11 + 1.5 * sc);
+  const backBodyMb = Math.round(8 + 2 * sc);
 
   const toggleFlip = (i: number) => {
     setFlipped(prev => prev.map((f, idx) => idx === i ? !f : f));
@@ -801,26 +826,27 @@ function MobilePainCards() {
               backgroundColor: '#111423',
               border: '1px solid rgba(255,255,255,0.07)',
               borderRadius: '16px',
-              padding: '18px 22px 14px',
+              padding: `${padT}px ${padH}px ${padB}px`,
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               textAlign: 'center',
             }}>
-              <div style={{ marginBottom: '8px', transform: 'scale(0.8)', transformOrigin: 'center' }}>
+              <div style={{ marginBottom: `${iconMb}px`, transform: `scale(${iconSc})`, transformOrigin: 'center', flexShrink: 0 }}>
                 <Icon />
               </div>
               <h3 className="font-heading" style={{
-                fontSize: '18px', fontWeight: 500,
+                fontSize: `${titlePx}px`, fontWeight: 500,
                 letterSpacing: '-0.02em', lineHeight: 1.1,
-                color: '#FFFFFF', marginBottom: '6px',
+                color: '#FFFFFF', marginBottom: `${titleMb}px`,
+                flexShrink: 0,
               }}>
                 {title}
               </h3>
-              <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                 <p style={{
                   fontFamily: 'var(--font-body), sans-serif',
-                  fontSize: '11.5px', lineHeight: 1.6,
+                  fontSize: `${bodyPx}px`, lineHeight: 1.55,
                   color: 'rgba(220,225,248,0.62)',
                   margin: 0,
                 }}>
@@ -869,13 +895,13 @@ function MobilePainCards() {
               <div style={{
                 flex: 1, display: 'flex', flexDirection: 'column',
                 justifyContent: 'center', alignItems: 'center',
-                padding: '14px 22px',
+                padding: `${padB}px ${padH}px`,
               }}>
                 <p style={{
                   fontFamily: 'var(--font-body), sans-serif',
-                  fontSize: '12.5px', lineHeight: 1.78,
+                  fontSize: `${backBodyPx}px`, lineHeight: 1.75,
                   color: 'rgba(220,225,248,0.72)',
-                  marginBottom: '10px',
+                  marginBottom: `${backBodyMb}px`,
                 }}>
                   {back}
                 </p>
@@ -1230,11 +1256,11 @@ function PainCards() {
           .auto-pain-section {
             height: 100dvh !important;
             min-height: 0 !important;
-            padding: 0 20px !important;
+            padding: 20px 20px !important;
             overflow: hidden !important;
             display: flex !important;
             flex-direction: column !important;
-            justify-content: center !important;
+            justify-content: flex-start !important;
           }
         }
       `}</style>
@@ -1294,7 +1320,7 @@ function DeliverableCard({
     mouseY.set(-300);
   }, [mouseX, mouseY]);
 
-  const inView = useInView(cardRef, { once: true, amount: 0.2 });
+  const inView = useInView(cardRef, { once: false, amount: 0.1 });
   const animateState = forceActive ? 'hovered' : (mobile ? 'visible' : (inView ? 'visible' : 'hidden'));
 
   return (
@@ -1326,8 +1352,8 @@ function DeliverableCard({
       {/* Background image */}
       {mobile ? (
         <motion.div
-          animate={{ opacity: forceActive ? 1 : 0 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          animate={{ opacity: forceActive ? 1 : (mobile ? 0 : inView ? 0.6 : 0) }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           style={{
             position: 'absolute', inset: 0,
             backgroundImage: `url(${item.image})`,
@@ -1473,11 +1499,10 @@ function HandoffDeliverables() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isMobile]);
 
-  const activeIdx = scrollProgress <= 0 ? -1
-    : scrollProgress >= 0.75 ? 3
-    : scrollProgress >= 0.50 ? 2
-    : scrollProgress >= 0.25 ? 1
-    : 0;
+  const activeIdx = scrollProgress >= 0.75 ? 3
+  : scrollProgress >= 0.50 ? 2
+  : scrollProgress >= 0.25 ? 1
+  : 0;
 
   /* ── Mobile: horizontal scroll hijack ─── */
   if (isMobile) {
@@ -1590,7 +1615,7 @@ function HandoffDeliverables() {
         maxWidth: '1200px', width: '100%', margin: '0 auto',
         flex: 1, minHeight: 0,
         display: 'flex', flexDirection: 'column',
-        paddingTop: 52, paddingBottom: 52,
+        paddingTop: 150, paddingBottom: 52,
       }}>
 
         {/* Header */}
@@ -1625,8 +1650,7 @@ function HandoffDeliverables() {
               lineHeight: 1.7, maxWidth: '340px',
               textAlign: 'right', flexShrink: 0,
             }}>
-              Every engagement closes with a complete handoff package.
-            </p>
+             </p>
           </div>
         </motion.div>
 

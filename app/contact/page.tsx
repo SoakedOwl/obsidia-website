@@ -191,7 +191,7 @@ function SuccessState() {
         </motion.div>
         <h2 className="font-heading" style={{ fontSize: 'clamp(32px, 3.5vw, 48px)', fontWeight: 500, letterSpacing: '-0.03em', color: '#0D1147', lineHeight: 0.95, margin: 0 }}>Inquiry sent.</h2>
       </div>
-      <p className="font-body" style={{ fontSize: '15px', lineHeight: 1.8, color: 'rgba(13,17,71,0.46)', maxWidth: '400px' }}>We&apos;ll be in touch within one hour.</p>
+      <p className="font-body" style={{ fontSize: '15px', lineHeight: 1.8, color: 'rgba(13,17,71,0.46)', maxWidth: '400px' }}>We&apos;ll be in touch as soon as possible.</p>
       <div style={{ borderTop: '1px solid rgba(13,17,71,0.08)', paddingTop: '32px' }}>
         <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '9px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(13,17,71,0.2)', display: 'block', marginBottom: '24px' }}>What happens next</span>
         {next.map((text, i) => (
@@ -236,6 +236,7 @@ export default function ContactPage() {
   const [gitHov, setGitHov] = useState(false);
 
   useEffect(() => { const id = setTimeout(() => setRevealed(true), 80); return () => clearTimeout(id); }, []);
+  useEffect(() => { if (submitted) window.scrollTo({ top: 0, behavior: 'smooth' }); }, [submitted]);
 
   const set = (k: string, v: string) => setForm(p => ({ ...p, [k]: v }));
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => { set(e.target.name, e.target.value); setFormError(''); };
@@ -287,7 +288,7 @@ export default function ContactPage() {
               <motion.p
                 className="font-body"
                 initial={{ opacity: 0, y: 12 }} animate={{ opacity: revealed ? 1 : 0, y: revealed ? 0 : 12 }} transition={{ duration: 0.55, ease: EASE, delay: 0.16 }}
-                style={{ fontSize: '16px', lineHeight: 1.75, color: 'rgb(255, 255, 255)', margin: 0 }}
+                style={{ fontSize: '16px', lineHeight: 1.75, color: 'rgb(255, 255, 255)', margin: 0, textAlign: 'justify' }}
               >
                 We are excited about the future of how businesses operate and invite you to build that future with us.
               </motion.p>
@@ -509,7 +510,7 @@ function MessageField({ value, onChange, wordCount }: { value: string; onChange:
       />
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
         <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '9px', letterSpacing: '0.12em', textTransform: 'uppercase', color: ready ? 'var(--accent)' : 'rgba(13,17,71,0.18)', transition: 'color 300ms ease' }}>
-          {wordCount} {wordCount === 1 ? 'word' : 'words'}{ready ? ' — ready' : ' — 10 min'}
+          {wordCount} {wordCount === 1 ? 'word' : 'words'}
         </span>
       </div>
     </div>

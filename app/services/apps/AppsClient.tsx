@@ -50,10 +50,10 @@ function AppSkeletonVisual() {
   return (
     <div style={{ position: 'absolute', inset: 0, backgroundColor: '#0A0A0A', borderLeft: '1px solid #1E1E1C', overflow: 'hidden' }}>
       <div aria-hidden style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle, #1A1A18 1px, transparent 1px)', backgroundSize: '24px 24px', pointerEvents: 'none' }} />
-      <div aria-hidden style={{ position: 'absolute', top: '20px', left: '24px', fontFamily: 'var(--font-body), sans-serif', fontSize: '9px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(220,225,248,0.32)', zIndex: 1 }}>App Preview</div>
+      <div aria-hidden style={{ position: 'absolute', top: '20px', left: '24px', fontFamily: 'var(--font-body), sans-serif', fontSize: '9px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgb(255, 255, 255)', zIndex: 1 }}>App Preview</div>
       <div style={{ position: 'absolute', top: '22px', right: '24px', display: 'flex', alignItems: 'center', gap: '6px', zIndex: 1 }}>
         <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#22C55E', animation: 'statPulse 2s ease-in-out infinite' }} />
-        <span style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '9px', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(220,225,248,0.32)' }}>Live</span>
+        <span style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '9px', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgb(255, 255, 255)' }}>Live</span>
       </div>
       <div style={{ position: 'absolute', inset: '52px 24px 28px', display: 'grid', gridTemplateColumns: '1fr 1.8fr', gap: '12px', opacity: mounted ? 1 : 0, transition: 'opacity 600ms ease' }}>
         {/* Phone */}
@@ -62,7 +62,7 @@ function AppSkeletonVisual() {
             <div style={{ width: '32px', height: '6px', backgroundColor: '#111111', borderRadius: '3px' }} />
           </div>
           <div style={{ height: '16px', backgroundColor: '#0D0D0D', display: 'flex', alignItems: 'center', padding: '0 10px', justifyContent: 'space-between' }}>
-            <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '6px', color: 'rgba(255,255,255,0.22)' }}>9:41</span>
+            <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '6px', color: 'rgba(255,255,255,0.22)' }}>10:10</span>
             <div style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
               {[1,2,3].map(i => <div key={i} style={{ width: '3px', height: '3px', borderRadius: '50%', backgroundColor: '#2A2A28' }} />)}
             </div>
@@ -111,11 +111,11 @@ function AppSkeletonVisual() {
             <div style={{ display: 'flex', alignItems: 'flex-end', gap: '3px', flex: 1 }}>
               {[0.4,0.7,0.55,0.9,0.65,0.8,0.5,0.72].map((h, i) => <div key={i} style={{ flex: 1, height: `${h*100}%`, backgroundColor: i === 3 ? 'var(--accent)' : '#1E1E1C', opacity: i === 3 ? 0.65 : 0.5, borderRadius: '1px 1px 0 0' }} />)}
             </div>
-            <div style={{ borderTop: '1px solid #1A1A18', paddingTop: '6px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+            <div style={{ borderTop: '3px solid #ffffff68', paddingTop: '6px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
               {['Backlog review','Sprint planning','Deploy pipeline'].map((label, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px', height: '14px' }}>
-                  <div style={{ width: '6px', height: '6px', borderRadius: '1px', backgroundColor: i === 0 ? 'rgba(61,82,230,0.4)' : '#1E1E1C', flexShrink: 0 }} />
-                  <span style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '6px', color: '#3A3A38' }}>{label}</span>
+                  <div style={{ width: '6px', height: '6px', borderRadius: '1px', backgroundColor: i === 0 ? 'rgba(61,82,230,0.4)' : '#ffffff66', flexShrink: 0 }} />
+                  <span style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '8px', color: '#ffffff' }}>{label}</span>
                   <div style={{ marginLeft: 'auto', width: '24px', height: '6px', backgroundColor: '#161616', borderRadius: '1px' }} />
                 </div>
               ))}
@@ -123,7 +123,7 @@ function AppSkeletonVisual() {
           </div>
         </div>
       </div>
-      <div style={{ position: 'absolute', bottom: '8px', left: '50%', transform: 'translateX(-50%)', fontFamily: 'var(--font-mono), monospace', fontSize: '8px', color: '#2A2A28', letterSpacing: '0.12em', opacity: mounted ? 1 : 0, transition: 'opacity 600ms ease 400ms' }}>
+      <div style={{ position: 'absolute', bottom: '8px', left: '50%', transform: 'translateX(-50%)', fontFamily: 'var(--font-mono), monospace', fontSize: '8px', color: '#ffffff', letterSpacing: '0.12em', opacity: mounted ? 1 : 0, transition: 'opacity 600ms ease 400ms' }}>
         MOBILE + DESKTOP · LIVE SYNC
       </div>
     </div>
@@ -176,12 +176,33 @@ function AppsHero() {
           </Link>
         </motion.div>
       </div>
-      <motion.div initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.4 }} style={{ position: 'relative', height: '100%', minHeight: '500px' }}>
-        <AppSkeletonVisual />
-      </motion.div>
+      <motion.div className="apps-hero-visual" initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.4 }} style={{ position: 'relative', height: '100%', minHeight: '500px' }}>
+  <AppSkeletonVisual />
+</motion.div>
       <style>{`
         @media (max-width: 1024px) { .apps-hero-grid { grid-template-columns: 1fr !important; min-height: auto !important; } .apps-hero-grid > div:last-child { display: none !important; } }
-        @media (max-width: 600px) { .apps-hero-content { padding: 22px 20px 48px 20px !important; } }
+        @media (max-width: 768px) {
+          #apps-hero {
+            padding-top: 10px !important;
+            height: 100dvh !important;
+            min-height: 0 !important;
+            grid-template-columns: 1fr !important;
+            grid-template-rows: auto minmax(0, 1fr) !important;
+            overflow: hidden !important;
+          }
+          .apps-hero-content {
+            padding-top: 80px !important;
+            padding-left: 20px !important;
+            padding-right: 20px !important;
+            padding-bottom: 12px !important;
+            max-width: 100% !important;
+            justify-content: flex-start !important;
+          }
+          #apps-hero .apps-hero-visual {
+            height: auto !important;
+            min-height: 0 !important;
+          }
+        }
       `}</style>
     </section>
   );
@@ -262,7 +283,7 @@ function ProblemCard({ p, i, isHov, forceHov, isMobile, onMouseEnter, onMouseLea
         glareAngle={-30}
         glareSize={320}
         transitionDuration={750}
-        style={{ padding: '22px 28px', display: 'flex', flexDirection: 'column' }}
+        style={{ padding: '22px 28px', display: 'flex', flexDirection: 'column', ...(isMobile ? { minHeight: '200px' } : {}) }}
       >
         {/* Indicator */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '9px', marginBottom: '16px' }}>
@@ -286,24 +307,25 @@ function ProblemCard({ p, i, isHov, forceHov, isMobile, onMouseEnter, onMouseLea
 
         {/* Title */}
         <h3
-          className="font-heading"
+          className="font-heading apps-prob-title"
           style={{
             fontSize: 'clamp(19px, 2.1vw, 28px)',
             fontWeight: 500, fontStyle: 'italic',
             letterSpacing: '-0.025em',
             color: effectiveHov ? 'var(--dark-text)' : 'rgba(220,225,248,0.65)',
-            lineHeight: 1.14, marginBottom: '14px',
+            lineHeight: 1.14, marginBottom: '40px',
             whiteSpace: 'pre-line',
             transition: 'color 250ms ease',
             position: 'relative', zIndex: 1,
           }}
+
         >
           {p.title}
         </h3>
 
         {/* Body */}
         <p className="font-body" style={{
-          fontSize: '12.5px', lineHeight: 1.68,
+          fontSize: '11.32px', lineHeight: 1.68,
           color: 'rgba(220,225,248,0.68)',
           position: 'relative', zIndex: 1,
         }}>
@@ -437,6 +459,7 @@ function AppsProblemStatement() {
         <style>{`
           .apps-swipe-container { scrollbar-width: none; -ms-overflow-style: none; }
           .apps-swipe-container::-webkit-scrollbar { display: none; }
+          .apps-prob-title { white-space: normal !important; text-align: center !important; }
         `}</style>
       </section>
     );
@@ -511,7 +534,7 @@ const PHONE_SCREENS = [
       <div style={{ height: '100%', backgroundColor: '#0A0B10', display: 'flex', flexDirection: 'column' }}>
         {/* Status bar */}
         <div style={{ padding: '10px 20px 6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
-          <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '10px', color: '#DCE1F5', fontWeight: 600 }}>9:41</span>
+          <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '10px', color: '#DCE1F5', fontWeight: 600 }}>10:10</span>
           <div style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
             {[3,5,7].map(h => <div key={h} style={{ width: '3px', height: `${h}px`, backgroundColor: '#DCE1F5', borderRadius: '1px', opacity: 0.7 }} />)}
             <div style={{ width: '14px', height: '7px', border: '1px solid rgba(220,225,245,0.5)', borderRadius: '2px', marginLeft: '3px', display: 'flex', alignItems: 'center', padding: '1px' }}>
@@ -565,7 +588,7 @@ const PHONE_SCREENS = [
       <div style={{ height: '100%', backgroundColor: '#0A0B10', display: 'flex', flexDirection: 'column' }}>
         {/* Status bar */}
         <div style={{ padding: '10px 20px 6px', display: 'flex', justifyContent: 'space-between', flexShrink: 0 }}>
-          <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '10px', color: '#DCE1F5', fontWeight: 600 }}>9:41</span>
+          <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '10px', color: '#DCE1F5', fontWeight: 600 }}>10:10</span>
           <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
             <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#22C55E', animation: 'statPulse 2s ease-in-out infinite' }} />
           </div>
@@ -613,7 +636,7 @@ const PHONE_SCREENS = [
       <div style={{ height: '100%', backgroundColor: '#0A0B10', display: 'flex', flexDirection: 'column' }}>
         {/* Status bar */}
         <div style={{ padding: '10px 20px 6px', display: 'flex', justifyContent: 'space-between', flexShrink: 0 }}>
-          <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '10px', color: '#DCE1F5', fontWeight: 600 }}>9:41</span>
+          <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '10px', color: '#DCE1F5', fontWeight: 600 }}>10:10</span>
         </div>
         {/* Header */}
         <div style={{ padding: '8px 20px 14px', flexShrink: 0 }}>
@@ -664,7 +687,7 @@ const PHONE_SCREENS = [
       <div style={{ height: '100%', backgroundColor: '#0A0B10', display: 'flex', flexDirection: 'column' }}>
         {/* Status bar */}
         <div style={{ padding: '10px 20px 6px', display: 'flex', justifyContent: 'space-between', flexShrink: 0 }}>
-          <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '10px', color: '#DCE1F5', fontWeight: 600 }}>9:41</span>
+          <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '10px', color: '#DCE1F5', fontWeight: 600 }}>10:10</span>
         </div>
         {/* Header */}
         <div style={{ padding: '8px 20px 14px', flexShrink: 0 }}>
@@ -819,6 +842,8 @@ const APP_SERVICES = [
 function AppServicesGrid() {
   const [activeIdx, setActiveIdx] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [cycleDelay, setCycleDelay] = useState(3500);
+  useEffect(() => { if (window.innerWidth <= 768) setCycleDelay(5000); }, []);
   const mouseX = useMotionValue(0);
   const svcHdrRef = useRef<HTMLDivElement>(null);
   const svcHdrInView = useInView(svcHdrRef, { once: false, amount: 0.35 });
@@ -855,9 +880,9 @@ function AppServicesGrid() {
     if (isHovered) return;
     const interval = setInterval(() => {
       setActiveIdx((prev) => (prev + 1) % APP_SERVICES.length);
-    }, 3500);
+    }, cycleDelay);
     return () => clearInterval(interval);
-  }, [isHovered]);
+  }, [isHovered, cycleDelay]);
   const mouseY = useMotionValue(0);
   const rotateX = useSpring(useTransform(mouseY, [-200, 200], [6, -6]), { stiffness: 180, damping: 28 });
   const rotateY = useSpring(useTransform(mouseX, [-200, 200], [-6, 6]), { stiffness: 180, damping: 28 });

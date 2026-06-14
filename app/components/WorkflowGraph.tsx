@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 
 /* ── Layout constants ─────────────────────────────────────── */
-const VB_W = 600;
+const VB_W = 640;
 const VB_H = 320;
 const NW   = 96;   // node width
 const NH   = 34;   // node height
@@ -27,9 +27,9 @@ const NODES: WFNode[] = [
   { id: 3, x: 272, y: 28,  label: 'Transform',     sub: 'formatter',  type: 'active'   },
   { id: 4, x: 272, y: 143, label: 'Validate',      sub: 'schema',     type: 'process'  },
   { id: 5, x: 272, y: 258, label: 'Schedule',      sub: 'cron',       type: 'process'  },
-  { id: 6, x: 404, y: 86,  label: 'Auto-Approve',  sub: 'action',     type: 'active'   },
-  { id: 7, x: 404, y: 200, label: 'Sync to DB',    sub: 'database',   type: 'process'  },
-  { id: 8, x: 496, y: 143, label: 'Complete',      sub: 'output',     type: 'output'   },
+  { id: 6, x: 404, y: 64,  label: 'Auto-Approve',  sub: 'action',     type: 'active'   },
+  { id: 7, x: 404, y: 223, label: 'Sync to DB',    sub: 'database',   type: 'process'  },
+  { id: 8, x: 535, y: 143, label: 'Complete',      sub: 'output',     type: 'output'   },
 ];
 
 /* ── Edge definitions ─────────────────────────────────────── */
@@ -101,7 +101,7 @@ export default function WorkflowGraph() {
         inset: 0,
         backgroundColor: '#0A0A0A',
         borderLeft: '1px solid #1E1E1C',
-        overflow: 'hidden',
+        overflow: 'visible',
       }}
     >
       {/* Subtle dot grid on the dark panel */}
@@ -128,7 +128,7 @@ export default function WorkflowGraph() {
           fontWeight: 500,
           letterSpacing: '0.2em',
           textTransform: 'uppercase',
-          color: '#3A3A38',
+          color: '#ffffff',
           zIndex: 1,
         }}
       >
@@ -162,7 +162,7 @@ export default function WorkflowGraph() {
             fontSize: '9px',
             letterSpacing: '0.14em',
             textTransform: 'uppercase',
-            color: '#3A3A38',
+            color: '#ffffff',
           }}
         >
           Live
@@ -172,11 +172,10 @@ export default function WorkflowGraph() {
       {/* SVG graph */}
       <svg
         ref={svgRef}
-        viewBox={`0 0 ${VB_W} ${VB_H}`}
+        viewBox={`0 -40 ${VB_W} ${VB_H + 65}`}
         style={{
           width: '100%',
           height: '100%',
-          padding: '52px 24px 28px',
         }}
         aria-hidden
       >
@@ -304,10 +303,10 @@ export default function WorkflowGraph() {
         {/* Connection count badge at bottom */}
         <text
           x={VB_W / 2}
-          y={VB_H - 6}
+          y={VB_H + 20}
           fontFamily="var(--font-body), sans-serif"
-          fontSize="7.5"
-          fill="#3A3A38"
+          fontSize="10"
+          fill="#ffffff"
           textAnchor="middle"
           letterSpacing="0.12em"
         >

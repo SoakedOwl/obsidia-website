@@ -65,18 +65,19 @@ export default function BackToTop() {
           }}
         >
           {/* SVG progress ring */}
-          <svg
-            width="52"
-            height="52"
-            viewBox="0 0 52 52"
-            style={{
-              position: 'absolute',
-              inset: 0,
-              transform: 'rotate(-90deg)',
-              pointerEvents: 'none',
-            }}
-            aria-hidden
-          >
+<svg
+  viewBox="0 0 52 52"
+  style={{
+    position: 'absolute',
+    inset: 0,
+    width: '100%',
+    height: '100%',
+    transform: 'rotate(-90deg)',
+    transformOrigin: 'center center',
+    pointerEvents: 'none',
+  }}
+  aria-hidden
+>
             {/* Track */}
             <circle
               cx="26"
@@ -103,11 +104,10 @@ export default function BackToTop() {
 
           {/* Arrow icon */}
           <ArrowUp
-            size={14}
-            color="rgba(220,225,248,0.82)"
-            strokeWidth={2}
-            style={{ position: 'relative', zIndex: 1 }}
-          />
+  size={14}
+  color="rgba(220,225,248,0.82)"
+  strokeWidth={2}
+/>
         </motion.button>
       )}
     </AnimatePresence>

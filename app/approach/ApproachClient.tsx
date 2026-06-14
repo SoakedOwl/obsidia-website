@@ -35,14 +35,13 @@ type Principle = {
 };
 
 /* ── Principle row ────────────────────────────────────────── */
-function PrincipleRow({ principle, index, scrollDir, total }: {
+function PrincipleRow({ principle, index, scrollDir, total, autoActive = false }: {
   principle: Principle; index: number;
   scrollDir: 'down' | 'up'; total: number;
+  autoActive?: boolean;
 }) {
   const rowRef = useRef<HTMLDivElement>(null);
   const [mobileActive, setMobileActive] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => { setIsMobile(window.innerWidth <= 768); }, []);
   const inView = useInView(rowRef, { once: false, amount: 0.5 });
   const mouseX = useMotionValue(-200);
   const mouseY = useMotionValue(-200);
@@ -67,7 +66,7 @@ function PrincipleRow({ principle, index, scrollDir, total }: {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onClick={() => setMobileActive(a => !a)}
-      animate={mobileActive ? 'hovered' : (inView ? 'visible' : 'hidden')}
+      animate={(autoActive || mobileActive) ? 'hovered' : (inView ? 'visible' : 'hidden')}
       custom={{ index, scrollDir, total }}
       variants={{
         hidden: { opacity: 0, y: 28 },
@@ -428,7 +427,7 @@ function PhaseSection({ phase, i }: { phase: Phase; i: number }) {
   return (
     <section
       id={phase.id}
-      style={{ backgroundColor: 'var(--bg)', borderTop: '1px solid var(--border)', position: 'relative' }}
+      style={{ backgroundColor: 'var(--bg)', position: 'relative' }}
     >
       <div
         ref={sectionRef}
@@ -474,10 +473,38 @@ export default function ApproachClient() {
   const ctaHdrRef = useRef<HTMLDivElement>(null);
   const ctaHdrInView = useInView(ctaHdrRef, { once: false, amount: 0.4 });
   const heroContentRef = useRef<HTMLDivElement>(null);
+  const principlesSectionRef = useRef<HTMLElement>(null);
+  const [autoActivePrinciples, setAutoActivePrinciples] = useState<boolean[]>([false, false, false]);
+
   useEffect(() => {
     if (window.innerWidth <= 768 && heroContentRef.current) {
       heroContentRef.current.style.paddingTop = '120px';
     }
+  }, []);
+
+  useEffect(() => {
+    if (window.innerWidth > 768) return;
+    const section = principlesSectionRef.current;
+    if (!section) return;
+    let t0: ReturnType<typeof setTimeout> | undefined;
+    let t1: ReturnType<typeof setTimeout> | undefined;
+    let t2: ReturnType<typeof setTimeout> | undefined;
+    const clear = () => { clearTimeout(t0); clearTimeout(t1); clearTimeout(t2); };
+
+    const observer = new IntersectionObserver(([entry]) => {
+      clear();
+      if (entry.isIntersecting) {
+        setAutoActivePrinciples([false, false, false]);
+        t0 = setTimeout(() => setAutoActivePrinciples(p => [true, p[1], p[2]]), 400);
+        t1 = setTimeout(() => setAutoActivePrinciples(p => [p[0], true, p[2]]), 1400);
+        t2 = setTimeout(() => setAutoActivePrinciples(p => [p[0], p[1], true]), 2400);
+      } else {
+        setAutoActivePrinciples([false, false, false]);
+      }
+    }, { threshold: 0.2 });
+
+    observer.observe(section);
+    return () => { observer.disconnect(); clear(); };
   }, []);
 
   const PHASES: Phase[] = [
@@ -634,7 +661,7 @@ export default function ApproachClient() {
           style={{ position: 'relative', zIndex: 2 }}
         >
           {/* Animated accent rule */}
-          <div aria-hidden style={{
+          <div aria-hidden className="phase-accent-rule" style={{
             position: 'absolute', top: 0, left: 0, height: 1, width: '100%',
             backgroundColor: 'var(--accent)',
             transformOrigin: 'left center',
@@ -643,7 +670,7 @@ export default function ApproachClient() {
             opacity: 0.4,
           }} />
 
-          <div style={{ borderTop: '1px solid var(--dark-border)' }}>
+          <div className="phase-tracker-border phase-tracker-border-line">
             <div
               className="phase-tracker"
               style={{
@@ -725,6 +752,7 @@ export default function ApproachClient() {
           S6 — PRINCIPLES
       ════════════════════════════════════════════════ */}
       <section
+        ref={principlesSectionRef}
         id="approach-principles"
         data-section-label="Principles"
         data-nav-theme="dark"
@@ -768,7 +796,7 @@ export default function ApproachClient() {
           </motion.div>
 
           {PRINCIPLES.map((p, i) => (
-            <PrincipleRow key={p.number} principle={p} index={i} scrollDir={scrollDir} total={PRINCIPLES.length} />
+            <PrincipleRow key={p.number} principle={p} index={i} scrollDir={scrollDir} total={PRINCIPLES.length} autoActive={autoActivePrinciples[i]} />
           ))}
 
           <div style={{ borderTop: '1px solid var(--dark-border)' }} />
@@ -967,6 +995,7 @@ export default function ApproachClient() {
 
       {/* ── Styles ─────────────────────────────────────────── */}
       <style>{`
+        .phase-tracker-border-line { border-top: 1px solid var(--dark-border); }
         .approach-line1 { display: block; }
         .approach-line2 { display: block; }
         /* Phase tracker hover */
@@ -1079,21 +1108,23 @@ export default function ApproachClient() {
           .principle-row-inner { cursor: pointer; }
 
           /* Phase tracker 2x2 — borders and sizing */
-          .phase-tracker { border: 1px solid var(--accent) !important; width: calc(100% - 40px) !important; margin: 0 auto !important; padding: 0 !important; }
-          div:has(> .phase-tracker) { border-top: none !important; }
+          .phase-tracker { border-left: 3px solid var(--accent) !important; border-right: 3px solid var(--accent) !important; border-bottom: 3px solid var(--accent) !important; border-top: none !important; width: calc(100% - 0px) !important; margin: 0 0px !important; padding: 0 !important; }
+          .phase-tracker-border { border-top: 3px solid var(--accent) !important; }
+          /* Accent rule: match the 20px inset of the table so it doesn't bleed beyond corners */
+          .phase-accent-rule { left: 20px !important; width: calc(100% - 40px) !important; height: 3px !important; }
           .phase-tracker-item { padding: 18px 8px !important; }
           .phase-name { font-size: 13px !important; text-align: center !important; color: #ffffff !important; }
           /* item 2 (BUILD) is bottom-left — remove desktop borderLeft */
           .phase-tracker-item-2 { border-left: none !important; }
-          /* column divider: right edge of left column */
+          /* column divider: single 2px rule at right edge of left column */
           .phase-tracker-item-0,
-          .phase-tracker-item-2 { border-right: 1px solid rgba(255,255,255,0.15) !important; }
+          .phase-tracker-item-2 { border-right: 3px solid rgba(255,255,255,0.32) !important; }
+          /* right-column items: kill inherited desktop left border to avoid double-line */
+          .phase-tracker-item-1,
+          .phase-tracker-item-3 { border-left: none !important; }
           /* row divider: bottom edge of top row */
           .phase-tracker-item-0,
-          .phase-tracker-item-1 { border-bottom: 1px solid rgba(255,255,255,0.15) !important; }
-          /* lighten the surviving left-column border (item 1 and 3) */
-          .phase-tracker-item-1,
-          .phase-tracker-item-3 { border-left-color: rgba(255,255,255,0.15) !important; }
+          .phase-tracker-item-1 { border-bottom: 3px solid rgba(255,255,255,0.32) !important; }
         }
         @media (max-width: 640px) {
           .phase-tracker { grid-template-columns: repeat(2, 1fr) !important; padding: 0 !important; }
